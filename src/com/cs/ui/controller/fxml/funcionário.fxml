@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="550.0" prefWidth="1024.0" style="-fx-background-color: rgb(60, 171, 198);" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cs.ui.controller.FuncionarioController">
+    <stylesheets>
+        <URL value="@/com/cs/ui/css/principal.css" />
+    </stylesheets>
+   <children>
+      <Label layoutX="80.0" layoutY="4.0" text="FUNCIONÁRIO">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Label>
+      <Button layoutX="82.0" layoutY="54.0" mnemonicParsing="false" onAction="#abrirModalCreate" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: #322530;" AnchorPane.leftAnchor="82.0">
+         <graphic>
+            <ImageView fitHeight="31.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../img/criar_ico.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <tooltip>
+            <Tooltip text="Criar novo funcionário" />
+         </tooltip>
+      </Button>
+      <Button layoutX="884.0" layoutY="64.0" mnemonicParsing="false" onAction="#pesquisa" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: #322530;" AnchorPane.rightAnchor="82.0">
+         <graphic>
+            <ImageView fitHeight="31.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../img/pesquisa_ico.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <tooltip>
+            <Tooltip text="Pesquisar funionário pelo nome" />
+         </tooltip>
+      </Button>
+      <TextField fx:id="pesquisa" layoutX="593.0" layoutY="64.0" onKeyReleased="#digitado" opacity="0.0" prefHeight="50.0" prefWidth="300.0" promptText="pequisar funcionário" />
+      <TableView fx:id="tabela" layoutX="81.0" layoutY="137.0" prefHeight="354.0" prefWidth="864.0">
+        <columns>
+          <TableColumn fx:id="colunaNome" prefWidth="431.0" text="NOME" />
+          <TableColumn fx:id="colunaCPF" minWidth="0.0" prefWidth="124.0" text="CPF" />
+            <TableColumn fx:id="colunaTel" prefWidth="123.0" text="TELEFONES" />
+            <TableColumn fx:id="colunaFun" prefWidth="105.0" text="FUNÇÃO" />
+            <TableColumn fx:id="colunaEdit" prefWidth="72.0" text="Editar" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>

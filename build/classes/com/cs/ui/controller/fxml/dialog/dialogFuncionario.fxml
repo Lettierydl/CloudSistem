@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane hgap="14.0" maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="354.0" prefWidth="690.0" vgap="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cs.ui.controller.dialog.FuncionarioDialogController">
+  <children>
+    <VBox maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" prefHeight="145.0" prefWidth="680.0" spacing="7.0" GridPane.rowIndex="1">
+         <children>
+            <GridPane prefHeight="204.0" prefWidth="643.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="305.0" minWidth="10.0" prefWidth="280.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="0.0" prefWidth="50.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="244.15615844726562" minWidth="10.0" prefWidth="150.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="244.15615844726562" minWidth="10.0" prefWidth="25.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="264.52459716796875" minWidth="10.0" prefWidth="150.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="94.0" minHeight="0.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="198.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="198.0" minHeight="10.0" prefHeight="15.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="198.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="198.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="198.0" minHeight="10.0" prefHeight="15.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="198.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="198.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label text="Nome" />
+                  <TextField fx:id="nome" GridPane.rowIndex="1">
+                     <tooltip>
+                        <Tooltip text="Nome do funcionário" />
+                     </tooltip>
+                  </TextField>
+                  <Label text="Celular" GridPane.columnIndex="4" />
+                  <TextField fx:id="endereco" promptText="Rua rita pereira de almenda, 51, centro" GridPane.rowIndex="4">
+                     <tooltip>
+                        <Tooltip text="Endereço do funcionário" />
+                     </tooltip>
+                  </TextField>
+                  <Label text="Endereço" GridPane.rowIndex="3" />
+                  <TextField fx:id="telefone" layoutX="10.0" layoutY="138.0" promptText="(  )   -    " GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <Label text="CPF" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  <Label layoutX="10.0" layoutY="101.0" text="Telefone" GridPane.columnIndex="2" />
+                  <Label fx:id="labelSenha" layoutX="354.0" layoutY="109.0" text="Senha" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                  <TextField fx:id="cpf" layoutX="10.0" layoutY="131.0" promptText="   .   .   -  " GridPane.columnIndex="2" GridPane.rowIndex="4">
+                     <tooltip>
+                        <Tooltip text="CPF do funcionário" />
+                     </tooltip>
+                  </TextField>
+                  <TextField fx:id="login" GridPane.columnIndex="4" GridPane.rowIndex="4">
+                     <tooltip>
+                        <Tooltip text="Login obrigatório do funcionário" />
+                     </tooltip>
+                  </TextField>
+                  <PasswordField fx:id="senha" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                     <tooltip>
+                        <Tooltip text="Senha do funcionário" />
+                     </tooltip></PasswordField>
+                  <PasswordField fx:id="senha2" layoutX="521.0" layoutY="90.0" GridPane.columnIndex="4" GridPane.rowIndex="7" />
+                  <Label fx:id="labelSenhaN" layoutX="521.0" layoutY="71.0" text="Confirmação da Senha" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+                  <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="7">
+                     <children>
+                        <RadioButton fx:id="caixa" mnemonicParsing="false" text="Caixa">
+                           <padding>
+                              <Insets right="30.0" />
+                           </padding>
+                        </RadioButton>
+                        <RadioButton fx:id="supervisor" mnemonicParsing="false" text="Supervisor">
+                           <padding>
+                              <Insets right="30.0" />
+                           </padding>
+                        </RadioButton>
+                        <RadioButton fx:id="gerente" mnemonicParsing="false" text="Gerente" />
+                     </children>
+                  </FlowPane>
+                  <Label layoutX="10.0" layoutY="77.0" text="Função" GridPane.rowIndex="6" />
+                  <Label layoutX="344.0" layoutY="159.0" text="Login" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                  <TextField fx:id="celular" promptText="(  )   -    " GridPane.columnIndex="4" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
+         </children>
+    </VBox>
+    <HBox maxHeight="-Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" GridPane.rowIndex="2">
+      <children>
+        <HBox fx:id="actionParent" alignment="CENTER">
+          <HBox.margin>
+            <Insets />
+          </HBox.margin>
+        </HBox>
+        <Pane maxWidth="+Infinity" HBox.hgrow="ALWAYS" />
+        <Button fx:id="cancelButton" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#cancelarClicado" text="Cancel" HBox.hgrow="NEVER">
+          <HBox.margin>
+            <Insets />
+          </HBox.margin>
+        </Button>
+        <HBox fx:id="okParent" alignment="CENTER">
+          <children>
+            <Button fx:id="okButton" minWidth="80.0" mnemonicParsing="false" onAction="#okClicado" text="Ok" HBox.hgrow="NEVER">
+              <HBox.margin>
+                <Insets left="25.0" />
+              </HBox.margin>
+            </Button>
+          </children>
+        </HBox>
+      </children>
+    </HBox>
+      <Label fx:id="page" prefHeight="29.0" prefWidth="624.0" text="Editar Funcionário">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+  </children>
+  <columnConstraints>
+    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="Infinity" minWidth="-Infinity" prefWidth="469.0" />
+  </columnConstraints>
+  <padding>
+    <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+  </padding>
+  <rowConstraints>
+      <RowConstraints maxHeight="Infinity" minHeight="10.0" prefHeight="56.0" valignment="CENTER" vgrow="ALWAYS" />
+    <RowConstraints maxHeight="Infinity" minHeight="-Infinity" prefHeight="203.0" valignment="CENTER" vgrow="ALWAYS" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+  </rowConstraints>
+</GridPane>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="768.0" prefWidth="1024.0" style="-fx-background-color: rgb(60, 171, 198);" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cs.ui.controller.PrincipalController">
+    <stylesheets>
+        <URL value="@/com/cs/ui/css/principal.css" />
+    </stylesheets>
+   <children>
+      <FlowPane layoutX="186.0" layoutY="31.0" prefHeight="200.0" prefWidth="830.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ImageView fitHeight="91.0" fitWidth="91.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../img/logo.png" />
+               </image>
+               <FlowPane.margin>
+                  <Insets left="30.0" right="30.0" top="20.5" />
+               </FlowPane.margin>
+            </ImageView>
+            <Button mnemonicParsing="false" onAction="#botaoMenu" prefHeight="160.0" prefWidth="120.0" styleClass="menu_botao_par" stylesheets="@../../css/principal.css" text="Venda" />
+            <Button mnemonicParsing="false" onAction="#botaoMenu" prefHeight="160.0" prefWidth="120.0" styleClass="menu_botao_impar" stylesheets="@../../css/principal.css" text="Pagamento" />
+            <Button mnemonicParsing="false" onAction="#botaoMenu" prefHeight="160.0" prefWidth="120.0" styleClass="menu_botao_par" stylesheets="@../../css/principal.css" text="Estoque" />
+            <Button mnemonicParsing="false" onAction="#botaoMenu" prefHeight="160.0" prefWidth="120.0" styleClass="menu_botao_impar" stylesheets="@../../css/principal.css" text="Cliente" />
+            <Button mnemonicParsing="false" onAction="#botaoMenu" prefHeight="160.0" prefWidth="120.0" styleClass="menu_botao_par" stylesheets="@../../css/principal.css" text="Balanço" />
+            <Button mnemonicParsing="false" onAction="#botaoMenu" prefHeight="160.0" prefWidth="120.0" styleClass="menu_botao_impar" stylesheets="@../../css/principal.css" text="Funcionário" />
+            <Button mnemonicParsing="false" onAction="#botaoMenu" prefHeight="160.0" prefWidth="120.0" styleClass="menu_botao_par" stylesheets="@../../css/principal.css" text="Configurações" />
+            <ToolBar prefHeight="40.0" prefWidth="1024.0">
+               <FlowPane.margin>
+                  <Insets />
+               </FlowPane.margin>
+               <items>
+                  <SplitMenuButton fx:id="user" mnemonicParsing="false" text="Usuário">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#trocarDeUsuario" text="Trocar de usuário" />
+                      <MenuItem mnemonicParsing="false" onAction="#logoff" text="Sair" />
+                    </items>
+                  </SplitMenuButton>
+               </items>
+               <padding>
+                  <Insets left="850.0" />
+               </padding>
+            </ToolBar>
+         </children>
+      </FlowPane>
+      <StackPane fx:id="stack" layoutX="8.0" layoutY="200.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="205.0" />
+   </children>
+</AnchorPane>

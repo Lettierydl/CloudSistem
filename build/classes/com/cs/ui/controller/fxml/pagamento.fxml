@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="550.0" prefWidth="1024.0" style="-fx-background-color: rgb(60, 171, 198);" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cs.ui.controller.PagamentoController">
+    <stylesheets>
+        <URL value="@/com/cs/ui/css/principal.css" />
+    </stylesheets>
+   <children>
+      <Ellipse fill="DODGERBLUE" layoutX="320.0" layoutY="314.0" radiusX="19.0" radiusY="19.0" stroke="BLACK" strokeType="INSIDE" />
+      <Arc fill="DODGERBLUE" layoutX="194.0" layoutY="308.0" length="270.0" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" />
+      <Ellipse fill="DODGERBLUE" layoutX="198.0" layoutY="246.0" radiusX="19.0" radiusY="19.0" stroke="BLACK" strokeType="INSIDE" />
+      <Ellipse fill="DODGERBLUE" layoutX="387.0" layoutY="314.0" radiusX="19.0" radiusY="19.0" stroke="BLACK" strokeType="INSIDE" />
+      <Ellipse fill="DODGERBLUE" layoutX="460.0" layoutY="314.0" radiusX="19.0" radiusY="19.0" stroke="BLACK" strokeType="INSIDE" />
+      <Ellipse fill="DODGERBLUE" layoutX="531.0" layoutY="314.0" radiusX="19.0" radiusY="19.0" stroke="BLACK" strokeType="INSIDE" />
+   </children>
+</AnchorPane>
