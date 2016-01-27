@@ -18,6 +18,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Pos;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
@@ -92,14 +93,16 @@ public abstract class MaskFieldUtil {
     public static void monetaryField(final TextField textField) {
         textField.setAlignment(Pos.CENTER_RIGHT);
         MaskFieldUtil.maxField(textField, 17);
-        textField.setOnKeyReleased(new EventHandler<KeyEvent>() {
+        textField.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent e) {
-                MaskFieldUtil.positionCaret(textField);
-                String value = textField.getText();
-                value = value.replaceAll("[^0-9]", "");
-                value = value.replaceAll("([0-9]{1})([0-9]{2})$", "$1,$2");
-                textField.setText(value);
+                try{
+                    MaskFieldUtil.positionCaret(textField);
+                    String value = textField.getText();
+                    value = value.replaceAll("[^0-9]", "");
+                    value = value.replaceAll("([0-9]{1})([0-9]{2})$", "$1,$2");
+                    textField.setText(value);
+                }catch(Exception ex){}
             }
         });
     }

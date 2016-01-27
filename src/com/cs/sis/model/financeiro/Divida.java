@@ -2,6 +2,7 @@ package com.cs.sis.model.financeiro;
 
 import com.cs.sis.model.pessoas.Cliente;
 import com.cs.sis.model.pessoas.Funcionario;
+import com.cs.sis.util.OperacaoStringUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Calendar;
@@ -233,6 +234,16 @@ public class Divida implements Comparable<Divida>, Pagavel {
     @Override
     public String toString() {
         return "Divida [id=" + id + ", total=" + total + "]";
+    }
+
+    @Override
+    public String getData() {
+        return OperacaoStringUtil.formatDataTimeValor(dia);
+    }
+
+    @Override
+    public String getOrigem() {
+        return "Dívida";
     }
 
 }

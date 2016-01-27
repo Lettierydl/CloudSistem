@@ -6,7 +6,6 @@
 package com.cs.sis.model.financeiro;
 
 import com.cs.sis.model.estoque.Produto;
-import com.cs.sis.model.estoque.UnidadeProduto;
 import com.cs.sis.util.OperacaoStringUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -115,7 +114,7 @@ public class ItemDeVenda implements Comparable<ItemDeVenda> {
         return indice;
     }
 
-    void setIndex(int index) {
+    public void setIndex(int index) {
         this.indice = index;
     }
 
@@ -163,6 +162,10 @@ public class ItemDeVenda implements Comparable<ItemDeVenda> {
         setValores(this.produto);
     }
 
+    public String getDescricaoProduto(){
+        return getProduto().getDescricao();
+    }
+    
     public double getTotalComDesconto() {
         return total - desconto;
     }

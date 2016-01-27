@@ -49,6 +49,9 @@
             </ToolBar>
          </children>
       </FlowPane>
-      <StackPane fx:id="stack" layoutX="8.0" layoutY="200.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="205.0" />
+      <StackPane fx:id="stack" layoutX="8.0" layoutY="199.0" prefHeight="569.0" prefWidth="1024.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="199.0">
+         <children>
+            
+         </children></StackPane>
    </children>
 </AnchorPane>

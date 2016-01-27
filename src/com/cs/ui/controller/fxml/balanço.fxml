@@ -14,10 +14,7 @@
     <stylesheets>
         <URL value="@/com/cs/ui/css/principal.css" />
     </stylesheets>
-   <children>
-      <Arc fill="DODGERBLUE" layoutX="382.0" layoutY="302.0" length="270.0" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" />
-      <Ellipse fill="DODGERBLUE" layoutX="386.0" layoutY="240.0" radiusX="19.0" radiusY="19.0" stroke="BLACK" strokeType="INSIDE" />
-      <Ellipse fill="DODGERBLUE" layoutX="460.0" layoutY="314.0" radiusX="19.0" radiusY="19.0" stroke="BLACK" strokeType="INSIDE" />
-      <Ellipse fill="DODGERBLUE" layoutX="531.0" layoutY="314.0" radiusX="19.0" radiusY="19.0" stroke="BLACK" strokeType="INSIDE" />
-   </children>
+    <children>
+        <np.com.ngopal.control.AutoFillTextBox listLimit="4" fx:id="teste" layoutX="187.0" layoutY="174.0" filterMode="true"  />
+    </children>
 </AnchorPane>

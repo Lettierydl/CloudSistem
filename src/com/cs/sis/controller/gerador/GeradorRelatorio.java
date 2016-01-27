@@ -226,10 +226,10 @@ public class GeradorRelatorio extends Gerador {
                 .createQuery(
                         "select p.descricao, p.valorDeCompra, p.valorDeVenda , sum(it.quantidade), sum((p.valorDeVenda - p.valorDeCompra)* it.quantidade) "
                         + " from Venda as v , Produto as p, ItemDeVenda as it "
-                        + " where v.dia between :diaInicio and :diaFim and it.venda = v "
+                        + " where v.dia between ? and ? and it.venda = v "
                         + " and it.produto = p  group by p.descricao order by p.descricao");
-        query.setParameter("diaInicio", di);
-        query.setParameter("diaFim", df);
+        query.setParameter(1, di);
+        query.setParameter(2, df);
 
         for (Object obj : query.getResultList()) {
             Object[] o = (Object[]) obj;
@@ -246,11 +246,11 @@ public class GeradorRelatorio extends Gerador {
 
     public static List<Venda> vendasDoCliente(Cliente cliente, Date diaInicio, Date diaFim) {
         String stringQuery = "select v FROM Venda as v ";
-        stringQuery += "WHERE v.paga = false and v.cliente = :cli"
+        stringQuery += "WHERE v.paga = false and v.cliente = ?"
                 + " order by v.total , v.dia DESC ";
 
         Query query = getEntityManager().createQuery(stringQuery, Venda.class);
-        query.setParameter("cli", cliente);
+        query.setParameter(1, cliente);
 
         @SuppressWarnings("unchecked")
         List<Venda> vendas = (List<Venda>) query.getResultList();
@@ -267,13 +267,15 @@ public class GeradorRelatorio extends Gerador {
 
         Calendar df = Calendar.getInstance();
 
-        String stringQuery = "select sum(r.qt) from (select DISTINCT it.id, it.quantidade as qt from item_de_venda as it, venda as v where it.produto_id = :idProduto and"
-                + " v.dia between :diaInicio and :diaFim) as r";
-
+        String stringQuery = "select sum(r.qt) from ("
+                + "select DISTINCT it.id, it.quantidade as qt from item_de_venda as it, venda as v "
+                + "where it.produto_id = ? and "
+                + "v.dia between ? and ?) as r;";
+        
         Query query = getEntityManager().createNativeQuery(stringQuery);
-        query.setParameter("diaInicio", di);
-        query.setParameter("diaFim", df);
-        query.setParameter("idProduto", idProduto);
+        query.setParameter(2, di);
+        query.setParameter(3, df);
+        query.setParameter(1, idProduto);
 
         try {
             double o = (double) query.getSingleResult();

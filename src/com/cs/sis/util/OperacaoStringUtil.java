@@ -45,16 +45,15 @@ public class OperacaoStringUtil {
         try {
             c.setTime(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(valor));
         } catch (ParseException ex) {
-           return null;
+            return null;
         }
         return c;
     }
-    
+
     public static String formatDataTimeValor(Calendar c) {
-       return new SimpleDateFormat("dd/MM/yyyy  HH:mm:ss").format(c.getTime());
+        return new SimpleDateFormat("dd/MM/yyyy  HH:mm:ss").format(c.getTime());
     }
-    
-    
+
     public static Calendar converterDataValor(String valor) {
         Calendar c = Calendar.getInstance();
         try {
@@ -64,12 +63,24 @@ public class OperacaoStringUtil {
         }
         return c;
     }
-    
+
     public static String formatDataValor(Calendar c) {
-       return new SimpleDateFormat("dd/MM/yyyy").format(c.getTime());
+        return new SimpleDateFormat("dd/MM/yyyy").format(c.getTime());
     }
 
     public static String formatarStringQuantidade(double quantidade) {
+        if (quantidade != 0.0) {
+            return new DecimalFormat("0.000").format(quantidade);
+        } else {
+            return "";
+        }
+    }
+
+    public static String formatarStringQuantidadeInteger(double quantidade) {
+        int valor2 = (int) quantidade;
+        if (quantidade == valor2) {// é inteiro
+            return new DecimalFormat("0").format(quantidade);
+        }
         if (quantidade != 0.0) {
             return new DecimalFormat("0.000").format(quantidade);
         } else {
@@ -87,6 +98,18 @@ public class OperacaoStringUtil {
     }
 
     public static String formatarStringValorMoeda(double valor) {
+        if (valor != 0.0) {
+            return new DecimalFormat("0.00").format(valor);
+        } else {
+            return "";
+        }
+    }
+    
+    public static String formatarStringValorMoedaInteger(double valor) {
+        int valor2 = (int) valor;
+        if (valor == valor2) {// é inteiro
+            return new DecimalFormat("0").format(valor);
+        }
         if (valor != 0.0) {
             return new DecimalFormat("0.00").format(valor);
         } else {

@@ -5,24 +5,16 @@
  */
 package com.cs;
 
-import java.util.Comparator;
 import javafx.application.Application;
-import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Callback;
+import np.com.ngopal.control.AutoFillTextBox;
+import org.controlsfx.control.textfield.TextFields;
 
 /**
  *
@@ -30,15 +22,39 @@ import javafx.util.Callback;
  */
 public class Teste extends Application {
 
-   /*public static void main(String[] args) {
-		launch();
+    public Teste() {
     }
-   */
+
+    /**
+     * @param args the command line arguments
+     */
+    /*public static void main(String[] args) {
+        Application.launch(args);
+    }*/
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("AutoFillTextBox without FilterMode");
 
-	
+        //SAMPLE DATA
+        ObservableList data = FXCollections.observableArrayList(Facede.getInstance().buscarNomeClientePorNomeQueInicia(""));
+
+        //Layout    
+        HBox hbox = new HBox();
+        hbox.setSpacing(10);
+        //CustomControl
+        final AutoFillTextBox box = new AutoFillTextBox(data);
+        //Label
+        Label l = new Label("AutoFillTextBox: ");
+        l.translateYProperty().set(5);
+        l.translateXProperty().set(5);
+
+        hbox.getChildren().addAll(l, box);
+        Scene scene = new Scene(hbox, 300, 200);
+
+        primaryStage.setScene(scene);
+        scene.getStylesheets().add(getClass().getResource("control.css").toExternalForm());
+        primaryStage.show();
+
+    }
 }

@@ -5,7 +5,6 @@ package com.cs.ui.controller;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import com.cs.sis.model.pessoas.Cliente;
 import com.cs.sis.model.pessoas.Funcionario;
 import com.cs.sis.model.pessoas.TipoDeFuncionario;
 import com.cs.ui.controller.dialog.DialogController;

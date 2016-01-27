@@ -224,6 +224,17 @@ public class FindVenda extends FindEntity {
         pag.addAll(vendasNaoPagaDoCliente(cliente));
         return pag;
     }
+    
+    public static List<Pagavel> pagavelNaoPagoDoCliente(String cliente) {
+        List<Cliente> cl = FindCliente.clientesQueNomeInicia(cliente);
+        if(cl.size() == 1){
+            return pagavelNaoPagoDoCliente(cl.get(0));
+        }else if(cl.size() > 1){
+            return pagavelNaoPagoDosClientes(cl);
+        }else{
+            return new ArrayList<Pagavel>();
+        }
+    }
 
     public static List<Pagavel> pagavelNaoPagoDosClientes(List<Cliente> clientes) {
         List<Pagavel> pag = new ArrayList<Pagavel>();

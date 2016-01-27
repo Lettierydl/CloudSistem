@@ -11,37 +11,27 @@ import com.cs.Main;
 import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Venda;
-import com.cs.sis.model.pessoas.exception.VendaPendenteException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.Calendar;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
@@ -57,24 +47,27 @@ import org.controlsfx.dialog.Dialogs;
  *
  * @author Lettiery
  */
-public class VendaController implements Initializable {
+public class MercadoriasController implements Initializable {
 
     private Facede f;
     private Venda atual;
-    private ObservableList<ItemDeVenda> observableList;
-
+    private static ObservableList<ItemDeVenda> mercadorias;
+    private static int index = 0;
+    
+    
     @FXML
     private TableView<ItemDeVenda> itens;
+    
     @FXML
-    private TableColumn<ItemDeVenda, ItemDeVenda> cancelCol;
+    private TableColumn<ItemDeVenda, ItemDeVenda> saidaCol;
     @FXML
-    private TableColumn<?, ?> qtCol;
-    @FXML
-    private TableColumn<?, ?> totalCol;
+    private TableColumn<?, ?> valCol;
     @FXML
     private TableColumn<?, ?> produtoCol;
     @FXML
-    private TableColumn<?, ?> valorCol;
+    private TableColumn<ItemDeVenda, ItemDeVenda> estoqueCol;
+    @FXML
+    private TableColumn<ItemDeVenda, ItemDeVenda> codigoCol;
 
     @FXML
     private TextField codigo;
@@ -89,44 +82,39 @@ public class VendaController implements Initializable {
     @FXML
     private Label total;
 
-    public VendaController() {
+    public MercadoriasController() {
         f = Facede.getInstance();
-    }
-
-    @FXML
-    public void pesquisaMercadorias(ActionEvent event) {
-        Main.trocarDeTela(ControllerTelas.TELA_MERCADORIAS);
-    }
-
-    @FXML
-    public void finalizarAvista(ActionEvent event) {
-        if (f.getVendaAtual().getTotal() <= 0) {
-            Dialogs.create()
-                    .title("Venda zerada")
-                    .masthead("Por favor adicione algum item antes de filizar a venda")
-                    .showError();
-        } else {
-            Main.trocarDeTela(ControllerTelas.TELA_FINALIZAR_A_VISTA);
+        if(mercadorias == null){
+            mercadorias =  FXCollections.observableArrayList();
         }
     }
-
+    
     @FXML
-    public void finalizarAprazo(ActionEvent event) {
-        if (f.getVendaAtual().getTotal() <= 0) {
-            Dialogs.create()
-                    .title("Venda zerada")
-                    .masthead("Por favor adicione algum item antes de filizar a venda")
-                    .showError();
-        } else {
-            Main.trocarDeTela(ControllerTelas.TELA_FINALIZAR_A_PRAZO);
-        }
+    void limparColsulta(ActionEvent event) {
+        mercadorias.clear();
+        preencherInformacoes();
     }
 
+    @FXML
+    void imprimir(ActionEvent event) {
+        Venda v = new Venda();
+        for(ItemDeVenda t: mercadorias){
+            v.addItemDeVenda(t);
+        }
+        v.setDia(Calendar.getInstance());
+        v.setFuncionario(f.getFuncionarioLogado());
+        v.setObservacao("Consulta de mercadorias");
+        f.imprimirVenda(v);
+    }
+    
+    @FXML
+    public void voltarVendas(ActionEvent event) {
+        Main.trocarDeTela(ControllerTelas.TELA_VENDA);
+    }
     @FXML
     public void home(ActionEvent event) {
         Main.trocarDeTela(ControllerTelas.TELA_PRINCIPAL);
     }
-
     @FXML
     void enterKey(ActionEvent event) {
         String txt = codigo.getText();
@@ -146,24 +134,25 @@ public class VendaController implements Initializable {
             ItemDeVenda it = new ItemDeVenda();
             it.setProduto(p);
             it.setQuantidade(qt);
+            it.setIndex(index++);
             try {
-                f.addItemAVenda(it);
+                mercadorias.add(0, it);
                 preencherInformacoes();
                 quantidade.setText("1");
                 codigo.setText("");
                 codigo.requestFocus();
                 codigo.selectAll();
-            } catch (Exception e) {// venda nao existente, erro grande
+            } catch (Exception e) {
                 Dialogs.create().showException(e);
             }
         } catch (NoResultException | NonUniqueResultException ne) {
             codigo.requestFocus();
             codigo.selectAll();
             Dialogs.create()
-                    .title("Produto inválido")
-                    .masthead("Produto não cadastrado")
-                    .message(txt)
-                    .showError();
+                        .title("Produto inválido")
+                        .masthead("Produto não cadastrado")
+                        .message(txt)
+                        .showError();
         }
     }
 
@@ -191,6 +180,7 @@ public class VendaController implements Initializable {
                 codigo.selectAll();
             }
         }
+        //inserir autoComplet
     }
 
     @FXML
@@ -203,90 +193,46 @@ public class VendaController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        totalCol.setCellValueFactory(new PropertyValueFactory<>("total"));
-        valorCol.setCellValueFactory(new PropertyValueFactory<>("valorProduto"));
-        qtCol.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+        valCol.setCellValueFactory(new PropertyValueFactory<>("valorProduto"));
         produtoCol.setCellValueFactory(new PropertyValueFactory<>("DescricaoProduto"));
 
-        JavaFXUtil.colunValueModedaFormat(valorCol);
-        JavaFXUtil.colunValueModedaFormat(totalCol);
-        JavaFXUtil.colunValueQuantidadeFormat(qtCol);
+        JavaFXUtil.colunValueQuantidadeFormat(saidaCol);
+        JavaFXUtil.colunValueModedaFormat(valCol);
+        JavaFXUtil.colunValueQuantidadeFormat(estoqueCol);
 
         MaskFieldUtil.quantityField(quantidade);
         quantidade.setAlignment(Pos.CENTER_LEFT);
         MaskFieldUtil.upperCase(codigo);
         JavaFXUtil.nextFielOnAction(quantidade, codigo);
-
-        verificarVendasPendentes();
+        
         preencherInformacoes();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                codigo.requestFocus();
-                codigo.selectAll();
-            }
-        });
-    }
-    
-    public void adicionarTeclaDeAtalho(KeyCode tecla, String tela, Scene scene){
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent t) -> {
-            if (t.getCode() == tecla) {
-                Main.trocarDeTela(tela);
-            }
-        });
+        itens.setItems(mercadorias);
+        
+        JavaFXUtil.beginFoccusTextField(codigo);
     }
 
     public void preencherInformacoes() {
-        atual = f.getVendaAtual();
-        observableList = FXCollections.observableList(getItensDaVenda());
-        itens.setItems(observableList);
-        configurarColunaEditar();
+        double val = 0;
+        for(ItemDeVenda it : this.mercadorias){
+            val += it.getTotal();
+        }
         ItemDeVenda ult = getUltimoItemVendido();
         if (ult != null) {
             descricao.setText(descricaoItem(ult));
-            total.setText(OperacaoStringUtil.formatarStringValorMoeda(atual.getTotal()));
+            total.setText(OperacaoStringUtil.formatarStringValorMoeda(val));
+        }else{
+            descricao.setText("X = ");
+            total.setText("0");
         }
         quantidade.setText("1");
         codigo.requestFocus();
         codigo.selectAll();
-    }
-
-    public void verificarVendasPendentes() {
-        List<Venda> pendentes = f.buscarVendaNaoFinalizadasPorFuncionario(f.getFuncionarioLogado());
-        if (pendentes.size() == 1) {
-            try {
-                // tornar ela atual
-                f.recuperarVendaPendenteDoFuncionarioLogado();
-                f.refreshValorDeVendaAtual();
-            } catch (Exception ex) {
-                Dialogs.create().showException(ex);
-            }
-        } else if (pendentes.size() > 1) {// varias vendas pendentes, mostrar erro
-            Dialogs.create()
-                    .title("Várias vendas pendentes")
-                    .masthead("Várias vendas inicializadas para o mesmo funcionário")
-                    .showError();
-        } else {
-            try {
-                f.inicializarVenda();
-            } catch (VendaPendenteException ex) {
-                Dialogs.create().showException(ex);
-            }
-        }
-        if (f.getVendaAtual() == null) {// verifica se iniciou venda atual
-            f.setAtualComVendaPendenteTemporariamente();// vai deixar para
-        }
-    }
-
-    public List<ItemDeVenda> getItensDaVenda() {
-        List<ItemDeVenda> it = f.buscarItensDaVendaPorIdDaVenda(f.getVendaAtual().getId());
-        Collections.sort(it);
-        return it;
+        configurarColunas();
     }
 
     public ItemDeVenda getUltimoItemVendido() {
         try {
-            return getItensDaVenda().get(0);
+            return mercadorias.get(0);
         } catch (IndexOutOfBoundsException i) {
             return null;
         }
@@ -320,20 +266,14 @@ public class VendaController implements Initializable {
     }
 
     @FXML
-    protected void configurarColunaEditar() {
-        cancelCol.setComparator(new Comparator<ItemDeVenda>() {
-            @Override
-            public int compare(ItemDeVenda p1, ItemDeVenda p2) {
-                return p1.toString().compareToIgnoreCase(p2.toString());
-            }
-        });
-        cancelCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ItemDeVenda, ItemDeVenda>, ObservableValue<ItemDeVenda>>() {
+    protected void configurarColunas() {
+        saidaCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ItemDeVenda, ItemDeVenda>, ObservableValue<ItemDeVenda>>() {
             @Override
             public ObservableValue<ItemDeVenda> call(TableColumn.CellDataFeatures<ItemDeVenda, ItemDeVenda> features) {
                 return new ReadOnlyObjectWrapper(features.getValue());
             }
         });
-        cancelCol.setCellFactory(new Callback<TableColumn<ItemDeVenda, ItemDeVenda>, TableCell<ItemDeVenda, ItemDeVenda>>() {
+        saidaCol.setCellFactory(new Callback<TableColumn<ItemDeVenda, ItemDeVenda>, TableCell<ItemDeVenda, ItemDeVenda>>() {
             @Override
             public TableCell<ItemDeVenda, ItemDeVenda> call(TableColumn<ItemDeVenda, ItemDeVenda> btnCol) {
                 return new TableCell<ItemDeVenda, ItemDeVenda>() {
@@ -342,19 +282,56 @@ public class VendaController implements Initializable {
                         if (empty || obj == null) {
                             return;
                         }
-                        final Button button = new Button(null, new ImageView(new Image("com/cs/ui/img/bt_cancel.png")));
-                        button.setStyle("-fx-background-color: none;");
-                        button.setCursor(Cursor.HAND);
-                        button.setMinSize(10, 10);
-
+                        Label l = new Label(OperacaoStringUtil.formatarStringQuantidadeInteger(f.getRelatorioDeProduto30Dias(obj.getProduto().getId())));
+                        l.setTooltip(new Tooltip("Quantidade vendida nos últimos 30 dias"));
                         super.updateItem(obj, empty);
-                        setGraphic(button);
-                        button.setOnAction(new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent event) {
-                                removerItem(obj);
-                            }
-                        });
+                        setGraphic(l);
+                    }
+                };
+            }
+        });
+        
+        codigoCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ItemDeVenda, ItemDeVenda>, ObservableValue<ItemDeVenda>>() {
+            @Override
+            public ObservableValue<ItemDeVenda> call(TableColumn.CellDataFeatures<ItemDeVenda, ItemDeVenda> features) {
+                return new ReadOnlyObjectWrapper(features.getValue());
+            }
+        });
+        codigoCol.setCellFactory(new Callback<TableColumn<ItemDeVenda, ItemDeVenda>, TableCell<ItemDeVenda, ItemDeVenda>>() {
+            @Override
+            public TableCell<ItemDeVenda, ItemDeVenda> call(TableColumn<ItemDeVenda, ItemDeVenda> btnCol) {
+                return new TableCell<ItemDeVenda, ItemDeVenda>() {
+                    @Override
+                    public void updateItem(final ItemDeVenda obj, boolean empty) {
+                        if (empty || obj == null) {
+                            return;
+                        }
+                        Label l = new Label(obj.getProduto().getCodigoDeBarras());
+                        super.updateItem(obj, empty);
+                        setGraphic(l);
+                    }
+                };
+            }
+        });
+        
+        estoqueCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ItemDeVenda, ItemDeVenda>, ObservableValue<ItemDeVenda>>() {
+            @Override
+            public ObservableValue<ItemDeVenda> call(TableColumn.CellDataFeatures<ItemDeVenda, ItemDeVenda> features) {
+                return new ReadOnlyObjectWrapper(features.getValue());
+            }
+        });
+        estoqueCol.setCellFactory(new Callback<TableColumn<ItemDeVenda, ItemDeVenda>, TableCell<ItemDeVenda, ItemDeVenda>>() {
+            @Override
+            public TableCell<ItemDeVenda, ItemDeVenda> call(TableColumn<ItemDeVenda, ItemDeVenda> btnCol) {
+                return new TableCell<ItemDeVenda, ItemDeVenda>() {
+                    @Override
+                    public void updateItem(final ItemDeVenda obj, boolean empty) {
+                        if (empty || obj == null) {
+                            return;
+                        }
+                        Label l = new Label(OperacaoStringUtil.formatarStringQuantidadeInteger(obj.getProduto().getQuantidadeEmEstoque()));
+                        super.updateItem(obj, empty);
+                        setGraphic(l);
                     }
                 };
             }

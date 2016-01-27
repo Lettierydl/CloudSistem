@@ -299,6 +299,10 @@ public class Facede {
     public void inicializarVenda() throws VendaPendenteException {
         vend.iniciarNovaVenda();
     }
+    
+    public void recuperarVendaPendenteDoFuncionarioLogado() throws VariasVendasPendentesException, Exception {
+        vend.recuperarVendaPendente(lg.getLogado());
+    }
 
     public void addItemAVenda(ItemDeVenda it) throws EntidadeNaoExistenteException, Exception {
         vend.addItem(it);
@@ -401,10 +405,6 @@ public class Facede {
         vend.create(d);
     }
 
-    public Venda recuperarVendaPendente() throws VariasVendasPendentesException, EntidadeNaoExistenteException, Exception {
-        return vend.recuperarVendaPendente();
-    }
-
     public void selecionarVendaPendente(int idVenda) throws EntidadeNaoExistenteException, Exception {
         vend.selecionarVendaPendente(idVenda);
     }
@@ -460,6 +460,14 @@ public class Facede {
     public List<Venda> buscarVendaNaoPagaDoCliente(Cliente cliente) {
         return FindVenda.vendasNaoPagaDoCliente(cliente);
     }
+    
+    public List<Venda> buscarVendaNaoFinalizadasPorFuncionario(Funcionario f) {
+        return FindVenda.getVendasNaoFinalizadasPorFuncionario(f);
+    }
+    
+    public List<Venda> buscarVendaNaoFinalizadas() {
+        return FindVenda.getVendasNaoFinalizadas();
+    }
 
     public List<ItemDeVenda> buscarItensDaVendaPorIdDaVenda(int id) {
         return FindVenda.itemDeVendaIdDaVenda(id);
@@ -475,6 +483,10 @@ public class Facede {
 
     public List<Pagavel> buscarPagaveisNaoPagoDoCliente(Cliente cliente) {
         return FindVenda.pagavelNaoPagoDoCliente(cliente);
+    }
+    
+    public List<Pagavel> buscarPagaveisNaoPagoDoCliente(String nome) {
+        return FindVenda.pagavelNaoPagoDoCliente(nome);
     }
 
     public Venda buscarVendaPeloId(int id_venda) {

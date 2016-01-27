@@ -5,7 +5,6 @@ package com.cs.ui.controller.dialog;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import com.cs.sis.model.pessoas.Cliente;
 import com.cs.sis.model.pessoas.Funcionario;
 import com.cs.sis.model.pessoas.TipoDeFuncionario;
 import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
@@ -13,7 +12,6 @@ import com.cs.sis.model.pessoas.exception.SenhaIncorretaException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import org.controlsfx.dialog.Dialogs;
-import com.cs.sis.util.OperacaoStringUtil;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;

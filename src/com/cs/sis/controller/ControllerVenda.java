@@ -9,6 +9,7 @@ import com.cs.sis.model.financeiro.Pagamento;
 import com.cs.sis.model.financeiro.Pagavel;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.Cliente;
+import com.cs.sis.model.pessoas.Funcionario;
 import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
 import com.cs.sis.model.pessoas.exception.EstadoInvalidoDaVendaAtualException;
 import com.cs.sis.model.pessoas.exception.ProdutoABaixoDoEstoqueException;
@@ -194,7 +195,7 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
             closeEntityManager();
         }
     }
-    
+
     public void removeAllDividas() {
         try {
             beginTransaction();
@@ -219,7 +220,7 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
             closeEntityManager();
         }
     }
-    
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     public int getQuantidadeDividas() {
         try {
@@ -310,6 +311,7 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
             System.err.println("venda com valor errado");
             // colocar no relatorio do final do dia
         }
+        atual = null;
     }
 
     // retorna o que deve ser acrecentado a conta do cliente
@@ -329,6 +331,7 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
             // colocar no relatorio do final do dia
         }
         double credito = v.getTotal() - v.getPartePaga();
+        atual = null;
         if (credito < 0) {
             System.err.println("venda com valor errado");
             return 0;
@@ -355,10 +358,10 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         return valor;
     }
 
-    public Venda recuperarVendaPendente() throws EntidadeNaoExistenteException,
+    public Venda recuperarVendaPendente(Funcionario logado) throws EntidadeNaoExistenteException,
             Exception {
         List<Venda> pendentes = FindVenda
-                .getVendasNaoFinalizadasPorFuncionario(ControllerLogin.logado);
+                .getVendasNaoFinalizadasPorFuncionario(logado);
         if (pendentes.size() == 1) {
             atual = pendentes.get(0);
             return pendentes.get(0);
@@ -417,12 +420,12 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         return atual;
     }
 
-    public void atualizarDataVendaAtual() throws EntidadeNaoExistenteException{
+    public void atualizarDataVendaAtual() throws EntidadeNaoExistenteException {
         atual.setDia(Calendar.getInstance());
         this.edit(atual);
     }
 
-    public void addItem(ItemDeVenda it) throws EntidadeNaoExistenteException{
+    public void addItem(ItemDeVenda it) throws EntidadeNaoExistenteException {
         this.refreshAtual();
 
         atual.addItemDeVenda(it);
@@ -491,7 +494,7 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
     }
 
     @Override
-    public void create(Pagavel entity){
+    public void create(Pagavel entity) {
         if (entity instanceof Venda) {
             Venda v = (Venda) entity;
             create(v);

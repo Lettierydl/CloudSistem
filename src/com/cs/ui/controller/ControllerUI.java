@@ -46,7 +46,7 @@ import javafx.util.Duration;
 public abstract class ControllerUI<T> implements Initializable {
 
     protected Facede f;
-    protected boolean pesquisa_ativa = true;
+    protected boolean pesquisa_ativa = false;
     protected T editar = null;
 
     protected List<T> observavel;
@@ -74,19 +74,18 @@ public abstract class ControllerUI<T> implements Initializable {
      */
     @FXML
     protected abstract void abrirModalEdit();
-    
+
     /*
      Método responsável por abrir e configurar modal que cria a entidade T
      */
     @FXML
     protected abstract void abrirModalCreate();
 
-
     /**
      * Método que atuliza a lista de entidades pela pesquisa
      */
     protected abstract void atualizarLista();
-    
+
     @FXML
     protected abstract void digitado(KeyEvent event);
 
@@ -102,6 +101,13 @@ public abstract class ControllerUI<T> implements Initializable {
         tabela.setItems(FXCollections.observableList(observavel));
         configurarColunaEditar();
         MaskFieldUtil.upperCase(pesquisa);
+        FadeTransition fade = new FadeTransition();
+        fade.setFromValue(0);
+        fade.setToValue(1);
+        fade.setDuration(new Duration(300));
+        fade.setNode(pesquisa);
+        fade.play();
+        JavaFXUtil.beginFoccusTextField(pesquisa);
     }
 
     @FXML
@@ -131,11 +137,11 @@ public abstract class ControllerUI<T> implements Initializable {
 
     @FXML
     protected void configurarColunaEditar() {
-         colunaEdit.setComparator(new Comparator<T>() {
-          @Override
-          public int compare(T p1, T p2) {
-            return p1.toString().compareToIgnoreCase(p2.toString());
-          }
+        colunaEdit.setComparator(new Comparator<T>() {
+            @Override
+            public int compare(T p1, T p2) {
+                return p1.toString().compareToIgnoreCase(p2.toString());
+            }
         });
         colunaEdit.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<T, T>, ObservableValue<Cliente>>() {
             @Override
@@ -191,11 +197,10 @@ public abstract class ControllerUI<T> implements Initializable {
             dialogStage.setResizable(false);
             // Mostra a janela e espera até o usuário fechar.
             dialogStage.showAndWait();
-            
+
             tabela.getItems().clear();
             atualizarLista();
-            
-            
+
             return controller.isOkClicked();
         } catch (IOException e) {
             e.printStackTrace();

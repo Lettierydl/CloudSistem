@@ -12,6 +12,7 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -56,6 +57,21 @@ public class JavaFXUtil {
                 });
     }
     
+    public static void colunDataTimeFormat(TableColumn colunaDouble) {
+        colunaDouble.setCellFactory(col
+                -> new TableCell<Calendar, Calendar>() {
+                    @Override
+                    public void updateItem(Calendar price, boolean empty) {
+                        super.updateItem(price, empty);
+                        if (empty) {
+                            setText(null);
+                        } else {
+                            setText(OperacaoStringUtil.formatDataTimeValor(price));
+                        }
+                    }
+                });
+    }
+    
     public static void nextFielOnAction(TextField action, Node foccus){
         action.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -90,6 +106,16 @@ public class JavaFXUtil {
         Instant instant = Instant.ofEpochMilli(d.getTime().getTime());
         LocalDate localDate = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate();
         return localDate;
+    }
+
+    public static void beginFoccusTextField(TextField text) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                text.requestFocus();
+                text.selectAll();
+            }
+        });
     }
 
 }
