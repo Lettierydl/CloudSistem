@@ -11,6 +11,7 @@ import com.cs.Main;
 import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Venda;
+import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
@@ -70,7 +71,7 @@ public class MercadoriasController implements Initializable {
     private TableColumn<ItemDeVenda, ItemDeVenda> codigoCol;
 
     @FXML
-    private TextField codigo;
+    private AutoCompleteTextField codigo;
     @FXML
     private TextField quantidade;
 
@@ -208,6 +209,7 @@ public class MercadoriasController implements Initializable {
         preencherInformacoes();
         itens.setItems(mercadorias);
         
+        codigo.setList(f.buscarDescricaoEPrecoProdutos());
         JavaFXUtil.beginFoccusTextField(codigo);
     }
 

@@ -11,6 +11,7 @@ import com.cs.Main;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.Cliente;
+import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
@@ -62,7 +63,7 @@ public class FinalizarAprazoController implements Initializable {
     private TableColumn<?, ?> valorCol;
 
     @FXML
-    private TextField nomeCli;
+    private AutoCompleteTextField nomeCli;
     
     @FXML
     private TextField valorPago;
@@ -125,6 +126,9 @@ public class FinalizarAprazoController implements Initializable {
         
         double debito = 0;
         try {
+            if(!observacao.getText().isEmpty()){
+                atual.setObservacao(observacao.getText());
+            }
             debito = f.finalizarVendaAprazo(atual, c, val);
             if (imprimir.isSelected() && !f.imprimirVenda(atual)) {
                 Dialogs dialog = Dialogs.create()
@@ -207,7 +211,7 @@ public class FinalizarAprazoController implements Initializable {
                 finalizar(null);
             }
         });
-        
+        nomeCli.setList(f.buscarNomeClientePorNomeQueInicia(""));
         JavaFXUtil.beginFoccusTextField(nomeCli);
     }
 

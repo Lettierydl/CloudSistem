@@ -236,6 +236,10 @@ public class Facede {
     public List<String> buscarDescricaoEPrecoProdutoPorDescricaoQueInicia(String descricao) {
         return FindProduto.drecricaoEPrecoProdutoQueIniciam(descricao);
     }
+    
+    public List<String> buscarDescricaoEPrecoProdutos() {
+        return FindProduto.drecricaoEPrecoProdutos();
+    }
 
     public Produto buscarProdutoPorId(int idProduto) {
         return FindProduto.produtoComId(idProduto);

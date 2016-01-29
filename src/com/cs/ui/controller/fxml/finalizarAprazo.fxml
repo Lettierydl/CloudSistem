@@ -11,6 +11,7 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import com.cs.sis.util.*?>
 
 <AnchorPane id="AnchorPane" prefHeight="768.0" prefWidth="1024.0" style="-fx-background-color: rgb(255,255,255);" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cs.ui.controller.FinalizarAprazoController">
     <stylesheets>
@@ -134,11 +135,11 @@
                         <Font name="Calibri" size="46.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="nomeCli" layoutX="26.0" layoutY="286.0" onKeyReleased="#nomeDigitado" prefHeight="27.0" prefWidth="235.0" promptText="Nome do Cliente">
+                  <AutoCompleteTextField fx:id="nomeCli" layoutX="26.0" layoutY="286.0" onKeyReleased="#nomeDigitado" prefHeight="27.0" prefWidth="235.0" promptText="Nome do Cliente">
                      <tooltip>
                         <Tooltip text="Nome do cliente" />
                      </tooltip>
-                  </TextField>
+                 </AutoCompleteTextField>
                   <TextField fx:id="observacao" layoutX="26.0" layoutY="321.0" prefHeight="27.0" prefWidth="235.0" promptText="Observação">
                      <tooltip>
                         <Tooltip text="Observações sobre a venda" />

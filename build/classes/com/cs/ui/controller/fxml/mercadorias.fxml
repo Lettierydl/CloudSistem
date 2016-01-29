@@ -11,6 +11,7 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import com.cs.sis.util.*?>
 
 <AnchorPane id="AnchorPane" prefHeight="768.0" prefWidth="1024.0" style="-fx-background-color: rgb(255,255,255);" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cs.ui.controller.MercadoriasController">
     <stylesheets>
@@ -113,11 +114,11 @@
                         <Font name="Calibri" size="46.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="codigo" layoutX="30.0" layoutY="171.0" onAction="#enterKey" onKeyReleased="#codigoDigitado" prefHeight="27.0" prefWidth="227.0">
+                  <AutoCompleteTextField fx:id="codigo" layoutX="30.0" layoutY="171.0" onAction="#enterKey" onKeyReleased="#codigoDigitado" prefHeight="27.0" prefWidth="227.0">
                      <tooltip>
                         <Tooltip text="Código de barras do produto" />
                      </tooltip>
-                  </TextField>
+                  </AutoCompleteTextField>
                   <Text layoutX="31.0" layoutY="165.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Código de Barras" />
                   <Text layoutX="271.0" layoutY="165.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Quantidade" />
                   <TextField fx:id="quantidade" layoutX="271.0" layoutY="171.0" onAction="#enterkeyQuantidade" prefHeight="27.0" prefWidth="107.0" text="1">

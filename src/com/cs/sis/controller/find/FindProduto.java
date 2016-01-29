@@ -256,7 +256,7 @@ public class FindProduto extends FindEntity {
     public static List<String> drecricaoEPrecoProdutoQueIniciam(String descricao) {
         String stringQuery = "select CONCAT(p.descricao, ' R$ ', REPLACE( ROUND(p.valorDeVenda, 2), '.', ',') ) FROM Produto as p where LOWER(p.descricao) LIKE LOWER(:descricao)  order by p.descricao";
 
-        Query query = getEntityManager().createQuery(stringQuery, String.class);
+        Query query = getEntityManager().createNativeQuery(stringQuery, String.class);
         query.setParameter("descricao", descricao + "%");
 
         @SuppressWarnings("unchecked")
@@ -264,5 +264,18 @@ public class FindProduto extends FindEntity {
 
         return descricoes;
     }
+    
+    public static List<String> drecricaoEPrecoProdutos() {
+        String stringQuery = "select CONCAT(p.descricao, ' \nR$ ', REPLACE( ROUND(p.valorDeVenda, 2), '.', ',') ) FROM Produto as p  order by p.descricao";
+
+        Query query = getEntityManager().createNativeQuery(stringQuery);
+
+        @SuppressWarnings("unchecked")
+        List<String> descricoes = (List<String>) query.getResultList();
+
+        return descricoes;
+    }
+    
+    
 
 }

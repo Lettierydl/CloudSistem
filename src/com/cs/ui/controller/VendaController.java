@@ -12,6 +12,7 @@ import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.exception.VendaPendenteException;
+import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
@@ -77,7 +78,7 @@ public class VendaController implements Initializable {
     private TableColumn<?, ?> valorCol;
 
     @FXML
-    private TextField codigo;
+    private AutoCompleteTextField codigo;
     @FXML
     private TextField quantidade;
 
@@ -214,11 +215,14 @@ public class VendaController implements Initializable {
 
         MaskFieldUtil.quantityField(quantidade);
         quantidade.setAlignment(Pos.CENTER_LEFT);
-        MaskFieldUtil.upperCase(codigo);
         JavaFXUtil.nextFielOnAction(quantidade, codigo);
 
         verificarVendasPendentes();
         preencherInformacoes();
+        List<String> list = f.buscarDescricaoEPrecoProdutos();
+        
+        MaskFieldUtil.upperCase(codigo);
+        codigo.setList(list);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
