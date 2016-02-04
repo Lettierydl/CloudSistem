@@ -10,16 +10,22 @@ package com.cs.ui.controller;
 import com.cs.ControllerTelas;
 import com.cs.Facede;
 import com.cs.Main;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitMenuButton;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -47,29 +53,33 @@ public class PrincipalController implements Initializable {
             String login = f.getFuncionarioLogado().getLogin();
             user.setText(login);
         }catch(Exception e){
+            e.printStackTrace();
         }
-        // TODO
     }    
     
     @FXML
     public void logoff(){
-       
+        f.logoff();
+        Platform.exit();
     }
     
     @FXML
     public void trocarDeUsuario(){
-        
+        f.logoff();
+        Main.trocarDeTela(ControllerTelas.TELA_LOGIN);
     }
     
     
     @FXML
     public void botaoMenu(ActionEvent e){
         Button bt = (Button) e.getSource();
-        if(bt.getText().equalsIgnoreCase("venda")){
+        String label = (bt.getId() != null? bt.getId(): bt.getText()).toLowerCase();
+        
+        if(label.equalsIgnoreCase("venda")){
             Main.trocarDeTela(ControllerTelas.TELA_VENDA);
         }else{
             stack.getChildren().clear();
-            stack.getChildren().add(getNode("fxml/"+bt.getText().toLowerCase()+".fxml"));
+            stack.getChildren().add(getNode("fxml/"+label+".fxml"));
         }
     }
     

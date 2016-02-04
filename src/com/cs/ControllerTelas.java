@@ -1,7 +1,6 @@
 package com.cs;
 
 import java.io.IOException;
-import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

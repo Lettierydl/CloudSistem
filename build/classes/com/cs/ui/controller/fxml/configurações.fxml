@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
@@ -15,6 +16,10 @@
         <URL value="@/com/cs/ui/css/principal.css" />
     </stylesheets>
    <children>
-      <Rectangle fx:id="rect" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="200.0" layoutX="319.0" layoutY="139.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
+      <Text layoutX="186.0" layoutY="216.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Não acessivel no momento">
+         <font>
+            <Font size="55.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

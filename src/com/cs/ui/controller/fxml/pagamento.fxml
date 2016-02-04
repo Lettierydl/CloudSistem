@@ -10,6 +10,7 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import com.cs.sis.util.* ?>
 
 <AnchorPane id="AnchorPane" prefHeight="550.0" prefWidth="1024.0" style="-fx-background-color: rgb(60, 171, 198);" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cs.ui.controller.PagamentoController">
     <stylesheets>
@@ -32,7 +33,7 @@
                             <RowConstraints maxHeight="143.05459594726562" minHeight="10.0" prefHeight="126.86442565917969" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <TextField fx:id="nomeP" onKeyReleased="#nomePDigitado" prefHeight="23.0" prefWidth="379.0" promptText="Nome do Cliente" GridPane.rowIndex="1" />
+                              <AutoCompleteTextField fx:id="nomeP" onKeyReleased="#nomePDigitado" prefHeight="23.0" prefWidth="379.0" promptText="Nome do Cliente" GridPane.rowIndex="1" />
                               <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" />
                               <GridPane fx:id="form" disable="true" opacity="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                 <columnConstraints>
@@ -115,18 +116,18 @@
                      <children>
                         <TableView fx:id="historico" layoutX="-1.0" layoutY="52.0" prefHeight="361.0" prefWidth="860.0" AnchorPane.leftAnchor="82.0" AnchorPane.rightAnchor="82.0">
                            <columns>
+                              <TableColumn fx:id="dataH" prefWidth="150.0" text="Data" />
                               <TableColumn fx:id="valorH" prefWidth="125.0" text="Valor" />
-                              <TableColumn fx:id="clienteH" prefWidth="324.8861083984375" text="Cliente" />
-                              <TableColumn fx:id="dataH" prefWidth="119.1138916015625" text="Data" />
+                              <TableColumn fx:id="clienteH" prefWidth="300.0" text="Cliente" />
                               <TableColumn fx:id="funcionarioH" prefWidth="120.0" text="Funcionário" />
-                              <TableColumn fx:id="obsH" prefWidth="162.27972412109375" text="Observações" />
+                              <TableColumn fx:id="obsH" prefWidth="150.0" text="Observações" />
                            </columns>
                         </TableView>
-                        <TextField fx:id="nomeH" layoutX="73.0" layoutY="20.0" onKeyReleased="#nomeHdigitado" prefHeight="27.0" prefWidth="250.0" promptText="Nome do Cliente" AnchorPane.leftAnchor="82.0" AnchorPane.topAnchor="20.0">
+                        <AutoCompleteTextField fx:id="nomeH" layoutX="73.0" layoutY="20.0" onKeyReleased="#nomeHdigitado" prefHeight="27.0" prefWidth="250.0" promptText="Nome do Cliente" AnchorPane.leftAnchor="82.0" AnchorPane.topAnchor="20.0">
                            <tooltip>
                               <Tooltip text="Pesquisar histórico de pagamentos" />
                            </tooltip>
-                        </TextField>
+                        </AutoCompleteTextField>
                      </children></AnchorPane>
             </content>
           </Tab>
@@ -134,13 +135,13 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TextField fx:id="nomeD" prefHeight="27.0" prefWidth="250.0" promptText="Nome do Cliente" AnchorPane.leftAnchor="82.0" AnchorPane.topAnchor="20.0">
+                        <AutoCompleteTextField fx:id="nomeD" prefHeight="27.0" prefWidth="250.0" promptText="Nome do Cliente" AnchorPane.leftAnchor="82.0" AnchorPane.topAnchor="20.0">
                            <tooltip>
                               <Tooltip text="Nome do Cliente da Dívida" />
                            </tooltip>
-                        </TextField>
+                        </AutoCompleteTextField>
                         <TextField fx:id="descricaoD" layoutX="334.0" layoutY="20.0" prefHeight="27.0" prefWidth="250.0" promptText="Descrição da dívida" AnchorPane.leftAnchor="354.0" />
-                        <TextField fx:id="valorV" layoutX="603.0" layoutY="20.0" prefHeight="27.0" prefWidth="155.0" promptText="0,00" AnchorPane.leftAnchor="623.0">
+                        <TextField fx:id="valorD" layoutX="603.0" layoutY="20.0" prefHeight="27.0" prefWidth="155.0" promptText="0,00" AnchorPane.leftAnchor="623.0">
                            <tooltip>
                               <Tooltip text="Valor da dívida" />
                            </tooltip>
@@ -157,15 +158,16 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView prefHeight="361.0" prefWidth="860.0" AnchorPane.leftAnchor="82.0" AnchorPane.rightAnchor="82.0" AnchorPane.topAnchor="50.0">
+                        <TableView fx:id="vendasAVista" prefHeight="361.0" prefWidth="860.0" AnchorPane.leftAnchor="82.0" AnchorPane.rightAnchor="82.0" AnchorPane.topAnchor="50.0">
                            <columns>
-                              <TableColumn prefWidth="142.6211929321289" text="Data" />
-                              <TableColumn prefWidth="307.3788146972656" text="Funcionário" />
-                              <TableColumn prefWidth="119.1138916015625" text="Valor" />
-                              <TableColumn prefWidth="187.5479736328125" text="Intes" />
-                              <TableColumn prefWidth="90.0" text="Vizualizar" />
+                              <TableColumn fx:id="colDataV" prefWidth="142.6211929321289" text="Data" />
+                              <TableColumn fx:id="colFuncV" prefWidth="307.3788146972656" text="Funcionário" />
+                              <TableColumn fx:id="colValorV" prefWidth="119.1138916015625" text="Valor" />
+                              <TableColumn fx:id="colItensV" prefWidth="187.5479736328125" text="Intes" />
+                              <TableColumn fx:id="colVerV" prefWidth="90.0" text="Vizualizar" />
                            </columns>
                         </TableView>
+                        <DatePicker fx:id="dataV" layoutX="82.0" layoutY="14.0" onAction="#dataDigitada" onKeyReleased="#dataDigitadaPress" />
                      </children></AnchorPane>
                </content>
             </Tab>

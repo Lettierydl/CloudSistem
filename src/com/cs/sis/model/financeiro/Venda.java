@@ -227,6 +227,10 @@ public class Venda implements Comparable<Venda>, Pagavel {
         //Hibernate.initialize(itensDeVenda);
         return itensDeVenda;
     }
+    
+    public int getQuantidadeDeItens(){
+        return getItensDeVenda().size();
+    }
 
     static int in = 0;
 

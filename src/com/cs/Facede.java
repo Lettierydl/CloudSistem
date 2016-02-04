@@ -406,6 +406,7 @@ public class Facede {
     public void adicionarDivida(Divida d, Cliente c) throws EntidadeNaoExistenteException, Exception {
         c.acrecentarDebito(d.getTotal());
         pes.edit(c);
+        d.setCliente(c);
         vend.create(d);
     }
 
@@ -471,6 +472,10 @@ public class Facede {
     
     public List<Venda> buscarVendaNaoFinalizadas() {
         return FindVenda.getVendasNaoFinalizadas();
+    }
+    
+    public List<Venda> buscarVendaAVista(Calendar dia) {
+        return FindVenda.vendasAVista(dia);
     }
 
     public List<ItemDeVenda> buscarItensDaVendaPorIdDaVenda(int id) {

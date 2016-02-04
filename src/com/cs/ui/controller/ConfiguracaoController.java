@@ -35,21 +35,7 @@ public class ConfiguracaoController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        rect.setArcHeight(20);
-        rect.setArcWidth(20);
-        rect.setFill(Color.ORANGE);
-        
-
-        rotateTransition = RotateTransitionBuilder.create()
-                .node(rect)
-                .duration(Duration.seconds(4))
-                .fromAngle(0)
-                .toAngle(720)
-                .cycleCount(Timeline.INDEFINITE)
-                .autoReverse(true)
-                .build();
-        
-        rotateTransition.play();
+       
     }    
     
 }

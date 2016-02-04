@@ -14,3 +14,8 @@
 .menu_botao_impar{
     -fx-background-color: rgb(60, 171, 198);
 }
+
+
+:hover .menu_botao_par{
+    -fx-opacity: 0.5;
+}

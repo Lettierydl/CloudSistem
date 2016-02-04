@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
@@ -14,7 +15,11 @@
     <stylesheets>
         <URL value="@/com/cs/ui/css/principal.css" />
     </stylesheets>
-    <children>
-        <np.com.ngopal.control.AutoFillTextBox listLimit="4" fx:id="teste" layoutX="187.0" layoutY="174.0" filterMode="true"  />
-    </children>
+   <children>
+      <Text layoutX="171.0" layoutY="230.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Não acessivel no momento" wrappingWidth="713.599365234375">
+         <font>
+            <Font size="55.0" />
+         </font>
+      </Text>
+   </children>
 </AnchorPane>

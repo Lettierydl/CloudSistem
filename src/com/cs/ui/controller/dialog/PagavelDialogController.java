@@ -18,6 +18,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -56,6 +57,14 @@ public class PagavelDialogController extends DialogController<Pagavel> {
     private Label valPg;
     @FXML
     private Label func;
+    
+    @FXML
+    private Button btPDF;
+    @FXML
+    private Button btImprimirECF;
+    @FXML
+    private Button btImprimir;
+    
 
     public PagavelDialogController() {
         super();
@@ -126,7 +135,11 @@ public class PagavelDialogController extends DialogController<Pagavel> {
         this.entity = entity;
         if(entity instanceof Venda){
             func.setText(entity.getFuncionario().getNome());
-            cli.setText(entity.getCliente().getNome());
+            try{
+                cli.setText(entity.getCliente().getNome());
+            }catch(NullPointerException n){
+                cli.setText("NÃO INFORMADO");
+            }
             data.setText(OperacaoStringUtil.formatDataTimeValor(entity.getDia()));
             total.setText(OperacaoStringUtil.formatarStringValorMoeda(entity.getTotal()));
             valPg.setText(OperacaoStringUtil.formatarStringValorMoeda(entity.getPartePaga()));
@@ -142,12 +155,17 @@ public class PagavelDialogController extends DialogController<Pagavel> {
             }catch(NullPointerException ne){
                 func.setText("Não informado");
             }
+            
             cli.setText(entity.getCliente().getNome());
             data.setText(OperacaoStringUtil.formatDataTimeValor(entity.getDia()));
             total.setText(OperacaoStringUtil.formatarStringValorMoeda(entity.getTotal()));
             valPg.setText(OperacaoStringUtil.formatarStringValorMoeda(entity.getPartePaga()));
             obs.setText(entity.getDescricao());
+            
             itens.setVisible(false);
+            btImprimir.setVisible(false);
+            btImprimirECF.setVisible(false);
+            btPDF.setVisible(false);
         }
         
         

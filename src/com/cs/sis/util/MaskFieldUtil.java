@@ -13,14 +13,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Pos;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -96,17 +93,18 @@ public abstract class MaskFieldUtil {
         textField.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent e) {
-                try{
+                try {
                     MaskFieldUtil.positionCaret(textField);
                     String value = textField.getText();
                     value = value.replaceAll("[^0-9]", "");
                     value = value.replaceAll("([0-9]{1})([0-9]{2})$", "$1,$2");
                     textField.setText(value);
-                }catch(Exception ex){}
+                } catch (Exception ex) {
+                }
             }
         });
     }
-    
+
     public static void quantityField(final TextField textField) {
         textField.setAlignment(Pos.CENTER_RIGHT);
         MaskFieldUtil.maxField(textField, 17);
@@ -246,10 +244,10 @@ public abstract class MaskFieldUtil {
             }
         });
     }
-    
+
     public static void upperCase(TextField campo) {
         campo.textProperty().addListener((ov, oldValue, newValue) -> {
-            if(newValue!=null && !newValue.isEmpty()){
+            if (newValue != null && !newValue.isEmpty()) {
                 campo.setText(newValue.toUpperCase());
             }
         });

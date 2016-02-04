@@ -5,6 +5,7 @@
  */
 package com.cs.sis.util;
 
+import com.cs.sis.model.pessoas.Pessoa;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -116,6 +117,21 @@ public class JavaFXUtil {
                 text.selectAll();
             }
         });
+    }
+
+    public static void colunPessoaFormat(TableColumn colunaPessoa) {
+        colunaPessoa.setCellFactory(col
+                -> new TableCell<Pessoa, Pessoa>() {
+                    @Override
+                    public void updateItem(Pessoa price, boolean empty) {
+                        super.updateItem(price, empty);
+                        if (empty) {
+                            setText(null);
+                        } else {
+                            setText(price.getNome());
+                        }
+                    }
+                });
     }
 
 }

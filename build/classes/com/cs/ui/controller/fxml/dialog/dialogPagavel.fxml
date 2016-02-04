@@ -35,12 +35,12 @@
                   <Label text="Observação:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#imprimir" text="Imprimir">
+                        <Button fx:id="btImprimir" mnemonicParsing="false" onAction="#imprimir" text="Imprimir">
                            <tooltip>
                               <Tooltip text="Imprimir por impressora matricial" />
                            </tooltip>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#imprimirECF" text="Imprimir ECF">
+                        <Button fx:id="btImprimirECF" mnemonicParsing="false" onAction="#imprimirECF" text="Imprimir ECF">
                            <FlowPane.margin>
                               <Insets left="24.0" />
                            </FlowPane.margin>
@@ -48,7 +48,7 @@
                               <Tooltip text="Imprimir pela impressora fiscal" />
                            </tooltip>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#gerarPDF" text="Gerar PDF">
+                        <Button fx:id="btPDF" mnemonicParsing="false" onAction="#gerarPDF" text="Gerar PDF">
                            <FlowPane.margin>
                               <Insets left="25.0" />
                            </FlowPane.margin>

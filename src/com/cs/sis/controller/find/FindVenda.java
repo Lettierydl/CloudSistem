@@ -133,6 +133,36 @@ public class FindVenda extends FindEntity {
 
         return vendas;
     }
+    
+    public static List<Venda> vendasAVista(Calendar dia) {
+        Calendar di = Calendar.getInstance();
+        di.setTime(dia.getTime());
+        di.set(Calendar.HOUR, 0);
+        di.set(Calendar.MINUTE, 0);
+        di.set(Calendar.SECOND, 00);
+
+        Calendar df = Calendar.getInstance();
+        df.setTime(dia.getTime());
+        df.set(Calendar.HOUR, 23);
+        df.set(Calendar.MINUTE, 59);
+        df.set(Calendar.SECOND, 59);
+
+        String stringQuery = "select v FROM Venda as v ";
+        stringQuery += "WHERE v.paga = true and v.formaDePagamento = :forma and  v.dia between :diaInicio and :diaFim"
+                + " order by v.dia , v.total DESC";
+        Query query = getEntityManager().createQuery(stringQuery, Venda.class);
+        //query.setMaxResults(LIMITE_DA_LISTA_DE_VENDAS_DE_HOJE);
+        
+        query.setParameter("diaInicio", di);
+        query.setParameter("diaFim", df);
+        query.setParameter("forma", FormaDePagamento.A_Vista);
+        
+
+        @SuppressWarnings("unchecked")
+        List<Venda> vendas = (List<Venda>) query.getResultList();
+
+        return vendas;
+    }
 
     public static List<Venda> vendasDoCliente(Cliente cliente, Date diaInicio,
             Date diaFim) {
@@ -226,14 +256,8 @@ public class FindVenda extends FindEntity {
     }
     
     public static List<Pagavel> pagavelNaoPagoDoCliente(String cliente) {
-        List<Cliente> cl = FindCliente.clientesQueNomeInicia(cliente);
-        if(cl.size() == 1){
-            return pagavelNaoPagoDoCliente(cl.get(0));
-        }else if(cl.size() > 1){
-            return pagavelNaoPagoDosClientes(cl);
-        }else{
-            return new ArrayList<Pagavel>();
-        }
+        Cliente cl = FindCliente.clienteComNome(cliente);
+        return pagavelNaoPagoDoCliente(cl);
     }
 
     public static List<Pagavel> pagavelNaoPagoDosClientes(List<Cliente> clientes) {
@@ -245,15 +269,15 @@ public class FindVenda extends FindEntity {
 
     public static List<Divida> dividasNaoPagaDoCliente(Cliente cliente) {
         String stringQuery = "select d FROM Divida as d ";
-        stringQuery += "WHERE d.paga = false and d.cliente = :cli"
+        stringQuery += "WHERE d.paga = false and d.cliente = :cli "
                 + " order by d.total , d.dia DESC ";
 
-        Query query = getEntityManager().createQuery(stringQuery, Divida.class);
+        Query query = getEntityManager().createQuery(stringQuery);
         query.setParameter("cli", cliente);
-
+        
         @SuppressWarnings("unchecked")
         List<Divida> dividas = (List<Divida>) query.getResultList();
-
+        
         return dividas;
     }
 

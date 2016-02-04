@@ -7,9 +7,12 @@ package com.cs.ui.controller;
  */
 import com.cs.ControllerTelas;
 import com.cs.Facede;
+import com.cs.sis.model.financeiro.Divida;
 import com.cs.sis.model.financeiro.Pagamento;
 import com.cs.sis.model.financeiro.Pagavel;
+import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.Cliente;
+import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
@@ -17,7 +20,9 @@ import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import com.cs.ui.controller.dialog.DialogController;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +41,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -52,7 +58,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import org.controlsfx.control.textfield.TextFields;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.DialogStyle;
 import org.controlsfx.dialog.Dialogs;
@@ -80,7 +85,7 @@ public class PagamentoController implements Initializable {
     @FXML
     private TableView<Pagavel> pagaveis;
     @FXML
-    private TextField nomeP;
+    private AutoCompleteTextField nomeP;
     @FXML
     private TextField valorP;
     @FXML
@@ -96,51 +101,43 @@ public class PagamentoController implements Initializable {
     @FXML
     public TableColumn dataColP;
 
-    
-    
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         f = Facede.getInstance();
+        iniciarPagePagamento();
+        iniciarPageHistorico();
+        iniciarPageDivida();
+        iniciarPageVenda();
+        JavaFXUtil.beginFoccusTextField(nomeP);
+    }
+
+    private void iniciarPagePagamento() {
         MaskFieldUtil.monetaryField(valorP);
         MaskFieldUtil.upperCase(nomeP);
-        MaskFieldUtil.upperCase(nomeH);
         JavaFXUtil.nextFielOnAction(nomeP, valorP);
         JavaFXUtil.nextFielOnAction(valorP, pagar);
-        nomeP.requestFocus();
-        nomeP.selectAll();
+        nomeP.setList(f.buscarNomeClientePorNomeQueInicia(""));
         preencherTabelaPagaveis();
-        iniciarTabelaHistorico();
         pagar.setOnKeyPressed((KeyEvent e) -> {
             if (e.getCode() == KeyCode.ENTER) {
                 pagar(null);
             }
         });
-        
-        salvarDivida.setOnKeyPressed((KeyEvent e) -> {
-            if (e.getCode() == KeyCode.ENTER) {
-                salvarDivida(null);
-            }
-        });
-        JavaFXUtil.beginFoccusTextField(nomeP);
     }
-    
-    
+
     @FXML
     void nomePDigitado(KeyEvent event) {
         String txt = nomeP.getText();
-        if (txt == null || txt.isEmpty() || txt.length() < 3)  {
+        if (txt == null || txt.isEmpty() || txt.length() < 3) {
             return;
         }
-        try{
-            TextFields.bindAutoCompletion(nomeP, f.buscarNomeClientePorNomeQueInicia(nomeP.getText()) );
-        }catch(Exception e){}
         try {
             Cliente c = f.buscarClientePorNome(txt);
             debitoP.setText(OperacaoStringUtil.formatarStringValorMoeda(c.getDebito()));
-            if(c.getDebito() >= 0){
+            if (c.getDebito() <= 0) {
                 return;
             }
             fade.setFromValue(0);
@@ -177,7 +174,7 @@ public class PagamentoController implements Initializable {
 
     @FXML
     public void pagar(ActionEvent e) {
-        if(OperacaoStringUtil.converterStringValor(valorP.getText()) <=0){
+        if (OperacaoStringUtil.converterStringValor(valorP.getText()) <= 0) {
             Dialogs.create()
                     .title("Valor Errado")
                     .masthead("O valor do pagamento não pode ser zero")
@@ -386,34 +383,32 @@ public class PagamentoController implements Initializable {
             return false;
         }
     }
-    
-    
+
     /*Historico*/
     @FXML
     private TableColumn<Pagamento, Double> valorH;
     @FXML
     private TextField descricaoD;
     @FXML
-    private TextField nomeD;
+    private AutoCompleteTextField nomeD;
     @FXML
     private TableColumn clienteH;
     @FXML
-    private TextField nomeH;
+    private AutoCompleteTextField nomeH;
     @FXML
     private TableColumn funcionarioH;
     @FXML
+    private TableColumn obsH;
+    @FXML
     private TableColumn dataH;
     @FXML
-    private TextField valorV;
-    @FXML
-    private TableColumn obsH;
+    private TextField valorD;
     @FXML
     private Button salvarDivida;
     @FXML
-    private TableView historico;
+    private TableView<Pagamento> historico;
 
-    
-    private void iniciarTabelaHistorico(){
+    private void iniciarTabelaHistorico() {
         valorH.setCellValueFactory(new PropertyValueFactory<>("valor"));
         clienteH.setCellValueFactory(new PropertyValueFactory<>("cliente"));
         dataH.setCellValueFactory(new PropertyValueFactory<>("data"));
@@ -421,31 +416,191 @@ public class PagamentoController implements Initializable {
         obsH.setCellValueFactory(new PropertyValueFactory<>("observacao"));
         JavaFXUtil.colunValueModedaFormat(valorH);
         JavaFXUtil.colunDataTimeFormat(dataH);
-    }
-    
-    @FXML
-    public void salvarDivida(ActionEvent event) {
-
+        JavaFXUtil.colunPessoaFormat(funcionarioH);
     }
 
     @FXML
-    public void nomeHdigitado(KeyEvent event){
+    public void nomeHdigitado(KeyEvent event) {
         String txt = nomeH.getText();
-        if (txt == null || txt.isEmpty() || txt.length() < 3)  {
+        if (txt == null || txt.isEmpty() || txt.length() < 3) {
+            historico.getItems().clear();
             return;
         }
-        try{
-            //TextFields.bindAutoCompletion(nomeH, f.buscarNomeClientePorNomeQueInicia(nomeH.getText()) );
-        }catch(Exception e){}
         try {
             Cliente c = f.buscarClientePorNome(txt);
             ObservableList<Pagamento> observableList = FXCollections.observableList(f.getListaPagamentoDoCliente(c));
-            
-            historico.setItems(observableList);           
-        } catch (NonUniqueResultException | NoResultException ne) { } finally {
+            historico.setItems(observableList);
+        } catch (NonUniqueResultException | NoResultException ne) {
             historico.getItems().clear();
         }
     }
+
+    private void iniciarPageHistorico() {
+        MaskFieldUtil.upperCase(nomeH);
+        nomeH.setList(f.buscarNomeClientePorNomeQueInicia(""));
+        iniciarTabelaHistorico();
+    }
+
+    private void iniciarPageDivida() {
+        MaskFieldUtil.upperCase(nomeD);
+        nomeD.setList(f.buscarNomeClientePorNomeQueInicia(""));
+        MaskFieldUtil.upperCase(descricaoD);
+        MaskFieldUtil.monetaryField(valorD);
+        salvarDivida.setOnKeyPressed((KeyEvent e) -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                salvarDivida(null);
+            }
+        });
+        JavaFXUtil.nextFielOnAction(nomeD, descricaoD);
+        JavaFXUtil.nextFielOnAction(descricaoD, valorD);
+        JavaFXUtil.nextFielOnAction(valorD, salvarDivida);
+
+    }
+
+    @FXML
+    public void salvarDivida(ActionEvent event) {
+        try {
+            Cliente c = f.buscarClientePorNome(nomeD.getText());
+            double va = OperacaoStringUtil.converterStringValor(valorD.getText());
+            if (va <= 0) {
+                Dialogs.create().title("Valor inválido")
+                        .masthead("Valor inválido para a venda")
+                        .showError();
+                valorD.selectAll();
+                valorD.requestFocus();
+                return;
+            } else {
+                Divida d = new Divida();
+                d.setTotal(va);
+                d.setDia(Calendar.getInstance());
+                d.setFuncionario(f.getFuncionarioLogado());
+                if (!descricaoD.getText().isEmpty()) {
+                    d.setDescricao(descricaoD.getText());
+                }
+                try {
+                    f.adicionarDivida(d, c);
+                    Dialogs.create().title("Dívida registrada")
+                            .masthead("Divida salva com sucesso!")
+                            .message("Cliente: " + c.getNome() + "\n"
+                                    + "Total: " + valorD.getText() + "\n"
+                                    + "Data: " + OperacaoStringUtil.formatDataTimeValor(d.getDia()))
+                            .showInformation();
+                    valorD.setText("");
+                    nomeD.setText("");
+                    descricaoD.setText("");
+                    nomeD.requestFocus();
+                } catch (Exception ex) {
+                    Dialogs.create().showExceptionInNewWindow(ex);
+                }
+            }
+        } catch (NonUniqueResultException | NoResultException ne) {
+            Dialogs.create().title("Cliente não selecionado")
+                    .masthead("Selecione o cliente para a dívida")
+                    .showError();
+            nomeD.selectAll();
+            nomeD.requestFocus();
+        }
+    }
+
+    @FXML
+    private DatePicker dataV;
+    @FXML
+    private TableView<Venda> vendasAVista;
     
+    @FXML
+    private TableColumn colDataV;
+    @FXML
+    private TableColumn colFuncV;
+    @FXML
+    private TableColumn colValorV;
+    @FXML
+    private TableColumn colItensV;
+    @FXML
+    private TableColumn colVerV;
+
+    private void iniciarPageVenda() {
+        MaskFieldUtil.dateField(dataV.getEditor());
+        dataV.setValue(JavaFXUtil.toLocalDate(Calendar.getInstance()));
+        iniciarTabelaVendasAVista();
+        atualizarListaVendasAVista();
+    }
+
+    private void atualizarListaVendasAVista() {
+        try {
+            Calendar dia = JavaFXUtil.toDate(dataV);
+            vendasAVista.getItems().clear();
+            List<Venda> avista = f.buscarVendaAVista(dia);
+            ObservableList<Venda> observableList = FXCollections.observableList(avista);
+            vendasAVista.setItems(observableList);
+            configurarVerColunVenda();
+        } catch (Exception e) {
+        }
+    }
     
+    @FXML
+    private void dataDigitada(ActionEvent event){
+        try {
+            Calendar dia = OperacaoStringUtil.converterDataValor(dataV.getEditor().getText());
+            atualizarListaVendasAVista();
+        } catch (Exception e) {
+        }
+    }
+    
+    @FXML
+    private void dataDigitadaPress(KeyEvent event){
+        try {
+            Calendar dia = OperacaoStringUtil.converterDataValor(dataV.getEditor().getText());
+            atualizarListaVendasAVista();
+        } catch (Exception e) {
+        }
+    }
+    
+    private void iniciarTabelaVendasAVista() {
+        colValorV.setCellValueFactory(new PropertyValueFactory<>("total"));
+        colItensV.setCellValueFactory(new PropertyValueFactory<Venda, Integer>("quantidadeDeItens"));
+        colDataV.setCellValueFactory(new PropertyValueFactory<>("data"));
+        colFuncV.setCellValueFactory(new PropertyValueFactory<>("funcionario"));
+        colVerV.setCellValueFactory(new PropertyValueFactory<Venda, Venda>(""));
+
+        JavaFXUtil.colunValueModedaFormat(colValorV);
+        JavaFXUtil.colunPessoaFormat(colFuncV);
+    }
+
+    public void configurarVerColunVenda() {
+        colVerV.setComparator(new Comparator<Venda>() {
+            @Override
+            public int compare(Venda p1, Venda p2) {
+                return Double.compare(p1.getValorNaoPago(), p2.getValorNaoPago());
+            }
+        });
+        colVerV.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Venda, Venda>, ObservableValue<Venda>>() {
+            @Override
+            public ObservableValue<Venda> call(TableColumn.CellDataFeatures<Venda, Venda> features) {
+                return new ReadOnlyObjectWrapper(features.getValue());
+            }
+        });
+        colVerV.setCellFactory(new Callback<TableColumn<Venda, Venda>, TableCell<Venda, Venda>>() {
+            public TableCell<Venda, Venda> call(TableColumn<Venda, Venda> btnCol) {
+                return new TableCell<Venda, Venda>() {
+                    @Override
+                    public void updateItem(final Venda obj, boolean empty) {
+                        if (empty || obj == null) {
+                            return;
+                        }
+                        final Label button = new Label(obj.getOrigem());
+                        button.setCursor(Cursor.HAND);
+                        super.updateItem(obj, empty);
+                        setGraphic(button);
+                        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+                                showDialogView(obj);
+                            }
+                        });
+                    }
+                };
+            }
+        });
+    }
+
 }
