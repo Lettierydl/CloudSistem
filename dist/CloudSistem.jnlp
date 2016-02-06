@@ -4,11 +4,13 @@
     <title>CloudSistem</title>
     <vendor>Lettiery</vendor>
     <description>null</description>
+    <icon href="src/com/cs/ui/img/logo.png"  kind="splash"/>
+    <icon href="src/com/cs/ui/img/logo.png" />
     <offline-allowed/>
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="CloudSistem.jar" size="652308" download="eager" />
+    <jar href="CloudSistem.jar" size="649878" download="eager" />
     <jar href="lib/Bematech.jar" size="5396" download="eager" />
     <jar href="lib/DarumaFrameworkJNA.jar" size="25569" download="eager" />
     <jar href="lib/controlsfx-8.0.6_20.jar" size="856539" download="eager" />
@@ -23,9 +25,9 @@
     <jar href="lib/org.eclipse.persistence.jpa.jpql_2.5.2.v20140319-9ad6abd.jar" size="1366247" download="eager" />
     <jar href="lib/platform.jar" size="794779" download="eager" />
   </resources>
-  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="CloudSistem" >
-    <param name="requiredFXVersion" value="8.0+"/>
+  <applet-desc  width="1024" height="768" main-class="com.javafx.main.NoJavaFXFallback"  name="CloudSistem" >
+    <param name="requiredFXVersion" value="2.0+"/>
   </applet-desc>
-  <jfx:javafx-desc  width="800" height="600" main-class="com.cs.Main"  name="CloudSistem" />
+  <jfx:javafx-desc  width="1024" height="768" main-class="com.cs.Main"  name="CloudSistem" />
   <update check="always"/>
 </jnlp>

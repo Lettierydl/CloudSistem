@@ -6,6 +6,7 @@
 package com.cs.sis.controller.gerador;
 
 import Funcionalidades.Arquivo;
+import com.cs.Main;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Venda;
 import com.itextpdf.text.BaseColor;
@@ -22,23 +23,28 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Lettiery
  */
 public class GeradorPDF {
+
     private Arquivo a;
-    
-    public GeradorPDF(){
+
+    public GeradorPDF() {
         a = new Arquivo();
     }
-    
+
     public String gerarPdfRelatorioBalancoProdutos(Date inicio, Date fim, File destino) {
         Document doc = new Document();
         try {
@@ -63,16 +69,20 @@ public class GeradorPDF {
 
     }
 
-    public String gerarPdfDaVenda(Venda v, List<ItemDeVenda> itens, File destino) {
+    public String gerarPdfDaVenda(Venda v, List<ItemDeVenda> itens, File destino) throws IOException {
         Document doc = new Document();
 
         try {
-            String path = a.getRelatorio().getCanonicalPath() + "/Venda_"+v.getId()+".pdf";
+            String path = a.getRelatorio().getCanonicalPath() + "/Venda_" + v.getId() + ".pdf";
             PdfWriter.getInstance(doc, new FileOutputStream(path));
             doc.open();
             String subTitulo = "Venda Realizada no dia "
                     + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(v.getDia().getTime());
-            inserirHead(doc, "Venda do Cliente " + v.getCliente().getNome(), subTitulo);
+            try {
+                inserirHead(doc, "Venda do Cliente " + v.getCliente().getNome(), subTitulo);
+            } catch (NullPointerException ne) {
+                inserirHead(doc, "Venda à vista ID: " + v.getId(), subTitulo);
+            }
 
             PdfPTable table = getTableDeItens(itens);
 
@@ -84,15 +94,15 @@ public class GeradorPDF {
             doc.add(p2);
 
             doc.close();
-            Arquivo.copyFile(new File(path), new File(destino + "/Venda_"+v.getId()+".pdf"));
-            return destino + "/Venda_"+v.getId()+".pdf";
-        } catch (DocumentException | IOException e) {
+            Arquivo.copyFile(new File(path), destino);
+            return destino.getAbsolutePath();
+        } catch (DocumentException e) {
             e.printStackTrace();
             return "";
         }
 
     }
-    
+
     public String gerarPdfRelatorioBalancoProdutos(Date inicio, Date fim) {
         Document doc = new Document();
         try {
@@ -120,7 +130,7 @@ public class GeradorPDF {
         Document doc = new Document();
 
         try {
-            String path = a.getRelatorio().getCanonicalPath() + "/Venda_"+v.getId()+".pdf";
+            String path = a.getRelatorio().getCanonicalPath() + "/Venda_" + v.getId() + ".pdf";
             PdfWriter.getInstance(doc, new FileOutputStream(path));
             doc.open();
             String subTitulo = "Venda Realizada no dia "
@@ -228,7 +238,7 @@ public class GeradorPDF {
     public void inserirHead(Document doc, String titulo, String subTitulo) throws MalformedURLException, DocumentException {
         Image img = null;
         try {
-            String path = "../../../../ui/img/";
+            String path = "com/cs/ui/img";
             img = Image.getInstance(path + "/logo_relatorio.png");
 
             img.setAlignment(Element.ALIGN_LEFT);

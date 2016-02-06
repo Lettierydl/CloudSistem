@@ -30,12 +30,13 @@ public class Main extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Facede f = Facede.getInstance();
+        
+        Parent root = FXMLLoader.load(getClass().getResource(ControllerTelas.TELA_LOGIN));
+        /*Parent root = FXMLLoader.load(getClass().getResource(ControllerTelas.TELA_PRINCIPAL));
+            Facede f = Facede.getInstance();
         f.login("leo", "1234");
         
-        //Parent root = FXMLLoader.load(getClass().getResource(ControllerTelas.TELA_LOGIN));
-        Parent root = FXMLLoader.load(getClass().getResource(ControllerTelas.TELA_PRINCIPAL));
-        
+        */
         
         Scene scene = new Scene(root);
         

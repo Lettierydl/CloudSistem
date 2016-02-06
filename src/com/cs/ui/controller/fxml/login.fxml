@@ -18,12 +18,12 @@
                   <Image url="@../../img/logo.png" />
                </image>
             </ImageView>
-            <TextField fx:id="nome" alignment="BOTTOM_LEFT" layoutX="18.0" layoutY="123.0" onAction="#enterKey" promptText="Nome" styleClass="textfield" stylesheets="@css/login.css">
+            <TextField fx:id="nome" alignment="BOTTOM_LEFT" layoutX="18.0" layoutY="123.0" promptText="Nome" styleClass="textfield" stylesheets="@css/login.css">
                <tooltip>
                   <Tooltip text="Nome do Usuário" />
                </tooltip>
             </TextField>
-            <PasswordField fx:id="senha" layoutX="17.0" layoutY="161.0" onAction="#enterKey" promptText="Senha" styleClass="textfield" stylesheets="@css/login.css">
+            <PasswordField fx:id="senha" layoutX="17.0" layoutY="161.0" promptText="Senha" styleClass="textfield" stylesheets="@css/login.css">
                <tooltip>
                   <Tooltip text="Senha do Usuário" />
                </tooltip>

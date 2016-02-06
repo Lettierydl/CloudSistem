@@ -22,9 +22,6 @@ public class BalancoController implements Initializable {
     @FXML
     private StackPane stack;
     
-    /**
-     * Initializes the controller class.
-     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO

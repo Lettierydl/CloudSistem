@@ -263,6 +263,7 @@ public class VendaController implements Initializable {
                 f.recuperarVendaPendenteDoFuncionarioLogado();
                 f.refreshValorDeVendaAtual();
             } catch (Exception ex) {
+                ex.printStackTrace();
                 Dialogs.create().showException(ex);
             }
         } else if (pendentes.size() > 1) {// varias vendas pendentes, mostrar erro

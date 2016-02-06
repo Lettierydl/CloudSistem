@@ -12,8 +12,14 @@ import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.OperacaoStringUtil;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,6 +31,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.FileChooser;
 import org.controlsfx.dialog.Dialogs;
 
 /**
@@ -57,14 +64,13 @@ public class PagavelDialogController extends DialogController<Pagavel> {
     private Label valPg;
     @FXML
     private Label func;
-    
+
     @FXML
     private Button btPDF;
     @FXML
     private Button btImprimirECF;
     @FXML
     private Button btImprimir;
-    
 
     public PagavelDialogController() {
         super();
@@ -78,7 +84,7 @@ public class PagavelDialogController extends DialogController<Pagavel> {
     @FXML
     void imprimirECF(ActionEvent event) {
         boolean imprimir = f.imprimirVenda((Venda) entity);
-        if(!imprimir){
+        if (!imprimir) {
             Dialogs.create()
                     .title("Impressora não conectada")
                     .masthead("Impressora não conectada")
@@ -89,15 +95,34 @@ public class PagavelDialogController extends DialogController<Pagavel> {
 
     @FXML
     void gerarPDF(ActionEvent event) {
-        try {
-            f.gerarPdfDaVendaVenda((Venda) entity, f.buscarItensDaVendaPorIdDaVenda(entity.getId()));
-        } catch (FuncionarioNaoAutorizadoException ex) {
-            Dialogs.create()
-                    .title("Funcionário não autorizado")
-                    .masthead("Funcionário não autorizado a gerar PDFs")
-                    .message("Por favor entre com um funcionário autorizado")
-                    .showError();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Salvar PDF");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        String name = "Venda_" + entity.getId() + "_" + new SimpleDateFormat("dd_MM_yyyy").format(new Date()) + ".pdf";
+        fileChooser.setInitialFileName(name);
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("PDF", "*.pdf")
+        );
+
+        File file = fileChooser.showSaveDialog(btPDF.getScene().getWindow());
+        if (file != null) {
+            try {
+                String path = f.gerarPdfDaVendaVenda((Venda) entity, f.buscarItensDaVendaPorIdDaVenda(entity.getId()), file);
+                Dialogs.create().title("PDF salvo com sucesso")
+                        .masthead("PDF salvo com sucesso")
+                        .message(file.getAbsolutePath() )
+                        .showInformation();
+            } catch (FuncionarioNaoAutorizadoException ex) {
+                Dialogs.create()
+                        .title("Funcionário não autorizado")
+                        .masthead("Funcionário não autorizado a gerar PDFs")
+                        .message("Por favor entre com um funcionário autorizado")
+                        .showError();
+            } catch (IOException ex) {
+                Dialogs.create().showException(ex);
+            }
         }
+
     }
 
     @Override
@@ -133,11 +158,11 @@ public class PagavelDialogController extends DialogController<Pagavel> {
     @Override
     public void setEntity(Pagavel entity) {
         this.entity = entity;
-        if(entity instanceof Venda){
+        if (entity instanceof Venda) {
             func.setText(entity.getFuncionario().getNome());
-            try{
+            try {
                 cli.setText(entity.getCliente().getNome());
-            }catch(NullPointerException n){
+            } catch (NullPointerException n) {
                 cli.setText("NÃO INFORMADO");
             }
             data.setText(OperacaoStringUtil.formatDataTimeValor(entity.getDia()));
@@ -149,26 +174,25 @@ public class PagavelDialogController extends DialogController<Pagavel> {
             itens.getItems().clear();
             ObservableList<ItemDeVenda> observableList = FXCollections.observableList(f.buscarItensDaVendaPorIdDaVenda(entity.getId()));
             itens.setItems(observableList);
-        }else if(entity instanceof Divida){
-            try{
+        } else if (entity instanceof Divida) {
+            try {
                 func.setText(entity.getFuncionario().getNome());
-            }catch(NullPointerException ne){
+            } catch (NullPointerException ne) {
                 func.setText("Não informado");
             }
-            
+
             cli.setText(entity.getCliente().getNome());
             data.setText(OperacaoStringUtil.formatDataTimeValor(entity.getDia()));
             total.setText(OperacaoStringUtil.formatarStringValorMoeda(entity.getTotal()));
             valPg.setText(OperacaoStringUtil.formatarStringValorMoeda(entity.getPartePaga()));
             obs.setText(entity.getDescricao());
-            
+
             itens.setVisible(false);
             btImprimir.setVisible(false);
             btImprimirECF.setVisible(false);
             btPDF.setVisible(false);
         }
-        
-        
+
     }
 
     @Override

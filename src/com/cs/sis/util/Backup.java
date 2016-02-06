@@ -4,7 +4,6 @@ import Funcionalidades.Arquivo;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -243,18 +242,75 @@ public class Backup {
 
         return arq;
     }
+    
+    
+    public String criarBackup(File destino) throws IOException {
+        byte[] data = this.getData().getBytes();
+        File filedst;
+        FileOutputStream dest;
+        //String arquivos [] = nomeArquivoDestinoDefalt.replace("?",  Arquivo.separador).split(";");
+        if (compactarBackup) {
+            /*if(!arquivos[0].endsWith(Arquivo.separador)){
+             arquivos[0] += Arquivo.separador;
+             }*/
+            filedst = new File(aquivos_destinos.get(0).getCanonicalPath() + Arquivo.separador
+                    + "Backup_CloudSystem.zip");
+            if (!aquivos_destinos.get(0).exists()) {
+                aquivos_destinos.get(0).mkdirs();
+            }
+            dest = new FileOutputStream(filedst);
+            ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(
+                    dest));
+            zip.setMethod(ZipOutputStream.DEFLATED);
+            zip.setLevel(Deflater.BEST_COMPRESSION);
+            zip.putNextEntry(new ZipEntry("cloudsistem_"
+                    + new SimpleDateFormat("dd_MM_yyyy").format(new Date())
+                    + ".sql"));
+            zip.write(data);
+            zip.close();
+            dest.close();
+        } else {
+            filedst = new File(aquivos_destinos.get(0).getCanonicalPath() + Arquivo.separador
+                    + "cloudsistem_"
+                    + new SimpleDateFormat("dd_MM_yyyy").format(new Date())
+                    + ".sql");
+            if (!aquivos_destinos.get(0).exists()) {
+                aquivos_destinos.get(0).mkdirs();
+            }
+            dest = new FileOutputStream(filedst);
+            dest.write(data);
+            dest.close();
+        }
+        
+        Arquivo.copyFile(filedst, destino);
+        
+        String arq = filedst + "\n";
+        List<File> copy = new ArrayList<File>(aquivos_destinos);
+        copy.remove(0);
+        for (File aq : copy) {
+            try {
+                Arquivo.copyFile(filedst, new File(aq + Arquivo.separador + filedst.getName()));
+                arq += aq.getCanonicalPath() + Arquivo.separador + filedst.getName() + "\n";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return arq;
+    }
 
     public boolean restoreBanco(File tempFile) throws IOException {
         File restore = tempFile;
         File tempDirectory = null;
         String f[] = tempFile.getName().split(".");
-        if (f[f.length - 1].equalsIgnoreCase("zip")) {
-            System.out.println("é zip");
-            tempDirectory = File.createTempFile("TempRestoreBackupCloudSistem", Arquivo.separador);
-            tempDirectory.mkdir();
-            extrairZip(tempFile, tempDirectory);
-            restore = tempDirectory.listFiles()[0];
-        }
+        try{
+            if (f[f.length - 1].equalsIgnoreCase("zip")) {
+                tempDirectory = File.createTempFile("TempRestoreBackupCloudSistem", Arquivo.separador);
+                tempDirectory.mkdir();
+                extrairZip(tempFile, tempDirectory);
+                restore = tempDirectory.listFiles()[0];
+            }
+        }catch(ArrayIndexOutOfBoundsException ar){}
 
         String Mysqlpath = mysqlBinPath;
         try {
@@ -292,7 +348,9 @@ public class Backup {
                     .log(Level.SEVERE, null, ex);
             return false;
         } finally {
-            tempDirectory.deleteOnExit();
+            try{
+                tempDirectory.deleteOnExit();
+            }catch(NullPointerException ne){}
         }
         return true;
     }

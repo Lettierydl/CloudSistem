@@ -549,13 +549,18 @@ public class Facede {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
         return pdf.gerarPdfDaVenda(v, itens);
     }
+    
+    public String gerarPdfDaVendaVenda(Venda v, List<ItemDeVenda> itens, File destino) throws FuncionarioNaoAutorizadoException, IOException {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
+        return pdf.gerarPdfDaVenda(v, itens, destino);
+    }
 
     public String gerarPlanilhaRelatorioBalancoProdutos(Date inicio, Date fim) throws FuncionarioNaoAutorizadoException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
         return pla.gerarPlanilhaRelatorioBalancoProdutos(inicio, fim);
     }
 
-    public boolean resteurarBancoDeDados(File tempFile) throws FuncionarioNaoAutorizadoException, IOException {
+    public boolean restaurarBancoDeDados(File tempFile) throws FuncionarioNaoAutorizadoException, IOException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.ALTERAR_CONFIGURACOES);
         return bac.restoreBanco(tempFile);
     }
@@ -564,9 +569,17 @@ public class Facede {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.ALTERAR_CONFIGURACOES);
         return bac.criarBackup();
     }
+    
+    public String realizarBackupBancoDeDados(File file) throws FuncionarioNaoAutorizadoException, IOException {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.ALTERAR_CONFIGURACOES);
+        return bac.criarBackup(file);
+    }
+    
+    public boolean isCopactarBackup(){
+        return bac.isCompactarBackup();
+    }
 
     public void salvarConfiguracoesDeBackup(String nomeArquivoDestinoDefalt, boolean compactarBackup) throws IOException {
-        Backup bac = new Backup();
         bac.salvarConfiguracoes(nomeArquivoDestinoDefalt, compactarBackup);
     }
 

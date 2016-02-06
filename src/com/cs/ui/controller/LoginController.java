@@ -3,7 +3,12 @@ package com.cs.ui.controller;
 
 
 import com.cs.ControllerTelas;
+import com.cs.Facede;
 import com.cs.Main;
+import com.cs.sis.model.pessoas.exception.LoginIncorretoException;
+import com.cs.sis.model.pessoas.exception.SenhaIncorretaException;
+import com.cs.sis.util.JavaFXUtil;
+import com.cs.sis.util.MaskFieldUtil;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -14,12 +19,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import jidefx.scene.control.field.MaskTextField;
 
 /**
  *
  * @author Lettiery
  */
 public class LoginController implements Initializable {
+    
+    private Facede f;
     
     @FXML
     private Label menssagem;
@@ -35,30 +43,21 @@ public class LoginController implements Initializable {
     @FXML
     private Pane formulario;
     
-    @FXML
-    private void enterKey(ActionEvent event){
-        if(event.getSource().equals(nome)){
-            senha.requestFocus();
-        }else if(event.getSource().equals(senha)){
-            entrar.requestFocus();
-        }
-    }
-    
     
     
     @FXML
     private void login(ActionEvent event) {
-        
+        f = Facede.getInstance();
         String name = nome.getText();
         String pass = senha.getText();
-        //verifica se consegue logar, se sim, passa para a proxima tela
-        //se nao exibe a menssagem
-        menssagem.setText("Usuário ou senha inválido!");
-        nome.requestFocus();
-        nome.selectAll();
-        
-        
-        
+        try {
+            f.login(name, pass);
+        } catch (LoginIncorretoException | SenhaIncorretaException ex) {
+            menssagem.setText("Usuário ou senha inválido!");
+            nome.requestFocus();
+            nome.selectAll();
+            return;
+        }
         Main.trocarDeTela(ControllerTelas.TELA_PRINCIPAL);
         
     }
@@ -66,7 +65,9 @@ public class LoginController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         entrar.defaultButtonProperty().bind(entrar.focusedProperty());
-        
+        MaskFieldUtil.upperCase(nome);
+        JavaFXUtil.nextFielOnAction(nome, senha);
+        JavaFXUtil.nextFielOnAction(senha, entrar);
     }    
     
 }
