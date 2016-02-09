@@ -59,7 +59,6 @@ public class PrincipalController implements Initializable {
     }
     
     public void adicionarAtalhos(){
-        System.err.println(stack.getScene());
         home.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent t) -> {
             if (t.isShiftDown() && t.getCode().equals(KeyCode.V)) {
                 Main.trocarDeTela(ControllerTelas.TELA_VENDA);

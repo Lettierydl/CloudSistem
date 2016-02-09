@@ -17,10 +17,14 @@ import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
@@ -46,6 +50,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import org.controlsfx.control.action.Action;
@@ -89,6 +94,10 @@ public class VendaController implements Initializable {
     private Label descricao;
     @FXML
     private Label total;
+    @FXML
+    private Label hora;
+
+    Timeline delayTimeline;
 
     public VendaController() {
         f = Facede.getInstance();
@@ -129,7 +138,7 @@ public class VendaController implements Initializable {
     }
 
     @FXML
-    void enterKey(ActionEvent event) {
+    void enterKey(ActionEvent ev) {
         String txt = codigo.getText();
         try {
             Produto p = f.buscarProdutoPorDescricaoOuCodigo(txt.replace(" R$ ", ";").split(";")[0]);
@@ -168,6 +177,7 @@ public class VendaController implements Initializable {
         }
     }
 
+    // tentar com todos os eventos em vez do relanssed coloca o pressed e o tiped
     @FXML
     void codigoDigitado(KeyEvent event) {
         if (event.getText().contains("*")) {
@@ -191,13 +201,21 @@ public class VendaController implements Initializable {
                 codigo.requestFocus();
                 codigo.selectAll();
             }
+        } else {
+            try {
+                Integer.valueOf(event.getText());
+                //se so tiver numero, pode ser um codigo
+                //agora busca os produtos que iniciam com esse codigo
+                //se tiver mais de um, nao foi enter
+                //se tiver so um, e o codigo for identico ao digitado, foi digitado enter
+            } catch (NumberFormatException ne) {
+            }
         }
     }
 
-    @FXML
-    void enterkeyQuantidade(ActionEvent event) {
-
-    }
+    final List<KeyEvent> unprocessedEventQueue = new ArrayList();
+    // create a queue to hold delayed events which have already been processed.
+    final List<KeyEvent> processedEventQueue = new ArrayList();
 
     /**
      * Initializes the controller class.
@@ -220,8 +238,14 @@ public class VendaController implements Initializable {
         verificarVendasPendentes();
         preencherInformacoes();
         List<String> list = f.buscarDescricaoEPrecoProdutos();
-        
+
         MaskFieldUtil.upperCase(codigo);
+        codigo.lengthProperty().addListener((observableValue, number, number2) -> {
+            if (number2.intValue() - number.intValue() > 4) {
+                enterKey(null);
+            }
+        });
+
         codigo.setList(list);
         Platform.runLater(new Runnable() {
             @Override
@@ -230,9 +254,35 @@ public class VendaController implements Initializable {
                 codigo.selectAll();
             }
         });
+
+        hora();    
+        
+        codigo.addEventFilter(KeyEvent.ANY, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER) {
+                    enterKey(null);
+                }
+            }
+        });
+
     }
-    
-    public void adicionarTeclaDeAtalho(KeyCode tecla, String tela, Scene scene){
+
+    private void hora() {
+        delayTimeline = new Timeline();
+        delayTimeline.setCycleCount(Timeline.INDEFINITE);
+        delayTimeline.getKeyFrames().add(
+                new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        hora.setText(OperacaoStringUtil.formatHoraMinutoSegunda(Calendar.getInstance()));
+                    }
+                })
+        );
+        delayTimeline.play();
+    }
+
+    public void adicionarTeclaDeAtalho(KeyCode tecla, String tela, Scene scene) {
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent t) -> {
             if (t.getCode() == tecla) {
                 Main.trocarDeTela(tela);

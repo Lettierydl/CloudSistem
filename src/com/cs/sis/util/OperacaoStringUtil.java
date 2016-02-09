@@ -53,6 +53,10 @@ public class OperacaoStringUtil {
     public static String formatDataTimeValor(Calendar c) {
         return new SimpleDateFormat("dd/MM/yyyy  HH:mm:ss").format(c.getTime());
     }
+    
+    public static String formatHoraMinutoSegunda(Calendar c) {
+        return new SimpleDateFormat("HH:mm:ss").format(c.getTime());
+    }
 
     public static Calendar converterDataValor(String valor) {
         Calendar c = Calendar.getInstance();
