@@ -23,6 +23,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -33,6 +34,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
@@ -119,6 +121,9 @@ public class MercadoriasController implements Initializable {
     @FXML
     void enterKey(ActionEvent event) {
         String txt = codigo.getText();
+        if(txt.isEmpty()){
+            return;
+        }
         try {
             Produto p = f.buscarProdutoPorDescricaoOuCodigo(txt.replace(" R$ ", ";").split(";")[0]);
             double qt = OperacaoStringUtil.converterStringValor(quantidade.getText());
@@ -211,6 +216,15 @@ public class MercadoriasController implements Initializable {
         
         codigo.setList(f.buscarDescricaoEPrecoProdutos());
         JavaFXUtil.beginFoccusTextField(codigo);
+        
+        codigo.addEventFilter(KeyEvent.ANY, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER) {
+                    enterKey(null);
+                }
+            }
+        });
     }
 
     public void preencherInformacoes() {

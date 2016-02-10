@@ -122,7 +122,7 @@ public class FindProduto extends FindEntity {
 
     public static Produto produtoComCodigoDeBarras(String codigo) {
 
-        String stringQuery = "select p FROM Produto as p where LOWER(p.codigoDeBarras) LIKE LOWER(:codigo) ";
+        String stringQuery = "select p FROM Produto as p where p.codigoDeBarras = :codigo ";
         Query query = getEntityManager().createQuery(stringQuery, Produto.class);
         query.setParameter("codigo", codigo);
 

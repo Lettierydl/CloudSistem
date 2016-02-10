@@ -1,0 +1,16 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+    -fx-background-color: rgb(60, 171, 198);
+}
+
+
+.menu_botao_par{
+    -fx-background-color: #389DB5;
+}
+
+.menu_botao_impar{
+    -fx-background-color: rgb(60, 171, 198);
+}

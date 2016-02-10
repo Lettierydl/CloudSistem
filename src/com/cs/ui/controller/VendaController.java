@@ -103,6 +103,54 @@ public class VendaController implements Initializable {
         f = Facede.getInstance();
     }
 
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        totalCol.setCellValueFactory(new PropertyValueFactory<>("total"));
+        valorCol.setCellValueFactory(new PropertyValueFactory<>("valorProduto"));
+        qtCol.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+        produtoCol.setCellValueFactory(new PropertyValueFactory<>("DescricaoProduto"));
+
+        JavaFXUtil.colunValueModedaFormat(valorCol);
+        JavaFXUtil.colunValueModedaFormat(totalCol);
+        JavaFXUtil.colunValueQuantidadeFormat(qtCol);
+
+        MaskFieldUtil.quantityField(quantidade);
+        quantidade.setAlignment(Pos.CENTER_LEFT);
+        JavaFXUtil.nextFielOnAction(quantidade, codigo);
+
+        verificarVendasPendentes();
+        preencherInformacoes();
+        List<String> list = f.buscarDescricaoEPrecoProdutos();
+
+        MaskFieldUtil.upperCase(codigo);
+        codigo.lengthProperty().addListener((observableValue, number, number2) -> {
+            if (number2.intValue() - number.intValue() > 4) {
+                enterKey(null);
+            }
+        });
+
+        codigo.setList(list);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                codigo.requestFocus();
+                codigo.selectAll();
+            }
+        });
+
+        hora();
+
+        codigo.addEventFilter(KeyEvent.ANY, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER) {
+                    enterKey(null);
+                }
+            }
+        });
+
+    }
+
     @FXML
     public void pesquisaMercadorias(ActionEvent event) {
         Main.trocarDeTela(ControllerTelas.TELA_MERCADORIAS);
@@ -140,9 +188,47 @@ public class VendaController implements Initializable {
     @FXML
     void enterKey(ActionEvent ev) {
         String txt = codigo.getText();
+        if (txt.isEmpty()) {
+            return;
+        }
         try {
             Produto p = f.buscarProdutoPorDescricaoOuCodigo(txt.replace(" R$ ", ";").split(";")[0]);
             double qt = OperacaoStringUtil.converterStringValor(quantidade.getText());
+            inserirItemDeVenda(p, qt);
+            return;
+        } catch (NoResultException | NonUniqueResultException ne) {
+            if (txt.startsWith("2") && txt.length() == 13) {
+                String vTotal = txt.substring(8, 10) + "."
+                        + txt.substring(10, 12);
+                String nCodigo = txt.substring(0, 7);
+                double t = 0;
+                
+                try{
+                    t = Double.valueOf(vTotal);
+                }catch(NumberFormatException nee){return;}
+
+                try{
+                    //produto de banca
+                    Produto p = f.buscarProdutoPorCodigo(nCodigo);
+                    quantidade.setText(OperacaoStringUtil.formatarStringQuantidade(t / p.getValorDeVenda()));
+                    codigo.setText(nCodigo);
+                    inserirItemDeVenda(p, t / p.getValorDeVenda());
+                    return;
+                }catch(NoResultException | NonUniqueResultException ne2) {
+                }
+            }
+
+            codigo.requestFocus();
+            codigo.selectAll();
+            Dialogs.create()
+                    .title("Produto inválido")
+                    .masthead("Produto não cadastrado")
+                    .message(txt)
+                    .showError();
+        }
+    }
+    
+     private void inserirItemDeVenda(Produto p, double qt) {
             if (qt <= 0) {
                 Dialogs.create()
                         .title("Valor incorreto")
@@ -166,16 +252,8 @@ public class VendaController implements Initializable {
             } catch (Exception e) {// venda nao existente, erro grande
                 Dialogs.create().showException(e);
             }
-        } catch (NoResultException | NonUniqueResultException ne) {
-            codigo.requestFocus();
-            codigo.selectAll();
-            Dialogs.create()
-                    .title("Produto inválido")
-                    .masthead("Produto não cadastrado")
-                    .message(txt)
-                    .showError();
-        }
     }
+    
 
     // tentar com todos os eventos em vez do relanssed coloca o pressed e o tiped
     @FXML
@@ -211,61 +289,6 @@ public class VendaController implements Initializable {
             } catch (NumberFormatException ne) {
             }
         }
-    }
-
-    final List<KeyEvent> unprocessedEventQueue = new ArrayList();
-    // create a queue to hold delayed events which have already been processed.
-    final List<KeyEvent> processedEventQueue = new ArrayList();
-
-    /**
-     * Initializes the controller class.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        totalCol.setCellValueFactory(new PropertyValueFactory<>("total"));
-        valorCol.setCellValueFactory(new PropertyValueFactory<>("valorProduto"));
-        qtCol.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
-        produtoCol.setCellValueFactory(new PropertyValueFactory<>("DescricaoProduto"));
-
-        JavaFXUtil.colunValueModedaFormat(valorCol);
-        JavaFXUtil.colunValueModedaFormat(totalCol);
-        JavaFXUtil.colunValueQuantidadeFormat(qtCol);
-
-        MaskFieldUtil.quantityField(quantidade);
-        quantidade.setAlignment(Pos.CENTER_LEFT);
-        JavaFXUtil.nextFielOnAction(quantidade, codigo);
-
-        verificarVendasPendentes();
-        preencherInformacoes();
-        List<String> list = f.buscarDescricaoEPrecoProdutos();
-
-        MaskFieldUtil.upperCase(codigo);
-        codigo.lengthProperty().addListener((observableValue, number, number2) -> {
-            if (number2.intValue() - number.intValue() > 4) {
-                enterKey(null);
-            }
-        });
-
-        codigo.setList(list);
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                codigo.requestFocus();
-                codigo.selectAll();
-            }
-        });
-
-        hora();    
-        
-        codigo.addEventFilter(KeyEvent.ANY, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
-                    enterKey(null);
-                }
-            }
-        });
-
     }
 
     private void hora() {

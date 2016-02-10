@@ -1,0 +1,5 @@
+Manifest-Version: JNA 2.1
+Manifest-Build: 12_05_08
+Created-By: Daruma LABS
+JAVA_VERSION: 1.6.0_25
+Sealed: true
