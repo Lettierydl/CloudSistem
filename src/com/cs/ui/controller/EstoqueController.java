@@ -50,6 +50,9 @@ public class EstoqueController extends ControllerUI<Produto> {
     public void atualizarLista(){
         try {
             String text = pesquisa.getText();
+            if(text.length() < 3 && !tabela.getItems().isEmpty()){
+                return;
+            }
             tabela.getItems().clear();
             observavel = f.buscarListaProdutoPorDescricaoOuCodigo(text, VariaveisDeConfiguracaoUtil.LIMITE_DE_REGISTROS_EXIBIDOS);
             tabela.setItems(FXCollections.observableList(observavel));

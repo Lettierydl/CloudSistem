@@ -9,6 +9,7 @@ import com.cs.sis.model.pessoas.exception.LoginIncorretoException;
 import com.cs.sis.model.pessoas.exception.SenhaIncorretaException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -18,8 +19,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import jidefx.scene.control.field.MaskTextField;
+import org.controlsfx.dialog.Dialogs;
 
 /**
  *
@@ -39,9 +42,6 @@ public class LoginController implements Initializable {
     
     @FXML
     private Button entrar;
-    
-    @FXML
-    private Pane formulario;
     
     
     
@@ -68,6 +68,12 @@ public class LoginController implements Initializable {
         MaskFieldUtil.upperCase(nome);
         JavaFXUtil.nextFielOnAction(nome, senha);
         JavaFXUtil.nextFielOnAction(senha, entrar);
+        
+        nome.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent t) -> {
+            if (t.isShiftDown() && t.getCode().equals(KeyCode.ESCAPE)) {
+                Main.trocarDeTela(ControllerTelas.TELA_CONFIGURACAO_SISTEMA);
+            }
+        });
     }    
     
 }

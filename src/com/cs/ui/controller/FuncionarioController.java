@@ -5,14 +5,21 @@ package com.cs.ui.controller;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.cs.ControllerTelas;
 import com.cs.sis.model.pessoas.Funcionario;
 import com.cs.sis.model.pessoas.TipoDeFuncionario;
 import com.cs.ui.controller.dialog.DialogController;
+import java.io.IOException;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.controlsfx.dialog.Dialogs;
 
 /**
@@ -30,10 +37,10 @@ public class FuncionarioController extends ControllerUI<Funcionario> {
     private TableColumn colunaTel;
     @FXML
     private TableColumn colunaFun;
-    
-    public FuncionarioController(){
+
+    public FuncionarioController() {
         super();
-        
+
     }
 
     @Override
@@ -60,13 +67,33 @@ public class FuncionarioController extends ControllerUI<Funcionario> {
     @Override
     @FXML
     protected void abrirModalCreate() {
-        if (f.getFuncionarioLogado().getTipoDeFuncionario().equals(TipoDeFuncionario.Gerente)) {
-            super.showDialog("dialogFuncionario", editar, DialogController.CREATE_MODAL);
-        } else {
-            Dialogs.create()
-                    .title("Funcionário não autorizado")
-                    .masthead("Por favor, entre com um usuário diferente")
-                    .showError();
+        try {
+            // Carrega o arquivo fxml e cria um novo stage para a janela popup.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("fxml/dialog/dialogFuncionario.fxml"));
+            GridPane page = (GridPane) loader.load();
+
+            // Cria o palco dialogStage.
+            Stage dialogStage = new Stage();
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(ControllerTelas.stage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Define a pessoa no controller.
+            DialogController<Funcionario> controller = loader.getController();
+            controller.setTipe(DialogController.CREATE_MODAL);
+            controller.setDialogStage(dialogStage);
+            dialogStage.setTitle(controller.getTitulo());
+            dialogStage.setResizable(false);
+            // Mostra a janela e espera até o usuário fechar.
+            dialogStage.showAndWait();
+
+            tabela.getItems().clear();
+            atualizarLista();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -85,18 +112,18 @@ public class FuncionarioController extends ControllerUI<Funcionario> {
 
     @Override
     public void atualizarLista() {
-        try{
+        try {
             String text = pesquisa.getText();
-        
+
             tabela.getItems().clear();
             observavel = f.buscarFuncionarioPorNomeQueInicia(text);
             configurarColunaEditar();
-        
+
             tabela.setItems(FXCollections.observableList(observavel));
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
     }
 
 }

@@ -23,6 +23,7 @@ public class ControllerTelas {
     public static final String TELA_MERCADORIAS = "ui/controller/fxml/mercadorias.fxml";
     public static final String TELA_FINALIZAR_A_VISTA = "ui/controller/fxml/finalizarAvista.fxml";
     public static final String TELA_FINALIZAR_A_PRAZO = "ui/controller/fxml/finalizarAprazo.fxml";
+    public static final String TELA_CONFIGURACAO_SISTEMA = "ui/controller/fxml/configuracao_sistema.fxml";
 
     public ControllerTelas(Stage stage) {
         ControllerTelas.stage = stage;
@@ -58,6 +59,7 @@ public class ControllerTelas {
             case TELA_FINALIZAR_A_VISTA:
                 adicionarTeclaDeAtalho(KeyCode.ESCAPE, TELA_VENDA, scene);
                 break;
+            
                 
         }
     }

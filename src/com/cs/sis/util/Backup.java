@@ -1,6 +1,5 @@
 package com.cs.sis.util;
 
-import Funcionalidades.Arquivo;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,20 +46,11 @@ public class Backup {
     private Arquivo a;
 
     public Backup() {
-        List<Object> list;
         try {
             a = new Arquivo();
             nomeArquivoDestinoDefalt = a.getBackup().getCanonicalPath();
-            list = (List<Object>) a.lerConfiguracoesBackup();
-            compactarBackup = (Boolean) list.get(0);
-            list.remove(0);
-            aquivos_destinos = new ArrayList<File>();
-            for (Object arqs : list) {
-                if (arqs instanceof File) {
-                    aquivos_destinos.add((File) arqs);
-
-                }
-            }
+            compactarBackup = (Boolean) a.lerConfiguracaoSistema(VariaveisDeConfiguracaoUtil.COMPACTAR_BACKUP);
+            aquivos_destinos = (List<File>) a.lerConfiguracaoSistema(VariaveisDeConfiguracaoUtil.ARQUIVOS_DEFALT_BACKUP);
             if (aquivos_destinos.isEmpty()) {
                 throw new IOException();
             }
@@ -89,13 +79,13 @@ public class Backup {
      * compactarBackup falg que determina se o arquivo vai ser salvo compacato(true) ou nao (false)
      * */
     public void salvarConfiguracoes(String nomeArquivosDestinoDefalt, boolean compactarBackup) throws IOException {
-        List<Object> list = new ArrayList<Object>();
-        list.add(compactarBackup);
+        List<File> list = new ArrayList<File>();
         for (String path : nomeArquivosDestinoDefalt.split(";")) {
             list.add(new File(path));
         }
-		//list.add(nomeArquivosDestinoDefalt.replace(Arquivo.separador, "?"));
-        a.salvarConfiguracoesBackup(list);
+	a.addConfiguracaoSistema(VariaveisDeConfiguracaoUtil.COMPACTAR_BACKUP, compactarBackup);
+        a.addConfiguracaoSistema(VariaveisDeConfiguracaoUtil.ARQUIVOS_DEFALT_BACKUP, list);
+        
     }
 
     public String getData() {

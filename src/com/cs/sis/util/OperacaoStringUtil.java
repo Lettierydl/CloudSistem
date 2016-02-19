@@ -12,9 +12,6 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class OperacaoStringUtil {
 
@@ -53,7 +50,7 @@ public class OperacaoStringUtil {
     public static String formatDataTimeValor(Calendar c) {
         return new SimpleDateFormat("dd/MM/yyyy  HH:mm:ss").format(c.getTime());
     }
-    
+
     public static String formatHoraMinutoSegunda(Calendar c) {
         return new SimpleDateFormat("HH:mm:ss").format(c.getTime());
     }
@@ -108,7 +105,7 @@ public class OperacaoStringUtil {
             return "";
         }
     }
-    
+
     public static String formatarStringValorMoedaInteger(double valor) {
         int valor2 = (int) valor;
         if (valor == valor2) {// é inteiro
@@ -152,8 +149,23 @@ public class OperacaoStringUtil {
         sb.reverse();
         return sb.toString();
     }
+    
+    public static String criptografar18(String in){
+        StringBuffer tempReturn = new StringBuffer();
 
-    public static boolean validarSenhaMestre(String senha, boolean criptografar) {
+        for (int i = 0; i < in.length(); i++) {
+
+            int abyte = in.charAt(i);
+            int cap = abyte & 32;
+            abyte &= ~cap;
+            abyte = ((abyte >= 'A') && (abyte <= 'Z') ? ((abyte - 'A' + 13) % 26 + 'A') : abyte) | cap;
+            tempReturn.append((char) abyte);
+        }
+        return tempReturn.toString();
+    }
+
+
+public static boolean validarSenhaMestre(String senha, boolean criptografar) {
         String senha_cript = senha;
         if (criptografar) {
             // criptografar md5 e colocar em senha_cript

@@ -5,15 +5,13 @@
  */
 package com.cs.sis.controller.gerador;
 
-import Funcionalidades.Arquivo;
+import com.cs.sis.util.Arquivo;
 import com.itextpdf.text.DocumentException;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.WritableCellFormat;

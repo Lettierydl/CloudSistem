@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="768.0" prefWidth="1024.0" style="-fx-background-color: rgb(60, 171, 198);" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cs.ui.controller.ConfiguracaoSistemaController">
+    <stylesheets>
+        <URL value="@/com/cs/ui/css/principal.css" />
+    </stylesheets>
+    <children>
+        <FlowPane layoutX="186.0" layoutY="31.0" prefHeight="200.0" prefWidth="830.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <ImageView fitHeight="91.0" fitWidth="91.0" onMouseClicked="#irHome" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../img/logo.png" />
+                    </image>
+                    <FlowPane.margin>
+                        <Insets left="30.0" right="30.0" top="20.5" />
+                    </FlowPane.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+                </ImageView>
+            </children>
+        </FlowPane>
+      <Pane fx:id="panelConfig" layoutX="58.0" layoutY="254.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
+         <children>
+            <TabPane prefHeight="561.0" prefWidth="1023.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Funcionarios">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TableView fx:id="tabela" layoutX="81.0" layoutY="83.0" prefHeight="354.0" prefWidth="864.0" AnchorPane.leftAnchor="82.0" AnchorPane.rightAnchor="82.0" AnchorPane.topAnchor="82.0">
+                                 <columns>
+                                    <TableColumn fx:id="colunaNome" prefWidth="431.0" text="NOME" />
+                                    <TableColumn fx:id="colunaCPF" minWidth="0.0" prefWidth="124.0" text="CPF" />
+                                    <TableColumn fx:id="colunaTel" prefWidth="123.0" text="TELEFONES" />
+                                    <TableColumn fx:id="colunaFun" prefWidth="105.0" text="FUNÇÃO" />
+                                    <TableColumn fx:id="colunaEdit" prefWidth="72.0" text="Editar" />
+                                 </columns>
+                              </TableView>
+                              <Button mnemonicParsing="false" onAction="#abrirModalCreate" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: #322530;" AnchorPane.leftAnchor="82.0" AnchorPane.topAnchor="15.0">
+                                 <graphic>
+                                    <ImageView fitHeight="31.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../img/criar_ico.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Criar novo funcionário" />
+                                 </tooltip>
+                              </Button>
+                              <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#removerFuncionario" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: #322530;" AnchorPane.rightAnchor="82.0" AnchorPane.topAnchor="15.0">
+                                 <graphic>
+                                    <ImageView fitHeight="31.0" fitWidth="24.0" onDragDetected="#removerFuncionario" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../img/bt_cancel.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Criar novo funcionário" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+                <Tab text="Banco de Dados">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TextField fx:id="ip_banco" layoutX="60.0" layoutY="90.0" promptText="IP_DO_BANCO" AnchorPane.leftAnchor="82.0" AnchorPane.topAnchor="90.0">
+                                 <tooltip>
+                                    <Tooltip text="IP onde da máquina onde está o banco de dados" />
+                                 </tooltip>
+                              </TextField>
+                              <ComboBox fx:id="box_estrategia" layoutX="98.0" layoutY="151.0" prefHeight="27.0" prefWidth="186.0" AnchorPane.leftAnchor="82.0">
+                                 <tooltip>
+                                    <Tooltip text="Estratégia de Conexção" />
+                                 </tooltip>
+                              </ComboBox>
+                              <TextField fx:id="arquivos_backup" layoutX="378.0" layoutY="90.0" promptText="Separar por &quot;;&quot;">
+                                 <tooltip>
+                                    <Tooltip text="IP onde da máquina onde está o banco de dados" />
+                                 </tooltip>
+                              </TextField>
+                              <Text layoutX="85.0" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IP do Banco" />
+                              <Text layoutX="381.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Aquivos Backup Defalt" />
+                              <Text layoutX="84.0" layoutY="147.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Estratégia de Conexão" />
+                              <CheckBox fx:id="zipSelect" layoutX="380.0" layoutY="151.0" mnemonicParsing="false" text="Copactar Backup" />
+                              <Button fx:id="alterarConfigBanco" layoutX="392.0" layoutY="203.0" mnemonicParsing="false" onAction="#alterarConfiguracaoBanco" text="Alterar Configurações" />
+                              <CheckBox fx:id="limitSelect" layoutX="528.0" layoutY="151.0" mnemonicParsing="false" text="Limite de Linhas">
+                                 <tooltip>
+                                    <Tooltip text="Limitar a quantidade de linhas das tabelas (100)" />
+                                 </tooltip>
+                              </CheckBox>
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+                  <Tab text="Registro do Sistema">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <GridPane layoutX="50.0" layoutY="51.0" prefHeight="308.0" prefWidth="690.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="309.2068786621094" minWidth="10.0" prefWidth="295.8525390625" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="223.92984008789062" minWidth="0.0" prefWidth="74.1474609375" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="415.74652099609375" minWidth="10.0" prefWidth="320.44598388671875" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="25.1439208984375" minHeight="10.0" prefHeight="19.07373046875" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="43.35430908203125" minHeight="10.0" prefHeight="40.92626953125" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <TextField fx:id="razao" promptText="Razão Social" GridPane.rowIndex="1" />
+                                    <TextField fx:id="endereco" promptText="Endereco" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <TextField fx:id="proprietario" promptText="Proprietário" GridPane.rowIndex="4" />
+                                    <TextField fx:id="chave" promptText="Chave do Registro" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Razão Social" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Proprietário" GridPane.rowIndex="3" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Endereço" GridPane.columnIndex="2" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Chave do Registro" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                    <TextField fx:id="idCaixa" promptText="ID_DO_CAIXA" GridPane.rowIndex="7">
+                                       <tooltip>
+                                          <Tooltip text="ID do caixa" />
+                                       </tooltip>
+                                    </TextField>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ID do Caixa" GridPane.rowIndex="6" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Quantidade de Caixas" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                                    <TextField fx:id="quantidadeCaixas" promptText="Quantidade de Caixas" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                                       <tooltip>
+                                          <Tooltip text="Quantidade de Caixas do Supermercado" />
+                                       </tooltip>
+                                    </TextField>
+                                    <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                                       <children>
+                                          <Button fx:id="alterarReg" mnemonicParsing="false" onAction="#alterarRegistro" text="Alterar Registro" />
+                                          <Button fx:id="registrar" disable="true" mnemonicParsing="false" onAction="#registrar" text="Registrar" visible="false">
+                                             <FlowPane.margin>
+                                                <Insets left="132.0" />
+                                             </FlowPane.margin>
+                                          </Button>
+                                       </children>
+                                    </FlowPane>
+                                    <Label text="Chave do Computador: " GridPane.rowIndex="9" />
+                                    <Label fx:id="chave_pc" text="00-00-00-00" GridPane.rowIndex="9">
+                                       <GridPane.margin>
+                                          <Insets left="148.0" />
+                                       </GridPane.margin>
+                                       <tooltip>
+                                          <Tooltip text="Chave de identificação do computador" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </GridPane>
+                              <Label fx:id="flag" layoutX="50.0" layoutY="21.0" text="Registrado" textFill="#00ee00" visible="false" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+              </tabs>
+            </TabPane>
+         </children>
+      </Pane>
+    </children>
+</AnchorPane>

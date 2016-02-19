@@ -91,9 +91,10 @@ public class FinalizarAprazoController implements Initializable {
     public void voltar(ActionEvent event) {
         Main.trocarDeTela(ControllerTelas.TELA_VENDA);
     }
-
+    
+    private boolean finalizando = false;
     @FXML
-    public void finalizar(ActionEvent event) {
+    public synchronized void finalizar(ActionEvent event) {
         if (atual.getTotal() <= 0) {
             Dialogs.create()
                     .title("Venda zerada")
@@ -129,6 +130,11 @@ public class FinalizarAprazoController implements Initializable {
             if(!observacao.getText().isEmpty()){
                 atual.setObservacao(observacao.getText());
             }
+            if(finalizando){
+              return;  
+            }else{
+               finalizando = true; 
+            }
             debito = f.finalizarVendaAprazo(atual, c, val);
             if (imprimir.isSelected() && !f.imprimirVenda(atual)) {
                 Dialogs dialog = Dialogs.create()
@@ -139,6 +145,7 @@ public class FinalizarAprazoController implements Initializable {
             }
         } catch (Exception ex) {
             Dialogs.create().showException(ex);
+            finalizando = false;
             return;
         }
         Main.trocarDeTela(ControllerTelas.TELA_VENDA);

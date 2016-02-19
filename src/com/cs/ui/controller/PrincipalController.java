@@ -8,7 +8,6 @@ package com.cs.ui.controller;
 import com.cs.ControllerTelas;
 import com.cs.Facede;
 import com.cs.Main;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -23,7 +22,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class

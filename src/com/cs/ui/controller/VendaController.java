@@ -17,7 +17,6 @@ import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -322,6 +321,9 @@ public class VendaController implements Initializable {
         if (ult != null) {
             descricao.setText(descricaoItem(ult));
             total.setText(OperacaoStringUtil.formatarStringValorMoeda(atual.getTotal()));
+        }else{
+            descricao.setText("X = ");
+            total.setText("0");
         }
         quantidade.setText("1");
         codigo.requestFocus();

@@ -42,18 +42,17 @@ public abstract class MaskFieldUtil {
         });
     }
 
-    //xxxxx-xxxxx-xxxxx-xxxxx
+    //xxxxx-xxxxx-xxxxx
     public static void serialTextField(final TextField textField) {
-        MaskFieldUtil.maxField(textField, 23);
-        textField.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent e) {
+        MaskFieldUtil.maxField(textField, 17);
+        MaskFieldUtil.upperCase(textField);
+        textField.textProperty().addListener((ov, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty()) {
                 MaskFieldUtil.positionCaret(textField);
                 String value = textField.getText();
                 value = value.replaceAll("[^\\w]", "");
                 value = value.replaceFirst("(\\w{5})(\\w)", "$1-$2");
                 value = value.replaceFirst("(\\w{5})\\-(\\w{5})(\\w)", "$1-$2-$3");
-                value = value.replaceFirst("(\\w{5})\\-(\\w{5})\\-(\\w{5})(\\w)", "$1-$2-$3-$4");
                 textField.setText(value);
             }
         });
@@ -61,9 +60,8 @@ public abstract class MaskFieldUtil {
 
     public static void dateField(final TextField textField) {
         MaskFieldUtil.maxField(textField, 10);
-        textField.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent e) {
+        textField.textProperty().addListener((ov, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty()) {
                 MaskFieldUtil.positionCaret(textField);
                 String value = textField.getText();
                 value = value.replaceAll("[^0-9]", "");

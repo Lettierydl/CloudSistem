@@ -6,6 +6,9 @@
 package com.cs.sis.controller;
 
 import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
+import com.cs.sis.util.Arquivo;
+import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
+import java.util.Properties;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -16,11 +19,30 @@ import javax.persistence.Persistence;
  * @author Lettiery
  */
 public abstract class ControllerEntity<T> {
-    
+
     public static final String UNIDADE_DE_PERSISTENCIA = "CloudSistemPU";
-    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory(UNIDADE_DE_PERSISTENCIA);
+    private static final EntityManagerFactory emf = createEntityManagerFactory();
     static EntityManager em;
-    
+
+    private static EntityManagerFactory createEntityManagerFactory() {
+        EntityManagerFactory factory;
+        try {
+            Arquivo a = new Arquivo();
+            if (a.lerConfiguracaoSistema(VariaveisDeConfiguracaoUtil.EXTRATEGIA_DE_CONEXAO).toString().equalsIgnoreCase("local")) {
+                factory = Persistence.createEntityManagerFactory(UNIDADE_DE_PERSISTENCIA);
+            } else {
+                Properties props = new Properties();
+                String url = "jdbc:mysql://" + a.lerConfiguracaoSistema(VariaveisDeConfiguracaoUtil.IP_DO_BANCO).toString() + ":3306/cloudsistem";
+                props.setProperty("javax.persistence.jdbc.url", url);
+                factory = Persistence.createEntityManagerFactory(UNIDADE_DE_PERSISTENCIA, props);
+            }
+        } catch (Exception e) {
+            System.err.println("Falha na tentativa de conexão com o banco"
+                    + "\nSerá aberto com as propriedades do PU");
+            factory = Persistence.createEntityManagerFactory(UNIDADE_DE_PERSISTENCIA);
+        }
+        return factory;
+    }
 
     static EntityManager getEntityManager() {
         if (em == null || !em.isOpen()) {
@@ -28,34 +50,38 @@ public abstract class ControllerEntity<T> {
         }
         return em;
     }
-    
-    protected void closeEntityManager(){
+
+    protected void closeEntityManager() {
         if (em != null && em.isOpen()) {
             em.close();
         }
     }
-    
-    protected void beginTransaction(){
+
+    protected void beginTransaction() {
         EntityTransaction transaction = getEntityManager().getTransaction();
-        if(transaction.isActive()){
+        if (transaction.isActive()) {
             commitTransaction();
         }
         transaction.begin();
     }
-    
-    protected void commitTransaction(){
+
+    protected void commitTransaction() {
         EntityTransaction transaction = getEntityManager().getTransaction();
-        if(transaction.isActive()){
+        if (transaction.isActive()) {
             transaction.commit();
         }
     }
-    
+
     public abstract void create(T entity) throws Exception;
+
     public abstract void edit(T entity) throws EntidadeNaoExistenteException;
+
     public abstract void destroy(T entity) throws EntidadeNaoExistenteException;
+
     public abstract T refresh(T entity);
+
     public abstract int cont(Class e);
+
     public abstract void removeAll(Class e);
-    
-    
+
 }

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Funcionalidades;
+package com.cs.sis.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,7 +11,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.channels.FileChannel;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author leo
@@ -21,9 +22,10 @@ public class Arquivo {
     public static String osname = System.getProperty("os.name");
     private static String defalt;
     public static final String separador = System.getProperty("file.separator");
-    private static final String CONFIGURACAO_BACKUP = "Configuracao_backup.csi";
+    private static final String CONFIGURACAO_SISTEMA = "Configuracao.csi";
     private static File central;
     private static File temp;
+    private static File config;
     private static File backup;
     private static File relatorio;
 
@@ -37,6 +39,8 @@ public class Arquivo {
         temp = new File(central + separador + "Temporarios" + separador);
         backup = new File(central + separador + "Backup" + separador);
         relatorio = new File(central + separador + "Relatorios" + separador);
+        config = new File(central + separador + "Configs" + separador);
+        config.mkdir();
         temp.mkdirs();
         backup.mkdir();
         relatorio.mkdirs();
@@ -90,14 +94,44 @@ public class Arquivo {
         return Arquivo.backup;
     }
     
+    /*
     public List<Object> lerConfiguracoesBackup(){
         return (List<Object>) recuperarArquivo(central, CONFIGURACAO_BACKUP);
     }
     
     public void salvarConfiguracoesBackup(List<Object> config){
         salvarArquivo(config, central, CONFIGURACAO_BACKUP);
+    }*/
+    
+    public Map<String, Object> lerConfiguracoesSistema(){
+        Map<String, Object> conf = (Map<String, Object>) recuperarArquivo(config, CONFIGURACAO_SISTEMA);
+        if(conf == null || conf.isEmpty()){
+            salvarConfiguracoesDefalt();
+            conf = (Map<String, Object>) recuperarArquivo(config, CONFIGURACAO_SISTEMA);
+        }
+        return conf;
     }
     
+    public Object lerConfiguracaoSistema(String chave){
+        Map<String, Object> conf = (Map<String, Object>) recuperarArquivo(config, CONFIGURACAO_SISTEMA);
+        if(conf == null || conf.isEmpty()){
+            salvarConfiguracoesDefalt();
+            conf = (Map<String, Object>) recuperarArquivo(config, CONFIGURACAO_SISTEMA);
+        }
+        return conf.get(chave);
+    }
+    
+    public void addConfiguracaoSistema(String chave, Object value){
+        Map<String, Object> conf;
+        try{
+            conf = lerConfiguracoesSistema();
+            conf.put(chave, value);
+        }catch(Exception e){
+            conf = new HashMap<String, Object>();
+            conf.put(chave, value);
+        }
+        salvarArquivo(conf, config, CONFIGURACAO_SISTEMA);
+    }
     
     public static void copyFile(File source, File destination) throws IOException {
         if (destination.exists()){
@@ -117,4 +151,16 @@ public class Arquivo {
                 destinationChannel.close();
        }
    }
+
+    private void salvarConfiguracoesDefalt() {
+        Map<String, Object> conf = new HashMap();
+        conf.put(VariaveisDeConfiguracaoUtil.IP_DO_BANCO, "localhost");
+        conf.put(VariaveisDeConfiguracaoUtil.ID_DO_CAIXA, "1");
+        conf.put(VariaveisDeConfiguracaoUtil.ARQUIVOS_DEFALT_BACKUP, backup.getAbsoluteFile());
+        conf.put(VariaveisDeConfiguracaoUtil.COMPACTAR_BACKUP, true);
+        conf.put(VariaveisDeConfiguracaoUtil.EXTRATEGIA_DE_CONEXAO, "Local");
+        conf.put(VariaveisDeConfiguracaoUtil.QUANTIDADE_CAIXA, "2");
+        conf.put(VariaveisDeConfiguracaoUtil.ATIVAR_LIMITE_REGISTRO_MOSTRADOS, true);
+        salvarArquivo(conf, config, CONFIGURACAO_SISTEMA);
+    }
 }

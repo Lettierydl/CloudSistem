@@ -31,6 +31,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
@@ -108,6 +109,16 @@ public abstract class ControllerUI<T> implements Initializable {
         fade.setNode(pesquisa);
         fade.play();
         JavaFXUtil.beginFoccusTextField(pesquisa);
+        
+        pesquisa.addEventFilter(KeyEvent.ANY, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER) {
+                    digitado(event);
+                }
+            }
+        });
+        
     }
 
     @FXML
@@ -143,9 +154,9 @@ public abstract class ControllerUI<T> implements Initializable {
                 return p1.toString().compareToIgnoreCase(p2.toString());
             }
         });
-        colunaEdit.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<T, T>, ObservableValue<Cliente>>() {
+        colunaEdit.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<T, T>, ObservableValue<T>>() {
             @Override
-            public ObservableValue<Cliente> call(TableColumn.CellDataFeatures<T, T> features) {
+            public ObservableValue<T> call(TableColumn.CellDataFeatures<T, T> features) {
                 return new ReadOnlyObjectWrapper(features.getValue());
             }
         });

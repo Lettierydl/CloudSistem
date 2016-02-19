@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class Facede {
     
@@ -33,6 +34,7 @@ public class Facede {
     private ControllerImpressora imp;
     private ControllerConfiguracao config;
     private Backup bac;
+    private Arquivo arq;
 
     private static Facede instance = null;
 
@@ -54,11 +56,18 @@ public class Facede {
         pla = new GeradorPlanilha();
         bac = new Backup();
         config = new ControllerConfiguracao();
-        
+        arq = new Arquivo();
         
 
         try {
             imp = ControllerImpressora.getInstance();
+        } catch (Error | Exception e) {
+        }
+        
+        try {
+            if(!(boolean)arq.lerConfiguracaoSistema(VariaveisDeConfiguracaoUtil.ATIVAR_LIMITE_REGISTRO_MOSTRADOS)){
+                VariaveisDeConfiguracaoUtil.LIMITE_DE_REGISTROS_EXIBIDOS = Integer.MAX_VALUE;
+            }
         } catch (Error | Exception e) {
         }
     }
@@ -578,9 +587,25 @@ public class Facede {
     public boolean isCopactarBackup(){
         return bac.isCompactarBackup();
     }
+    
+    public List<File> getArquivosDestinoBackup(){
+        return bac.getAquivos_destinos();
+    }
 
     public void salvarConfiguracoesDeBackup(String nomeArquivoDestinoDefalt, boolean compactarBackup) throws IOException {
         bac.salvarConfiguracoes(nomeArquivoDestinoDefalt, compactarBackup);
+    }
+    
+    public void inserirConfiguracaoSistema(String key, Object value){
+       arq.addConfiguracaoSistema(key, value);
+    }
+    
+    public Object lerConfiguracaoSistema(String key){
+       return arq.lerConfiguracaoSistema(key);
+    }
+    
+    public Map<String, Object> lerConfiguracoesSistema(){
+       return arq.lerConfiguracoesSistema();
     }
 
     //Operacao de Risco
