@@ -1,5 +1,6 @@
 package com.cs;
 
+import com.cs.ui.img.IMG;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -39,7 +40,8 @@ public class ControllerTelas {
 
         stage.setScene(scene);
         stage.show();
-        stage.getIcons().add(new javafx.scene.image.Image("com/cs/ui/img/logo.png"));
+        
+        stage.getIcons().add(new javafx.scene.image.Image(IMG.class.getResource("logo_relatorio.png").openStream()));
         stage.setTitle("CloudSistem");
 
         switch (tela) {

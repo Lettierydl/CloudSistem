@@ -124,6 +124,7 @@ public class Venda implements Comparable<Venda>, Pagavel {
         return formaDePagamento;
     }
 
+    /*Apenas controller de Venda deve utilizar esse método*/
     public void setFormaDePagamento(FormaDePagamento formaDePagamento) {
         this.formaDePagamento = formaDePagamento;
     }
@@ -234,10 +235,6 @@ public class Venda implements Comparable<Venda>, Pagavel {
 
     static int in = 0;
 
-    int getNewIndex() {
-        return in++;
-    }
-
     /**
      * @see Deve ser atualizado a venda logo em seguida para que o item de venda
      * seja salvo
@@ -249,7 +246,7 @@ public class Venda implements Comparable<Venda>, Pagavel {
             throw new NullPointerException("Item de venda sem produto");
         } else {
             this.getItensDeVenda().add(item);
-            item.setIndex(getNewIndex());
+            item.setIndex(this.getItensDeVenda().size()+1);
             item.setVenda(this);
             this.desconto += item.getDesconto();
             this.total += item.getTotal();

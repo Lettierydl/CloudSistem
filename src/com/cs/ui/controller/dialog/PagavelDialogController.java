@@ -132,8 +132,8 @@ public class PagavelDialogController extends DialogController<Pagavel> {
         colQt.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
         colProd.setCellValueFactory(new PropertyValueFactory<>("descricaoProduto"));
 
-        JavaFXUtil.colunValueModedaFormat(colVal);
-        JavaFXUtil.colunValueModedaFormat(colTot);
+        JavaFXUtil.colunValueMoedaFormat(colVal);
+        JavaFXUtil.colunValueMoedaFormat(colTot);
         JavaFXUtil.colunValueQuantidadeFormat(colQt);
 
         okButton.setOnKeyReleased((KeyEvent e) -> {

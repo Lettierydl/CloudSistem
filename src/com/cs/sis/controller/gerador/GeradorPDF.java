@@ -8,6 +8,7 @@ package com.cs.sis.controller.gerador;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.util.Arquivo;
+import com.cs.ui.img.IMG;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -21,9 +22,13 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +48,7 @@ public class GeradorPDF {
     public String gerarPdfRelatorioBalancoProdutos(Date inicio, Date fim, File destino) {
         Document doc = new Document();
         try {
-            String path = a.getRelatorio().getCanonicalPath() + "/RelatorioBalancoProdutos.pdf";
+            String path = a.getRelatorio().getCanonicalPath() + destino.getName();
             PdfWriter.getInstance(doc, new FileOutputStream(path));
             doc.open();
             String subTitulo = "Saída de produtos \n Referênte do dia "
@@ -55,8 +60,8 @@ public class GeradorPDF {
             doc.add(table);
 
             doc.close();
-            Arquivo.copyFile(new File(path), new File(destino + "/RelatorioBalancoProdutos.pdf"));
-            return destino + "/RelatorioBalancoProdutos.pdf";
+            Arquivo.copyFile(new File(path), destino);
+            return destino.getAbsolutePath();
         } catch (DocumentException | IOException e) {
             e.printStackTrace();
             return "";
@@ -180,8 +185,7 @@ public class GeradorPDF {
     }
 
     private PdfPTable getTableBalancoProdutos(Date inicio, Date fim) throws DocumentException {
-        Map<String, Double[]> saida = GeradorRelatorio.getRelatorioDetalhadoSaidaProduto(
-                inicio, fim);
+        Map<String, Double[]> saida = GeradorRelatorio.getRelatorioDetalhadoSaidaProduto(inicio, fim);
 
         PdfPTable table = new PdfPTable(5);
         table.setWidths(new int[]{5, 1, 1, 1, 1});
@@ -199,7 +203,10 @@ public class GeradorPDF {
         table.addCell("Lucro");
         table.getDefaultCell().setBackgroundColor(null);
         double compra = 0, venda = 0, lucro = 0, qt = 0;
-        for (String produto : saida.keySet()) {
+        List<String> c = new ArrayList<String>();
+        c.addAll(saida.keySet());
+        Collections.sort(c);
+        for (String produto : c) {
             table.addCell(produto);
             Double[] val = saida.get(produto);
             compra += val[0];
@@ -233,8 +240,7 @@ public class GeradorPDF {
     public void inserirHead(Document doc, String titulo, String subTitulo) throws MalformedURLException, DocumentException {
         Image img = null;
         try {
-            String path = "com/cs/ui/img";
-            img = Image.getInstance(path + "/logo_relatorio.png");
+            img = Image.getInstance(IMG.class.getResource("logo_relatorio.png"));
 
             img.setAlignment(Element.ALIGN_LEFT);
 

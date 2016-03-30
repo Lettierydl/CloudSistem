@@ -17,6 +17,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -28,7 +29,7 @@ import javafx.scene.control.TextField;
  */
 public class JavaFXUtil {
 
-    public static void colunValueModedaFormat(TableColumn colunaDouble) {
+    public static void colunValueMoedaFormat(TableColumn colunaDouble) {
         colunaDouble.setCellFactory(col
                 -> new TableCell<Double, Number>() {
                     @Override
@@ -80,6 +81,8 @@ public class JavaFXUtil {
                 foccus.requestFocus();
                 if(foccus instanceof TextField){
                     ((TextField) foccus).selectAll();
+                }else if(foccus instanceof Button){
+                    ((Button) foccus).defaultButtonProperty().bind(((Button) foccus).focusedProperty());
                 }
             }
         });
@@ -128,7 +131,11 @@ public class JavaFXUtil {
                         if (empty) {
                             setText(null);
                         } else {
-                            setText(price.getNome());
+                            try{
+                                setText(price.getNome());
+                            }catch(NullPointerException ne){
+                                setText(null);
+                            }
                         }
                     }
                 });

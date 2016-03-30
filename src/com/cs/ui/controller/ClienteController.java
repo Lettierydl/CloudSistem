@@ -47,7 +47,7 @@ public class ClienteController extends ControllerUI<Cliente> {
         colunaEnd.setCellValueFactory(new PropertyValueFactory<Cliente, String>("endereco"));
         colunaCpf.setCellValueFactory(new PropertyValueFactory<Cliente, String>("cpf"));
 
-        JavaFXUtil.colunValueModedaFormat(colunaDebt);
+        JavaFXUtil.colunValueMoedaFormat(colunaDebt);
 
         atualizarLista();
     }

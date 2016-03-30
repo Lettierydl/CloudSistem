@@ -3,9 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/Lettiery/NetBeansProjects/CloudSistem/src/com/cs/ui/controller/ControllerUI.java</file>
-            <file>file:/Users/Lettiery/NetBeansProjects/CloudSistem/src/com/cs/ui/controller/VendaController.java</file>
-            <file>file:/Users/Lettiery/NetBeansProjects/CloudSistem/src/com/cs/ui/controller/EstoqueController.java</file>
+            <file>file:/Users/Lettiery/NetBeansProjects/CloudSistem/src/com/cs/Facede.java</file>
+            <file>file:/Users/Lettiery/NetBeansProjects/CloudSistem/src/com/cs/sis/controller/ControllerImpressora.java</file>
         </group>
     </open-files>
 </project-private>

@@ -226,10 +226,10 @@ public class GeradorRelatorio extends Gerador {
                 .createQuery(
                         "select p.descricao, p.valorDeCompra, p.valorDeVenda , sum(it.quantidade), sum((p.valorDeVenda - p.valorDeCompra)* it.quantidade) "
                         + " from Venda as v , Produto as p, ItemDeVenda as it "
-                        + " where v.dia between ? and ? and it.venda = v "
+                        + " where v.dia between :di and :df and it.venda = v "
                         + " and it.produto = p  group by p.descricao order by p.descricao");
-        query.setParameter(1, di);
-        query.setParameter(2, df);
+        query.setParameter("di", di);
+        query.setParameter("df", df);
 
         for (Object obj : query.getResultList()) {
             Object[] o = (Object[]) obj;

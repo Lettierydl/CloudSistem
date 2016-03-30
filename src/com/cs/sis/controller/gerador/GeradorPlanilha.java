@@ -6,6 +6,7 @@
 package com.cs.sis.controller.gerador;
 
 import com.cs.sis.util.Arquivo;
+import com.cs.ui.img.IMG;
 import com.itextpdf.text.DocumentException;
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class GeradorPlanilha {
 
         try {
 
-            String path = a.getRelatorio().getCanonicalPath() + "/PlanilhaBalancoProdutos.xls";
+            String path = a.getRelatorio().getCanonicalPath() + destino.getName();
             WritableWorkbook workbook = Workbook.createWorkbook(new File(path));
             WritableSheet folha = workbook.createSheet("Relatorio Produtos", 0);
 
@@ -50,8 +51,8 @@ public class GeradorPlanilha {
             workbook.write();
             workbook.close();
             
-            Arquivo.copyFile(new File(path), new File(destino + "/PlanilhaBalancoProdutos.xls"));
-            return destino + "/PlanilhaBalancoProdutos.xls";
+            Arquivo.copyFile(new File(path), destino );
+            return destino.getAbsolutePath();
         } catch (DocumentException | IOException | WriteException e) {
             e.printStackTrace();
             return "";
@@ -126,11 +127,16 @@ public class GeradorPlanilha {
 
     public void inserirHead(WritableSheet folha, String titulo, String subTitulo) {
         try {
-            String path = "../../../../ui/img/";
             
-            WritableImage img = new WritableImage(0, 0, 2, 6, new File(path + "/logo_relatorio.png"));
+            try {
+               // byte[] b = null;
+               // IMG.class.getResource("logo_relatorio.png").openStream().read(b);
+               // WritableImage img = new WritableImage(0, 0, 2, 6,b);
 
-            folha.addImage(img);
+               // folha.addImage(img);
+            }catch(Exception nee){
+                nee.printStackTrace();
+            }
 
             WritableCellFormat cour20 = new WritableCellFormat(new WritableFont(WritableFont.COURIER, 20));
             WritableCellFormat cour16 = new WritableCellFormat(new WritableFont(WritableFont.COURIER, 16));

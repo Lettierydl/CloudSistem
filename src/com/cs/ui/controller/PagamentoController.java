@@ -239,8 +239,8 @@ public class PagamentoController implements Initializable {
         dataColP.setCellValueFactory(new PropertyValueFactory<Pagavel, String>("data"));
         restColP.setCellValueFactory(new PropertyValueFactory<Pagavel, Double>("valorNaoPago"));
         valColP.setCellValueFactory(new PropertyValueFactory<Pagavel, Double>("total"));
-        JavaFXUtil.colunValueModedaFormat(restColP);
-        JavaFXUtil.colunValueModedaFormat(valColP);
+        JavaFXUtil.colunValueMoedaFormat(restColP);
+        JavaFXUtil.colunValueMoedaFormat(valColP);
         atualizarListaPagaveis();
     }
 
@@ -414,7 +414,7 @@ public class PagamentoController implements Initializable {
         dataH.setCellValueFactory(new PropertyValueFactory<>("data"));
         funcionarioH.setCellValueFactory(new PropertyValueFactory<>("funcionario"));
         obsH.setCellValueFactory(new PropertyValueFactory<>("observacao"));
-        JavaFXUtil.colunValueModedaFormat(valorH);
+        JavaFXUtil.colunValueMoedaFormat(valorH);
         JavaFXUtil.colunDataTimeFormat(dataH);
         JavaFXUtil.colunPessoaFormat(funcionarioH);
     }
@@ -562,7 +562,7 @@ public class PagamentoController implements Initializable {
         colFuncV.setCellValueFactory(new PropertyValueFactory<>("funcionario"));
         colVerV.setCellValueFactory(new PropertyValueFactory<Venda, Venda>(""));
 
-        JavaFXUtil.colunValueModedaFormat(colValorV);
+        JavaFXUtil.colunValueMoedaFormat(colValorV);
         JavaFXUtil.colunPessoaFormat(colFuncV);
     }
 

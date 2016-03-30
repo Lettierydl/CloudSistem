@@ -109,7 +109,6 @@ public class AutoCompleteTextField extends TextField {
                 if (keyEvent.getCode().equals(KeyCode.ENTER)) {
                     String selected = listView.getSelectionModel().getSelectedItem();
                     if(selected  == null || selected.isEmpty()){
-                        popup.hide();
                         return;
                     }
                     setText(selected);

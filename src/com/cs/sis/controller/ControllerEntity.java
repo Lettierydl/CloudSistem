@@ -26,21 +26,19 @@ public abstract class ControllerEntity<T> {
 
     private static EntityManagerFactory createEntityManagerFactory() {
         EntityManagerFactory factory;
-        try {
-            Arquivo a = new Arquivo();
-            if (a.lerConfiguracaoSistema(VariaveisDeConfiguracaoUtil.EXTRATEGIA_DE_CONEXAO).toString().equalsIgnoreCase("local")) {
-                factory = Persistence.createEntityManagerFactory(UNIDADE_DE_PERSISTENCIA);
-            } else {
-                Properties props = new Properties();
-                String url = "jdbc:mysql://" + a.lerConfiguracaoSistema(VariaveisDeConfiguracaoUtil.IP_DO_BANCO).toString() + ":3306/cloudsistem";
-                props.setProperty("javax.persistence.jdbc.url", url);
-                factory = Persistence.createEntityManagerFactory(UNIDADE_DE_PERSISTENCIA, props);
-            }
-        } catch (Exception e) {
-            System.err.println("Falha na tentativa de conexão com o banco"
-                    + "\nSerá aberto com as propriedades do PU");
+        Arquivo a = new Arquivo();
+        if (a.lerConfiguracaoSistema(VariaveisDeConfiguracaoUtil.EXTRATEGIA_DE_CONEXAO).toString().equalsIgnoreCase("local")) {
+            System.out.println("Conectando ao MYSQL pelo localhost ");
             factory = Persistence.createEntityManagerFactory(UNIDADE_DE_PERSISTENCIA);
+        } else {
+            Properties props = new Properties();
+            System.out.println("Conectando ao MYSQL por: ");
+            String url = "jdbc:mysql://" + a.lerConfiguracaoSistema(VariaveisDeConfiguracaoUtil.IP_DO_BANCO).toString() + ":3306/cloudsistem";
+            System.out.println(url);
+            props.setProperty("javax.persistence.jdbc.url", url);
+            factory = Persistence.createEntityManagerFactory(UNIDADE_DE_PERSISTENCIA, props);
         }
+
         return factory;
     }
 

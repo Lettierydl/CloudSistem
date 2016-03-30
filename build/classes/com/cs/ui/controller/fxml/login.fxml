@@ -30,6 +30,7 @@
             </PasswordField>
             <Button fx:id="entrar" layoutX="136.0" layoutY="226.0" mnemonicParsing="false" onAction="#login" styleClass="entrar" stylesheets="@css/login.css" text="Entrar" />
             <Label fx:id="menssagem" layoutX="14.0" layoutY="203.0" mouseTransparent="true" prefHeight="17.0" prefWidth="170.0" textFill="#e43535" />
+            <Label fx:id="menssagemErro" layoutY="268.0" mouseTransparent="true" prefHeight="29.0" prefWidth="200.0" textFill="#e43535" />
          </children>
       </Pane>
    </children>

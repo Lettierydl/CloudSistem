@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Facede {
-    
-    private int limit =  100;
-    
+
+    private int limit = 100;
+
     private ControllerEstoque est;
     private ControllerPessoa pes;
     private ControllerLogin lg;
@@ -57,15 +57,22 @@ public class Facede {
         bac = new Backup();
         config = new ControllerConfiguracao();
         arq = new Arquivo();
-        
 
         try {
             imp = ControllerImpressora.getInstance();
         } catch (Error | Exception e) {
         }
+        new Thread(){
+            public void run(){
+                int retorno = imp.retornoECF();
+                if(imp.retornoECF() < 0){
+                    System.out.println("impressora não conectada... Retorno: " + retorno);
+                }
+            }
+        }.start();
         
         try {
-            if(!(boolean)arq.lerConfiguracaoSistema(VariaveisDeConfiguracaoUtil.ATIVAR_LIMITE_REGISTRO_MOSTRADOS)){
+            if (!(boolean) arq.lerConfiguracaoSistema(VariaveisDeConfiguracaoUtil.ATIVAR_LIMITE_REGISTRO_MOSTRADOS)) {
                 VariaveisDeConfiguracaoUtil.LIMITE_DE_REGISTROS_EXIBIDOS = Integer.MAX_VALUE;
             }
         } catch (Error | Exception e) {
@@ -99,7 +106,7 @@ public class Facede {
     public List<Cliente> getListaClientes() {
         return FindCliente.listClientes();
     }
-    
+
     public List<Cliente> getListaClientesLimitada() {
         return FindCliente.listClientes(limit);
     }
@@ -209,7 +216,7 @@ public class Facede {
     public List<Produto> getListaProdutos() {
         return FindProduto.todosProdutos();
     }
-    
+
     public List<Produto> getListaProdutosLimitada() {
         return FindProduto.todosProdutos(limit);
     }
@@ -245,7 +252,7 @@ public class Facede {
     public List<String> buscarDescricaoEPrecoProdutoPorDescricaoQueInicia(String descricao) {
         return FindProduto.drecricaoEPrecoProdutoQueIniciam(descricao);
     }
-    
+
     public List<String> buscarDescricaoEPrecoProdutos() {
         return FindProduto.drecricaoEPrecoProdutos();
     }
@@ -269,6 +276,7 @@ public class Facede {
     public List<Produto> buscarListaProdutoPorDescricaoOuCodigo(String nomeOuCodigo) {
         return FindProduto.produtosQueDescricaoOuCodigoDeBarrasIniciam(nomeOuCodigo);
     }
+
     public List<Produto> buscarListaProdutoPorDescricaoOuCodigo(String nomeOuCodigo, int limit) {
         return FindProduto.produtosQueDescricaoOuCodigoDeBarrasIniciam(nomeOuCodigo, limit);
     }
@@ -312,7 +320,7 @@ public class Facede {
     public void inicializarVenda() throws VendaPendenteException {
         vend.iniciarNovaVenda();
     }
-    
+
     public void recuperarVendaPendenteDoFuncionarioLogado() throws VariasVendasPendentesException, Exception {
         vend.recuperarVendaPendente(lg.getLogado());
     }
@@ -348,8 +356,12 @@ public class Facede {
     public void finalizarVendaAVista(Venda v)
             throws EntidadeNaoExistenteException, Exception {
         vend.finalizarVendaAVista(v);
+        double valor = est.retirarItensDoEstoque(v.getItensDeVenda());
+        if (valor != v.getTotal()) {
+            System.err.println("venda com valor errado");
+        }
     }
-
+    
     /**
      * Metodo utilizado para finalizar uma venda a prazo<br/>
      *
@@ -359,22 +371,31 @@ public class Facede {
      * @throws EntidadeNaoExistenteException
      * @throws ParametrosInvalidosException
      */
-    public synchronized double finalizarVendaAprazo(Venda v, Cliente c, double partePaga)
+    public double finalizarVendaAprazo(Cliente c, double partePaga, String observacao)
             throws ParametrosInvalidosException, EstadoInvalidoDaVendaAtualException {
         double deb = 0;
-
+        double oud_deb = c.getDebito();
+        int id_venda = vend.getAtual().getId();
         try {
-            deb = vend.finalizarVendaAPrazo(v, c, partePaga);
-
-            double oud_deb = c.getDebito();
-
+            if(observacao !=null && !observacao.trim().isEmpty()){
+                vend.getAtual().setObservacao(observacao);
+            }
+            
+            deb = vend.finalizarVendaAPrazo(c, partePaga);
+            
+            est.retirarItensDoEstoque(FindVenda.itemDeVendaIdDaVenda(id_venda));
+            
             try {
                 c.acrecentarDebito(deb);
                 pes.edit(c);
                 if (this.buscarClientePorId(c.getId()).getDebito() != oud_deb + deb) {
                     throw new ParametrosInvalidosException("Falha na conexão com o banco de dados \nDebito não atualizado!");
                 }
-            } catch (Exception e) {
+            } catch (Exception e) {// ver se esse codigo ta complicando, se tiver excue
+                System.err.println("ERRO ao tentar editar o cliente\nQuando acrecentar o Débito");
+                e.printStackTrace();
+                throw new Exception("Venda salva, porém o débito não inserido na conta do cliente");
+                /*
                 if (this.buscarClientePorId(c.getId()).getDebito() != oud_deb + deb) {
                     List<Pagavel> di_ve = FindVenda.pagavelNaoPagoDoCliente(c);
                     double deb_real = 0;
@@ -401,13 +422,23 @@ public class Facede {
                         throw new ParametrosInvalidosException("Falha na conexão com o banco de dados \nDebito não atualizado!");
                     }
 
-                }
+                }*/
             }
 
         } catch (EstadoInvalidoDaVendaAtualException ei) {
+            deb = FindVenda.vendaId(id_venda).getValorNaoPago();
+            c.acrecentarDebito(deb);
+            try {
+                pes.edit(c);
+            } catch (EntidadeNaoExistenteException ex) {
+                throw new ParametrosInvalidosException("Falha na conexão com o banco de dados \nDebito não atualizado!");
+            }
+            if (this.buscarClientePorId(c.getId()).getDebito() != oud_deb + deb) {
+                throw new ParametrosInvalidosException("Falha na conexão com o banco de dados \nDebito não atualizado!");
+            }
             throw ei;
         } catch (Exception e) {
-            throw new EstadoInvalidoDaVendaAtualException("Venda não salva, verifique na tela de pagamentos!");
+            throw new ParametrosInvalidosException("Venda não salva, verifique na tela de pagamentos!");
         }
         return this.buscarClientePorId(c.getId()).getDebito();
     }
@@ -474,15 +505,15 @@ public class Facede {
     public List<Venda> buscarVendaNaoPagaDoCliente(Cliente cliente) {
         return FindVenda.vendasNaoPagaDoCliente(cliente);
     }
-    
+
     public List<Venda> buscarVendaNaoFinalizadasPorFuncionario(Funcionario f) {
         return FindVenda.getVendasNaoFinalizadasPorFuncionario(f);
     }
-    
+
     public List<Venda> buscarVendaNaoFinalizadas() {
         return FindVenda.getVendasNaoFinalizadas();
     }
-    
+
     public List<Venda> buscarVendaAVista(Calendar dia) {
         return FindVenda.vendasAVista(dia);
     }
@@ -502,7 +533,7 @@ public class Facede {
     public List<Pagavel> buscarPagaveisNaoPagoDoCliente(Cliente cliente) {
         return FindVenda.pagavelNaoPagoDoCliente(cliente);
     }
-    
+
     public List<Pagavel> buscarPagaveisNaoPagoDoCliente(String nome) {
         return FindVenda.pagavelNaoPagoDoCliente(nome);
     }
@@ -553,20 +584,25 @@ public class Facede {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
         return pdf.gerarPdfRelatorioBalancoProdutos(inicio, fim);
     }
+    
+    public String gerarPdfRelatorioBalancoProdutos(Date inicio, Date fim, File f) throws FuncionarioNaoAutorizadoException {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
+        return pdf.gerarPdfRelatorioBalancoProdutos(inicio, fim, f);
+    }
 
     public String gerarPdfDaVendaVenda(Venda v, List<ItemDeVenda> itens) throws FuncionarioNaoAutorizadoException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
         return pdf.gerarPdfDaVenda(v, itens);
     }
-    
+
     public String gerarPdfDaVendaVenda(Venda v, List<ItemDeVenda> itens, File destino) throws FuncionarioNaoAutorizadoException, IOException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
         return pdf.gerarPdfDaVenda(v, itens, destino);
     }
 
-    public String gerarPlanilhaRelatorioBalancoProdutos(Date inicio, Date fim) throws FuncionarioNaoAutorizadoException {
+    public String gerarPlanilhaRelatorioBalancoProdutos(Date inicio, Date fim,File destino) throws FuncionarioNaoAutorizadoException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
-        return pla.gerarPlanilhaRelatorioBalancoProdutos(inicio, fim);
+        return pla.gerarPlanilhaRelatorioBalancoProdutos(inicio, fim, destino);
     }
 
     public boolean restaurarBancoDeDados(File tempFile) throws FuncionarioNaoAutorizadoException, IOException {
@@ -578,34 +614,34 @@ public class Facede {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.ALTERAR_CONFIGURACOES);
         return bac.criarBackup();
     }
-    
+
     public String realizarBackupBancoDeDados(File file) throws FuncionarioNaoAutorizadoException, IOException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.ALTERAR_CONFIGURACOES);
         return bac.criarBackup(file);
     }
-    
-    public boolean isCopactarBackup(){
+
+    public boolean isCopactarBackup() {
         return bac.isCompactarBackup();
     }
-    
-    public List<File> getArquivosDestinoBackup(){
+
+    public List<File> getArquivosDestinoBackup() {
         return bac.getAquivos_destinos();
     }
 
     public void salvarConfiguracoesDeBackup(String nomeArquivoDestinoDefalt, boolean compactarBackup) throws IOException {
         bac.salvarConfiguracoes(nomeArquivoDestinoDefalt, compactarBackup);
     }
-    
-    public void inserirConfiguracaoSistema(String key, Object value){
-       arq.addConfiguracaoSistema(key, value);
+
+    public void inserirConfiguracaoSistema(String key, Object value) {
+        arq.addConfiguracaoSistema(key, value);
     }
-    
-    public Object lerConfiguracaoSistema(String key){
-       return arq.lerConfiguracaoSistema(key);
+
+    public Object lerConfiguracaoSistema(String key) {
+        return arq.lerConfiguracaoSistema(key);
     }
-    
-    public Map<String, Object> lerConfiguracoesSistema(){
-       return arq.lerConfiguracoesSistema();
+
+    public Map<String, Object> lerConfiguracoesSistema() {
+        return arq.lerConfiguracoesSistema();
     }
 
     //Operacao de Risco
@@ -650,6 +686,10 @@ public class Facede {
         } catch (NullPointerException ne) {
             return false;
         }
+    }
+    
+    public int retornoImpressora() {
+        return imp.retornoECF();
     }
 
 }

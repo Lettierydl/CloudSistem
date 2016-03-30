@@ -9,6 +9,7 @@ import com.cs.ControllerTelas;
 import com.cs.Facede;
 import com.cs.Main;
 import com.cs.sis.model.pessoas.Funcionario;
+import com.cs.sis.util.Arquivo;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
 import com.cs.sis.util.Registro;
@@ -21,8 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -221,8 +220,18 @@ public class ConfiguracaoSistemaController implements Initializable {
                             + "Zipar: "+ (zipar? "Sim" : "Não")+"\n"
                             + "Limitar: "+ (limitar? "Sim" : "Não"))
                     .showInformation();
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Dialogs.create().showException(ex);
+            Arquivo arq = new Arquivo();
+            arq.addConfiguracaoSistema(VariaveisDeConfiguracaoUtil.IP_DO_BANCO, ip);
+            arq.addConfiguracaoSistema(VariaveisDeConfiguracaoUtil.ATIVAR_LIMITE_REGISTRO_MOSTRADOS, limitar);
+            arq.addConfiguracaoSistema(VariaveisDeConfiguracaoUtil.EXTRATEGIA_DE_CONEXAO, estrategia);
+            Dialogs.create().title("Alterações realizada")
+                    .masthead("Alterações realizada apenas algumas partes")
+                    .message("IP: "+ip+"\n" + "Arquivos: "+arquivos+"\n"
+                            + "Estratégia: "+ estrategia+"\n"
+                            + "Limitar: "+ (limitar? "Sim" : "Não"))
+                    .showError();
         }
     }
 
@@ -261,7 +270,7 @@ public class ConfiguracaoSistemaController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         try{
              f = Facede.getInstance();
-        }catch(Exception e){
+        }catch(Exception | NoClassDefFoundError e){
             Dialogs.create().title("Conexão com o Banco")
                     .masthead("Não foi possível estabelecer uma conexão com o Banco")
                     .showError();
@@ -306,7 +315,6 @@ public class ConfiguracaoSistemaController implements Initializable {
             configurarColunaEditar();
             tabela.setItems(FXCollections.observableList(observavel));
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
     

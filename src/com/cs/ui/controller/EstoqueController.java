@@ -39,16 +39,18 @@ public class EstoqueController extends ControllerUI<Produto> {
         colunaEst.setCellValueFactory(new PropertyValueFactory<Cliente, String>("quantidadeEmEstoque"));
         colunaVal.setCellValueFactory(new PropertyValueFactory<Cliente, String>("valorDeVenda"));
 
-        JavaFXUtil.colunValueModedaFormat(colunaVal);
+        JavaFXUtil.colunValueMoedaFormat(colunaVal);
         JavaFXUtil.colunValueQuantidadeFormat(colunaEst);
         
         atualizarLista();
 
     }
     
+    int v = 0;
     @Override
     public void atualizarLista(){
         try {
+            
             String text = pesquisa.getText();
             if(text.length() < 3 && !tabela.getItems().isEmpty()){
                 return;

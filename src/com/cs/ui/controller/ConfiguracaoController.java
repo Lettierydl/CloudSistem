@@ -60,7 +60,9 @@ public class ConfiguracaoController implements Initializable {
                    new FileChooser.ExtensionFilter( "SQL", "*.sql"),
                    new FileChooser.ExtensionFilter( "Zip", "*.zip")
            );
-
+           if(true){
+               return;
+           }
 
            File file = fileChooser.showOpenDialog(restaurarBut.getScene().getWindow());
            if (file != null) {

@@ -163,8 +163,8 @@ public class FinalizarAvistaController implements Initializable {
         produtoCol.setCellValueFactory(new PropertyValueFactory<>("DescricaoProduto"));
 
         MaskFieldUtil.monetaryField(valorPago);
-        JavaFXUtil.colunValueModedaFormat(totalCol);
-        JavaFXUtil.colunValueModedaFormat(valorCol);
+        JavaFXUtil.colunValueMoedaFormat(totalCol);
+        JavaFXUtil.colunValueMoedaFormat(valorCol);
         JavaFXUtil.colunValueQuantidadeFormat(qtCol);
         preencherInformacoes();
         

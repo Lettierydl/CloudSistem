@@ -12,7 +12,6 @@ import com.cs.sis.model.pessoas.Cliente;
 import com.cs.sis.model.pessoas.Funcionario;
 import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
 import com.cs.sis.model.pessoas.exception.EstadoInvalidoDaVendaAtualException;
-import com.cs.sis.model.pessoas.exception.ProdutoABaixoDoEstoqueException;
 import com.cs.sis.model.pessoas.exception.VariasVendasPendentesException;
 import com.cs.sis.model.pessoas.exception.VendaPendenteException;
 import java.util.ArrayList;
@@ -306,16 +305,15 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         v.setPaga(true);
         v.setPartePaga(v.getTotal());
         edit(v);
-        double valor = retirarItensDoEstoque(v);
-        if (valor != v.getTotal()) {
-            System.err.println("venda com valor errado");
-            // colocar no relatorio do final do dia
-        }
         atual = null;
     }
 
+    public double finalizarVendaAPrazo(Cliente c, double partePaga)throws EntidadeNaoExistenteException, EstadoInvalidoDaVendaAtualException, Exception {
+        return finalizarVendaAPrazo(atual ,c,partePaga);
+    }
+    
     // retorna o que deve ser acrecentado a conta do cliente
-    public synchronized double finalizarVendaAPrazo(Venda v, Cliente c,
+    public double finalizarVendaAPrazo(Venda v, Cliente c,
             double partePaga) throws EntidadeNaoExistenteException, EstadoInvalidoDaVendaAtualException, Exception {
         if (v.getFormaDePagamento() != null) {
             throw new EstadoInvalidoDaVendaAtualException("Venda já finalizada anteriormente, inicie uma nova venda");
@@ -325,11 +323,6 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         v.setPartePaga(partePaga);
         v.setCliente(c);
         edit(v);
-        double valor = retirarItensDoEstoque(v);
-        if (valor != v.getTotal()) {
-            System.err.println("venda com valor errado");
-            // colocar no relatorio do final do dia
-        }
         double credito = v.getTotal() - v.getPartePaga();
         atual = null;
         if (credito < 0) {
@@ -338,24 +331,6 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         } else {
             return credito;
         }
-    }
-
-    private synchronized double retirarItensDoEstoque(Venda atual)
-            throws EntidadeNaoExistenteException, Exception {
-        double valor = 0;
-        ControllerEstoque ce = new ControllerEstoque();
-        for (ItemDeVenda it : atual.getItensDeVenda()) {
-            try {
-                valor += it.getTotal();
-                it.getProduto().removerQuantidadeDeEstoque(it.getQuantidade());
-            } catch (ProdutoABaixoDoEstoqueException e) {
-                // colocar alguma mensagem no relatorio do final do dia
-            } finally {
-                ce.edit(it.getProduto());
-            }
-
-        }
-        return valor;
     }
 
     public Venda recuperarVendaPendente(Funcionario logado) throws EntidadeNaoExistenteException,

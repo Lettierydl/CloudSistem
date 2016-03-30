@@ -11,6 +11,8 @@ import com.cs.Main;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.Cliente;
+import com.cs.sis.model.pessoas.exception.EstadoInvalidoDaVendaAtualException;
+import com.cs.sis.model.pessoas.exception.ParametrosInvalidosException;
 import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
@@ -47,7 +49,6 @@ import org.controlsfx.dialog.Dialogs;
 public class FinalizarAprazoController implements Initializable {
 
     private Facede f;
-    private Venda atual;
     private ObservableList<ItemDeVenda> observableList;
 
     @FXML
@@ -94,7 +95,8 @@ public class FinalizarAprazoController implements Initializable {
     
     private boolean finalizando = false;
     @FXML
-    public synchronized void finalizar(ActionEvent event) {
+    public void finalizar(ActionEvent event) {
+        Venda atual = f.getVendaAtual();
         if (atual.getTotal() <= 0) {
             Dialogs.create()
                     .title("Venda zerada")
@@ -127,15 +129,18 @@ public class FinalizarAprazoController implements Initializable {
         
         double debito = 0;
         try {
-            if(!observacao.getText().isEmpty()){
-                atual.setObservacao(observacao.getText());
-            }
             if(finalizando){
               return;  
             }else{
                finalizando = true; 
             }
-            debito = f.finalizarVendaAprazo(atual, c, val);
+            try{
+                debito = f.finalizarVendaAprazo(c, val, observacao.getText());
+            }catch(EstadoInvalidoDaVendaAtualException iee){
+                debito = f.buscarClientePorId(c.getId()).getDebito();
+            }catch(ParametrosInvalidosException pe){
+                pe.printStackTrace();
+            }
             if (imprimir.isSelected() && !f.imprimirVenda(atual)) {
                 Dialogs dialog = Dialogs.create()
                         .title("Impressora não conectada")
@@ -168,6 +173,7 @@ public class FinalizarAprazoController implements Initializable {
     void entradaDigitado(KeyEvent event){
         String txt = valorPago.getText();
         double val = OperacaoStringUtil.converterStringValor(valorPago.getText());
+        Venda atual = f.getVendaAtual();
         if(atual.getTotal() - val > 0){
             subTotal.setText(OperacaoStringUtil.formatarStringValorMoeda(atual.getTotal() - val));
         }else{
@@ -179,6 +185,7 @@ public class FinalizarAprazoController implements Initializable {
     void enterKeyEntrada(ActionEvent event) {
         String txt = valorPago.getText();
         double val = OperacaoStringUtil.converterStringValor(valorPago.getText());
+        Venda atual = f.getVendaAtual();
         if (val >= atual.getTotal()) {
             Dialogs.create()
                     .title("Valor incorreto")
@@ -204,8 +211,8 @@ public class FinalizarAprazoController implements Initializable {
         MaskFieldUtil.monetaryField(valorPago);
         MaskFieldUtil.upperCase(nomeCli);
         MaskFieldUtil.upperCase(observacao);
-        JavaFXUtil.colunValueModedaFormat(totalCol);
-        JavaFXUtil.colunValueModedaFormat(valorCol);
+        JavaFXUtil.colunValueMoedaFormat(totalCol);
+        JavaFXUtil.colunValueMoedaFormat(valorCol);
         JavaFXUtil.colunValueQuantidadeFormat(qtCol);
         preencherInformacoes();
         
@@ -223,10 +230,9 @@ public class FinalizarAprazoController implements Initializable {
     }
 
     public void preencherInformacoes() {
-        atual = f.getVendaAtual();
         observableList = FXCollections.observableList(getItensDaVenda());
         itens.setItems(observableList);
-        total.setText(OperacaoStringUtil.formatarStringValorMoeda(atual.getTotal()));
+        total.setText(OperacaoStringUtil.formatarStringValorMoeda(f.getVendaAtual().getTotal()));
     }
 
     public List<ItemDeVenda> getItensDaVenda() {

@@ -47,12 +47,20 @@ public class Main extends Application {
         ct = new ControllerTelas(stage);
     }
     
+    public static Throwable messagem_erro_fachada = null;
+    
     public static void main(String[] args) {
         Thread t;
         t = new Thread(){
             @Override
             public void run (){
-                Facede.getInstance();
+                try{
+                    Facede.getInstance();
+                }catch(ExceptionInInitializerError ee){
+                    messagem_erro_fachada = new Exception("Erro ao Conectar com o Banco");
+                }catch(Exception e){
+                    messagem_erro_fachada = e;
+                }
                 try {
                     finalize();
                 } catch (Throwable ex) {

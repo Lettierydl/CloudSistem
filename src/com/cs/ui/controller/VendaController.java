@@ -1,10 +1,5 @@
 package com.cs.ui.controller;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 import com.cs.ControllerTelas;
 import com.cs.Facede;
 import com.cs.Main;
@@ -17,12 +12,10 @@ import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
 import java.net.URL;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
-import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -49,7 +42,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
-import javafx.util.Duration;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import org.controlsfx.control.action.Action;
@@ -81,8 +73,13 @@ public class VendaController implements Initializable {
     @FXML
     private TableColumn<?, ?> valorCol;
 
+    
     @FXML
-    private AutoCompleteTextField codigo;
+    private AutoCompleteTextField nomeComplet;
+    
+    @FXML
+    private TextField codigo;
+    
     @FXML
     private TextField quantidade;
 
@@ -93,10 +90,8 @@ public class VendaController implements Initializable {
     private Label descricao;
     @FXML
     private Label total;
-    @FXML
-    private Label hora;
 
-    Timeline delayTimeline;
+    static Timeline delayTimeline;
 
     public VendaController() {
         f = Facede.getInstance();
@@ -109,8 +104,8 @@ public class VendaController implements Initializable {
         qtCol.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
         produtoCol.setCellValueFactory(new PropertyValueFactory<>("DescricaoProduto"));
 
-        JavaFXUtil.colunValueModedaFormat(valorCol);
-        JavaFXUtil.colunValueModedaFormat(totalCol);
+        JavaFXUtil.colunValueMoedaFormat(valorCol);
+        JavaFXUtil.colunValueMoedaFormat(totalCol);
         JavaFXUtil.colunValueQuantidadeFormat(qtCol);
 
         MaskFieldUtil.quantityField(quantidade);
@@ -122,13 +117,11 @@ public class VendaController implements Initializable {
         List<String> list = f.buscarDescricaoEPrecoProdutos();
 
         MaskFieldUtil.upperCase(codigo);
-        codigo.lengthProperty().addListener((observableValue, number, number2) -> {
-            if (number2.intValue() - number.intValue() > 4) {
-                enterKey(null);
-            }
-        });
-
-        codigo.setList(list);
+        
+        nomeComplet.setList(list);
+        nomeComplet.setVisible(false);
+        nomeComplet.setDisable(true);
+        MaskFieldUtil.upperCase(nomeComplet);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -136,9 +129,6 @@ public class VendaController implements Initializable {
                 codigo.selectAll();
             }
         });
-
-        hora();
-
         codigo.addEventFilter(KeyEvent.ANY, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -147,6 +137,7 @@ public class VendaController implements Initializable {
                 }
             }
         });
+        
 
     }
 
@@ -190,14 +181,19 @@ public class VendaController implements Initializable {
         if (txt.isEmpty()) {
             return;
         }
+        
         try {
-            Produto p = f.buscarProdutoPorDescricaoOuCodigo(txt.replace(" R$ ", ";").split(";")[0]);
+            Produto p = f.buscarProdutoPorCodigo(txt);
+            
             double qt = OperacaoStringUtil.converterStringValor(quantidade.getText());
             inserirItemDeVenda(p, qt);
+            nomeComplet.setDisable(true);
+            nomeComplet.setVisible(false);
             return;
         } catch (NoResultException | NonUniqueResultException ne) {
             if (txt.startsWith("2") && txt.length() == 13) {
-                String vTotal = txt.substring(8, 10) + "."
+                //2023000 162,69 9
+                String vTotal = txt.substring(7, 10) + "."
                         + txt.substring(10, 12);
                 String nCodigo = txt.substring(0, 7);
                 double t = 0;
@@ -227,6 +223,35 @@ public class VendaController implements Initializable {
         }
     }
     
+    @FXML
+    void enterKeyNome(ActionEvent ev) {
+        String txt = nomeComplet.getText();
+        if (txt.isEmpty()) {
+            return;
+        }
+        
+        try {
+            Produto p = f.buscarProdutoPorDescricao(txt.replace(" R$ ", ";").split(";")[0]);
+            double qt = OperacaoStringUtil.converterStringValor(quantidade.getText());
+            inserirItemDeVenda(p, qt);
+            codigo.requestFocus();
+            codigo.selectAll();
+            nomeComplet.setText("");
+            nomeComplet.setVisible(false);
+            nomeComplet.setDisable(true);
+            return;
+        } catch (NoResultException | NonUniqueResultException ne) {
+            nomeComplet.requestFocus();
+            nomeComplet.selectAll();
+            Dialogs.create()
+                    .title("Produto inválido")
+                    .masthead("Produto não cadastrado")
+                    .message(txt)
+                    .showError();
+        }
+    }
+    
+    
      private void inserirItemDeVenda(Produto p, double qt) {
             if (qt <= 0) {
                 Dialogs.create()
@@ -243,7 +268,13 @@ public class VendaController implements Initializable {
             it.setQuantidade(qt);
             try {
                 f.addItemAVenda(it);
-                preencherInformacoes();
+                
+                atual = f.getVendaAtual();
+                observableList.add(0, it);
+                configurarColunaEditar();
+                descricao.setText(descricaoItem(it));
+                total.setText(OperacaoStringUtil.formatarStringValorMoeda(atual.getTotal()));
+                
                 quantidade.setText("1");
                 codigo.setText("");
                 codigo.requestFocus();
@@ -257,7 +288,7 @@ public class VendaController implements Initializable {
     // tentar com todos os eventos em vez do relanssed coloca o pressed e o tiped
     @FXML
     void codigoDigitado(KeyEvent event) {
-        if (event.getText().contains("*")) {
+        if (codigo.getText().contains("*")) {
             double qt = 0;
             try {
                 qt = OperacaoStringUtil.converterStringValor(codigo.getText().replace("*", ""));
@@ -280,28 +311,23 @@ public class VendaController implements Initializable {
             }
         } else {
             try {
-                Integer.valueOf(event.getText());
+                Integer.valueOf(codigo.getText());
                 //se so tiver numero, pode ser um codigo
                 //agora busca os produtos que iniciam com esse codigo
                 //se tiver mais de um, nao foi enter
                 //se tiver so um, e o codigo for identico ao digitado, foi digitado enter
             } catch (NumberFormatException ne) {
+                if(codigo.getText() != null && !codigo.getText().isEmpty() && !codigo.getText().replace(",", "").replace(".", "").replaceAll("\\d", "").isEmpty()){
+                    nomeComplet.setVisible(true);
+                    nomeComplet.setDisable(false);
+                    nomeComplet.setText(codigo.getText().trim());
+
+                    codigo.setText("");
+                    nomeComplet.requestFocus();
+                    nomeComplet.positionCaret(nomeComplet.getText().length());
+                }
             }
         }
-    }
-
-    private void hora() {
-        delayTimeline = new Timeline();
-        delayTimeline.setCycleCount(Timeline.INDEFINITE);
-        delayTimeline.getKeyFrames().add(
-                new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        hora.setText(OperacaoStringUtil.formatHoraMinutoSegunda(Calendar.getInstance()));
-                    }
-                })
-        );
-        delayTimeline.play();
     }
 
     public void adicionarTeclaDeAtalho(KeyCode tecla, String tela, Scene scene) {
@@ -314,7 +340,9 @@ public class VendaController implements Initializable {
 
     public void preencherInformacoes() {
         atual = f.getVendaAtual();
-        observableList = FXCollections.observableList(getItensDaVenda());
+        //observableList = FXCollections.observableList(getItensDaVenda());
+        observableList = FXCollections.observableList(atual.getItensDeVenda());
+        Collections.reverse(observableList);
         itens.setItems(observableList);
         configurarColunaEditar();
         ItemDeVenda ult = getUltimoItemVendido();

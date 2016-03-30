@@ -7,7 +7,6 @@ package com.cs.ui.controller;
 
 import com.cs.ControllerTelas;
 import com.cs.Facede;
-import com.cs.sis.model.pessoas.Cliente;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.ui.controller.dialog.DialogController;

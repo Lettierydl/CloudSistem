@@ -1,7 +1,10 @@
 package com.cs.sis.controller;
 
 import com.cs.sis.model.estoque.Produto;
+import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
+import com.cs.sis.model.pessoas.exception.ProdutoABaixoDoEstoqueException;
+import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
@@ -61,8 +64,22 @@ public class ControllerEstoque extends ControllerEntity<Produto> {
         }
     }    
     
+    public double retirarItensDoEstoque(List<ItemDeVenda> list) throws EntidadeNaoExistenteException{
+        double valor = 0;
+        for (ItemDeVenda it : list) {
+            try {
+                valor += it.getTotal();
+                it.getProduto().removerQuantidadeDeEstoque(it.getQuantidade());
+            } catch (ProdutoABaixoDoEstoqueException e) {
+                // colocar alguma mensagem no relatorio do final do dia
+            } finally {
+                edit(it.getProduto());
+            }
+
+        }
+        return valor;
+    }
     
-  
     //metodos para testes
     @Override
     public void removeAll(Class t){

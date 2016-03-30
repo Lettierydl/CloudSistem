@@ -30,24 +30,37 @@ public class ControllerImpressora {
 
     public static void carregarDLL() {
         try {
+            System.out.println("Carregando dll..");
             System.loadLibrary("DarumaFramework");
+            System.out.println("DLL carregada!!!");
+            System.out.println("Comunicacao com Impressora:" + ECF.eBuscarPortaVelocidade());
             return;
-        } catch (Exception e) {
-            System.err.println("Impressora não conetada");
+        } catch (Exception | Error e) {
+            System.out.println("Impressora não conetada");
         }
         String userdir = System.getProperty("user.dir");
         String separator = System.getProperty("file.separator");
         try{
+            System.out.println("Carregando DLL de: "+ userdir + separator + "DarumaFrameWork.dll");
             System.load(userdir + separator + "DarumaFrameWork.dll");
             return;
-        }catch(Exception e){
-            System.err.println("Impressora não conetada");
+        }catch(Exception | Error  e){
+            System.out.println("Impressora não conetada");
         }
         
         try{
             System.load(userdir+".jar" + separator + "DarumaFrameWork.dll");
             return;
-        }catch(Exception e){
+        }catch(Exception | Error e){
+            System.out.println("Impressora não conetada");
+        }
+        
+        try{
+            System.out.println("Carregando DLL de: "+ userdir+ separator +"CloudSistem" + separator + "DarumaFrameWork.dll");
+            
+            System.load(userdir+ separator +"CloudSistem" + separator + "DarumaFrameWork.dll");
+            return;
+        }catch(Exception | Error e){
             System.err.println("Impressora não conetada");
         }
         
@@ -56,19 +69,33 @@ public class ControllerImpressora {
         //System.out.println("Comunicacao com Impressora:" + ECF.eBuscarPortaVelocidade_ECF_Daruma());
     }
 
+    public int retornoECF(){
+        carregarDLL();
+        try {
+            return ECF.eBuscarPortaVelocidade_ECF_Daruma();
+        }catch(Error | Exception e){
+            return -1;
+        }
+    }
+    
     public boolean imprimirVenda(Venda v) {
         carregarDLL();
 
         FindFuncionario ffunc = new FindFuncionario();
         FindCliente fcli = new FindCliente();
-
+        
+        try {
+            ECF.iRGAbrirPadrao_ECF_Daruma();
+        }catch(Error | Exception e){
+            System.out.println("Não abriu Relatorio Gerencial");
+        }
+        
+        
         int iRGImprimirTexto = 0;
         try {
-            carregarDLL();
-        } catch (Error | Exception e) {
-        }
-        try {
-
+            ECF.iRGAbrirPadrao_ECF_Daruma();
+            
+            
             String texto = " Data/Hora: "
                     + new SimpleDateFormat("dd/MM/yyyy  HH:mm:ss").format(v
                             .getDia().getTime()) + "  \n"
@@ -217,6 +244,7 @@ public class ControllerImpressora {
 
             texto += " ---------------------------------------------- \n";
             //System.out.println(texto);
+            e.printStackTrace();
             return false;
         }
         if (1 == iRGImprimirTexto) {

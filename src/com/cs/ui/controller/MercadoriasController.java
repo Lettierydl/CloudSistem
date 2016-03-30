@@ -203,7 +203,7 @@ public class MercadoriasController implements Initializable {
         produtoCol.setCellValueFactory(new PropertyValueFactory<>("DescricaoProduto"));
 
         JavaFXUtil.colunValueQuantidadeFormat(saidaCol);
-        JavaFXUtil.colunValueModedaFormat(valCol);
+        JavaFXUtil.colunValueMoedaFormat(valCol);
         JavaFXUtil.colunValueQuantidadeFormat(estoqueCol);
 
         MaskFieldUtil.quantityField(quantidade);
