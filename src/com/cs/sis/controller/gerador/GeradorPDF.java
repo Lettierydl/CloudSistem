@@ -173,7 +173,7 @@ public class GeradorPDF {
         table.getDefaultCell().setBackgroundColor(null);
 
         for (ItemDeVenda it : itens) {
-            table.addCell(it.getProduto().getDescricao());
+            table.addCell(it.getDescricaoProduto());
 
             table.addCell(new DecimalFormat("0.000").format(it.getQuantidade()));
             table.addCell(new DecimalFormat("0.00").format(it.getValorProduto()));

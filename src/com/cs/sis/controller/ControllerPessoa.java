@@ -59,7 +59,7 @@ public class ControllerPessoa extends ControllerEntity<Pessoa> {
                 throw new EntidadeNaoExistenteException("O cliente "
                         + cliente.getNome() + " não existe.");
             }
-            em.remove(cliente);
+            em.remove(em.getReference(cliente.getClass(), cliente.getId()));
             commitTransaction();
         } finally {
             closeEntityManager();

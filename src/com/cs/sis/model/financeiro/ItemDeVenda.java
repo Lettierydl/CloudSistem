@@ -98,7 +98,7 @@ public class ItemDeVenda implements Comparable<ItemDeVenda> {
 
     /**
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(updatable = true)
     private Produto produto;
 
@@ -163,7 +163,11 @@ public class ItemDeVenda implements Comparable<ItemDeVenda> {
     }
 
     public String getDescricaoProduto(){
-        return getProduto().getDescricao();
+        try{
+            return getProduto().getDescricao();
+        }catch(NullPointerException ne){
+            return "PRODUTO EXCLUIDO";
+        }
     }
     
     public double getTotalComDesconto() {

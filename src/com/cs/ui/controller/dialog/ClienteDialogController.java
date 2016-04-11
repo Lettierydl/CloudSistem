@@ -5,13 +5,17 @@ package com.cs.ui.controller.dialog;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.cs.sis.model.financeiro.Pagamento;
+import com.cs.sis.model.financeiro.Pagavel;
 import com.cs.sis.model.pessoas.Cliente;
+import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
 import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import org.controlsfx.dialog.Dialogs;
 import com.cs.sis.util.OperacaoStringUtil;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +26,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
+import org.controlsfx.dialog.DialogStyle;
 
 /**
  * FXML Controller class
@@ -254,6 +261,58 @@ public class ClienteDialogController extends DialogController<Cliente> {
                 cancelButton.setVisible(false);
                 break;
         }
+    }
+    
+    @FXML
+    public void excluirClicado(){
+        
+        Dialogs dialog = Dialogs.create().title("Excluir cliente")
+                .masthead("Tem certeza que deseja excluir todas as informações do cliente "+entity.getNome()+"?")
+                .message("Todas as vendas e pagamentos desse cliente serão apagadas\n"
+                        + "Essa operação não pode ser revertida!");
+        dialog.actions(Dialog.Actions.CANCEL, Dialog.Actions.YES);
+        dialog.style(DialogStyle.UNDECORATED);
+        Action act = dialog.showError();
+        if(act.equals(Dialog.Actions.CANCEL)){
+            return;
+        }
+        
+        try {
+            List<Pagavel> buscarPagaveisDoCliente = f.buscarPagaveisDoCliente(entity);
+            for(Pagavel p: buscarPagaveisDoCliente){
+                f.removerPagavel(p);
+            }
+            
+            List<Pagamento> listaPagamentoDoCliente = f.getListaPagamentoDoCliente(entity);
+            for(Pagamento p: listaPagamentoDoCliente){
+                f.removerPagamento(p);
+            }
+            f.removerCliente(entity);
+        } catch (EntidadeNaoExistenteException ex) {
+            Logger.getLogger(ClienteDialogController.class.getName()).log(Level.SEVERE, null, ex);
+            dialog = Dialogs.create().title("Erro na operação")
+                .masthead("Erro na operação de exclusão");
+            dialog.style(DialogStyle.UNDECORATED);
+            dialog.showError();
+            return;
+        } catch (FuncionarioNaoAutorizadoException ex) {
+            dialog = Dialogs.create().title("Funcionário não autorizado")
+                .masthead("Funcionário não autorizado")
+                .message("Por favor, entre com um funcionário autorizado para esta operação!");
+            dialog.style(DialogStyle.UNDECORATED);
+            dialog.showError();
+            return;
+        }catch(Exception ee){
+            ee.printStackTrace();
+            Dialogs.create().showException(ee);
+            return;
+        }
+        dialog = Dialogs.create().title("Cliente excuido")
+                .masthead("Cliente excuido com sucesso!")
+                .message("Cadastro do cliente "+entity.getNome()+ " excuido com sucesso!");
+            dialog.style(DialogStyle.UNDECORATED);
+            dialog.showError();
+        this.cancelarClicado();
     }
 
     @Override

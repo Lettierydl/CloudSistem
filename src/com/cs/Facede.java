@@ -84,7 +84,8 @@ public class Facede {
         pes.create(c);
     }
 
-    public void removerCliente(Cliente c) throws EntidadeNaoExistenteException {
+    public void removerCliente(Cliente c) throws EntidadeNaoExistenteException, FuncionarioNaoAutorizadoException {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.REMOVER_CLIENTES);
         pes.destroy(c);
     }
 
@@ -203,7 +204,8 @@ public class Facede {
         est.create(p);
     }
 
-    public void removerProduto(Produto p) throws EntidadeNaoExistenteException {
+    public void removerProduto(Produto p) throws EntidadeNaoExistenteException, FuncionarioNaoAutorizadoException {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.REMOVER_PRODUTOS);
         est.destroy(p);
     }
 
@@ -333,6 +335,18 @@ public class Facede {
         vend.removerItem(it);
     }
 
+    public void removerPagavel(Pagavel v) throws EntidadeNaoExistenteException, Exception {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.REMOVER_PAGAVEIS);
+        vend.destroy(v);
+    }
+
+    
+    public void removerPagamento(Pagamento p) throws EntidadeNaoExistenteException, Exception {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.REMOVER_PAGAMENTOS);
+        pagam.destroy(p);
+    }
+
+    
     public void refreshValorDeVendaAtual() throws EntidadeNaoExistenteException, Exception {
         vend.refreshValorVendaAtual();
     }
@@ -389,6 +403,8 @@ public class Facede {
                 c.acrecentarDebito(deb);
                 pes.edit(c);
                 if (this.buscarClientePorId(c.getId()).getDebito() != oud_deb + deb) {
+                    System.out.println("oud_deb: " + oud_deb+" + deb: " + deb + " = new: "+oud_deb + deb);
+                    System.out.println("New: " + this.buscarClientePorId(c.getId()).getDebito());
                     throw new ParametrosInvalidosException("Falha na conexão com o banco de dados \nDebito não atualizado!");
                 }
             } catch (Exception e) {// ver se esse codigo ta complicando, se tiver excue
@@ -524,6 +540,10 @@ public class Facede {
 
     public List<Pagavel> buscarPagaveisDoCliente(Cliente cliente, Date diaInicio, Date diaFim) {
         return FindVenda.pagavelCliente(cliente, diaInicio, diaFim);
+    }
+    
+    public List<Pagavel> buscarPagaveisDoCliente(Cliente cliente) {
+        return FindVenda.pagavelCliente(cliente);
     }
 
     public List<Pagavel> buscarPagaveisNaoPagosDosClientes(List<Cliente> clientes) {

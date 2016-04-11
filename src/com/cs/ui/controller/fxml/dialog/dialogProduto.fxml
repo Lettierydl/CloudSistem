@@ -79,6 +79,14 @@
     </VBox>
     <HBox maxHeight="-Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" GridPane.rowIndex="2">
       <children>
+            <Button fx:id="excuirButton" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#excluirClicado" text="Excluir" textFill="RED">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Excluir cadastro do produto" />
+               </tooltip>
+            </Button>
         <HBox fx:id="actionParent" alignment="CENTER">
           <HBox.margin>
             <Insets />

@@ -19,6 +19,12 @@ public class PermissaoFuncionario {
 	public static final String CADASTRAR_FUNCIONARIO = "CADASTRAR_FUNCIONARIO";
 	public static final String CADASTRAR_PRODUTO = "CADASTRAR_PRODUTO";
 	public static final String CADASTRAR_CLIENTES = "CADASTRAR_CLIENTES";
+        
+        public static final String REMOVER_CLIENTES = "REMOVER_CLIENTES";
+        public static final String REMOVER_PAGAVEIS = "REMOVER_PAGAVEIS";
+        public static final String REMOVER_PAGAMENTOS = "REMOVER_PAGAMENTOS";
+        public static final String REMOVER_PRODUTOS = "REMOVER_PRODUTOS";
+        
 
 	public static final String GERAR_RELATORIOS = "GERAR_RELATORIOS";
 	
@@ -78,6 +84,11 @@ public class PermissaoFuncionario {
 		
 		getControllerConfiguracao().putValor(GERAR_RELATORIOS, true, TipoDeFuncionario.Supervisor);
 		getControllerConfiguracao().putValor(GERAR_RELATORIOS, true, TipoDeFuncionario.Gerente);
+                
+                getControllerConfiguracao().putValor(REMOVER_CLIENTES, true, TipoDeFuncionario.Gerente);
+                getControllerConfiguracao().putValor(REMOVER_PAGAMENTOS, true, TipoDeFuncionario.Gerente);
+                getControllerConfiguracao().putValor(REMOVER_PAGAVEIS, true, TipoDeFuncionario.Gerente);
+                getControllerConfiguracao().putValor(REMOVER_PRODUTOS, true, TipoDeFuncionario.Gerente);
 		
 		
 	}

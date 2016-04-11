@@ -8,6 +8,7 @@ package com.cs.ui.controller.dialog;
 import com.cs.sis.model.estoque.CategoriaProduto;
 import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.estoque.UnidadeProduto;
+import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
 import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
@@ -24,6 +25,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
+import org.controlsfx.dialog.DialogStyle;
 
 /**
  * FXML Controller class
@@ -277,6 +281,49 @@ public class EstoqueDialogController extends DialogController<Produto> {
         }
     }
 
+    @FXML      
+    public void excluirClicado(){
+        
+        Dialogs dialog = Dialogs.create().title("Excluir Produto")
+                .masthead("Tem certeza que deseja excluir o produto "+entity.getDescricao()+" do sistema?")
+                .message("O produto será retirado de todo o histórico de vendas e balanços do sistema\n"
+                        + "Essa operação não pode ser revertida!");
+        dialog.actions(Dialog.Actions.CANCEL, Dialog.Actions.YES);
+        dialog.style(DialogStyle.UNDECORATED);
+        Action act = dialog.showError();
+        if(act.equals(Dialog.Actions.CANCEL)){
+            return;
+        }
+        
+        try {
+            f.removerProduto(entity);
+        } catch (EntidadeNaoExistenteException ex) {
+            Logger.getLogger(EstoqueDialogController.class.getName()).log(Level.SEVERE, null, ex);
+            dialog = Dialogs.create().title("Erro na operação")
+                .masthead("Erro na operação de excuisão");
+            dialog.style(DialogStyle.UNDECORATED);
+            dialog.showError();
+            return;
+        } catch (FuncionarioNaoAutorizadoException ex) {
+            dialog = Dialogs.create().title("Funcionário não autorizado")
+                .masthead("Funcionário não autorizado")
+                .message("Por favor, entre com um funcionário autorizado para esta operação!");
+            dialog.style(DialogStyle.UNDECORATED);
+            dialog.showError();
+            return;
+        }catch(Exception ee){
+            ee.printStackTrace();
+            Dialogs.create().showException(ee);
+            return;
+        }
+        dialog = Dialogs.create().title("Produto excuido")
+                .masthead("Produto excuido com sucesso!")
+                .message("Cadastro do produto "+entity.getDescricao()+ " excuido com sucesso!");
+            dialog.style(DialogStyle.UNDECORATED);
+            dialog.showError();
+        this.cancelarClicado();
+    }
+    
     @Override
     public String getTitulo() {
         switch (tipe) {

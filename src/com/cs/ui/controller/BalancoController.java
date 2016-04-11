@@ -3,14 +3,13 @@ package com.cs.ui.controller;
 import com.cs.Facede;
 import com.cs.sis.model.financeiro.Pagamento;
 import com.cs.sis.model.financeiro.Pagavel;
-import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.Cliente;
 import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
 import java.io.File;
-import java.io.IOException;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.control.DatePicker;
@@ -21,7 +20,6 @@ import javafx.scene.control.TableView;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -29,9 +27,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -100,7 +95,7 @@ public class BalancoController implements Initializable {
     @FXML
     private DatePicker hAte;
     @FXML
-    private TextField hNome;
+    private AutoCompleteTextField hNome;
 
     /*Geral*/
     @FXML
@@ -122,7 +117,7 @@ public class BalancoController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // colocar a list de nomes dos clientes 
+        hNome.setList(f.buscarNomeClientePorNomeQueInicia(""));
 
         colDataH.setCellValueFactory(new PropertyValueFactory<>("dia"));
         colTotalH.setCellValueFactory(new PropertyValueFactory<>("total"));

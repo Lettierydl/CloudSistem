@@ -57,7 +57,7 @@ public class ControllerEstoque extends ControllerEntity<Produto> {
             } catch (EntityNotFoundException enfe) {
             	throw new EntidadeNaoExistenteException("O produto com código de barras " + produto.getCodigoDeBarras() + " não existe.");
             }
-            em.remove(produto);
+            em.remove(em.getReference(Produto.class, produto.getId()));
             commitTransaction();
         } finally {
             closeEntityManager();

@@ -64,12 +64,15 @@
     </VBox>
     <HBox maxHeight="-Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" GridPane.rowIndex="2">
       <children>
-        <HBox fx:id="actionParent" alignment="CENTER">
-          <HBox.margin>
-            <Insets />
-          </HBox.margin>
-        </HBox>
-        <Pane maxWidth="+Infinity" HBox.hgrow="ALWAYS" />
+            <Button fx:id="excluirButton" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#excluirClicado" text="Excluir" textFill="RED">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Excluir dados do cliente do sistema" />
+               </tooltip>
+            </Button>
+        <Pane maxWidth="+Infinity" prefHeight="31.0" prefWidth="384.0" HBox.hgrow="ALWAYS" />
         <Button fx:id="cancelButton" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#cancelarClicado" text="Cancel" HBox.hgrow="NEVER">
           <HBox.margin>
             <Insets />

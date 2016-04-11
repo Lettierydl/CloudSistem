@@ -193,6 +193,20 @@ public class FindVenda extends FindEntity {
 
         return vendas;
     }
+    
+    public static List<Venda> vendasDoCliente(Cliente cliente) {
+
+        String stringQuery = "select v FROM Venda as v ";
+        stringQuery += "WHERE v.cliente = :cli order by v.dia , v.total DESC";
+
+        Query query = getEntityManager().createQuery(stringQuery, Venda.class);
+        query.setParameter("cli", cliente);
+
+        @SuppressWarnings("unchecked")
+        List<Venda> vendas = (List<Venda>) query.getResultList();
+
+        return vendas;
+    }
 
     public static List<Venda> vendasNaoPagasDosClientes(List<Cliente> clientes) {
         String stringQuery = "select v FROM Venda as v ";
@@ -245,6 +259,13 @@ public class FindVenda extends FindEntity {
         List<Pagavel> pag = new ArrayList<Pagavel>();
         pag.addAll(vendasDoCliente(cliente, diaInicio, diaFim));
         pag.addAll(dividasDoCliente(cliente, diaInicio, diaFim));
+        return pag;
+    }
+    
+    public static List<Pagavel> pagavelCliente(Cliente cliente) {
+        List<Pagavel> pag = new ArrayList<Pagavel>();
+        pag.addAll(vendasDoCliente(cliente));
+        pag.addAll(dividasDoCliente(cliente));
         return pag;
     }
 
@@ -330,6 +351,21 @@ public class FindVenda extends FindEntity {
         query.setParameter("cli", cliente);
         query.setParameter("diaInicio", di);
         query.setParameter("diaFim", df);
+
+        @SuppressWarnings("unchecked")
+        List<Divida> dividas = (List<Divida>) query.getResultList();
+
+        return dividas;
+    }
+
+    
+    public static List<Divida> dividasDoCliente(Cliente cliente) {
+
+        String stringQuery = "select d FROM Divida as d ";
+        stringQuery += "WHERE d.cliente  = :cli order by d.dia, d.total DESC";
+
+        Query query = getEntityManager().createQuery(stringQuery, Divida.class);
+        query.setParameter("cli", cliente);
 
         @SuppressWarnings("unchecked")
         List<Divida> dividas = (List<Divida>) query.getResultList();

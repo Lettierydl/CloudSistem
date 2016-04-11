@@ -58,7 +58,7 @@ public class ControllerPagamento extends ControllerEntity<Pagamento> {
                         "O Pagamento com código " + pagamento.getId()
                         + " não existe.");
             }
-            em.remove(pagamento);
+            em.remove(em.getReference(pagamento.getClass(), pagamento.getId()));
             commitTransaction();
         } finally {
             closeEntityManager();

@@ -115,16 +115,16 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         }
     }
 
-    public void destroy(Venda Venda) throws EntidadeNaoExistenteException {
+    public void destroy(Venda venda) throws EntidadeNaoExistenteException {
         try {
             beginTransaction();
             try {
-                refresh(Venda);
+                refresh(venda);
             } catch (EntityNotFoundException enfe) {
                 throw new EntidadeNaoExistenteException("A Venda com código "
-                        + Venda.getId() + " não existe.");
+                        + venda.getId() + " não existe.");
             }
-            em.remove(Venda);
+            em.remove(em.getReference(venda.getClass(), venda.getId()));
             commitTransaction();
         } finally {
             closeEntityManager();
@@ -141,7 +141,7 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
                         + divida.getId() + " não existe.");
             }
 
-            em.remove(divida);
+            em.remove(em.getReference(divida.getClass(), divida.getId()));
             commitTransaction();
         } finally {
             closeEntityManager();
@@ -426,6 +426,18 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         refreshAtual();
         atual.removeItemDeVendaJaDeletado(it);
         edit(atual);
+
+    }
+    
+    
+     public void removerVenda(Pagavel p)
+            throws EntidadeNaoExistenteException, Exception {
+
+        try {
+            destroy(p);
+        } catch (Exception e) {
+            throw e;
+        }
 
     }
 

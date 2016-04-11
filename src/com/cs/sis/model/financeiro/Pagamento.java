@@ -9,6 +9,7 @@ import com.cs.sis.model.pessoas.Cliente;
 import com.cs.sis.model.pessoas.Funcionario;
 import java.util.Calendar;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

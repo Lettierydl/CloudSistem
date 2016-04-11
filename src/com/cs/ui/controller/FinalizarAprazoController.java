@@ -21,6 +21,8 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -96,6 +98,12 @@ public class FinalizarAprazoController implements Initializable {
     private boolean finalizando = false;
     @FXML
     public void finalizar(ActionEvent event) {
+        if(finalizarButton.isDisable()){
+            return;
+        }
+        finalizarButton.setDisable(true);
+        finalizarButton.setText("Finalizando...");
+        
         Venda atual = f.getVendaAtual();
         if (atual.getTotal() <= 0) {
             Dialogs.create()
@@ -141,6 +149,8 @@ public class FinalizarAprazoController implements Initializable {
             }catch(ParametrosInvalidosException pe){
                 pe.printStackTrace();
             }
+            atual.setObservacao(observacao.getText());
+            atual.setCliente(c);
             if (imprimir.isSelected() && !f.imprimirVenda(atual)) {
                 Dialogs dialog = Dialogs.create()
                         .title("Impressora não conectada")
