@@ -5,15 +5,25 @@ package com.cs.ui.controller;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.cs.ControllerTelas;
 import com.cs.sis.model.pessoas.Cliente;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import com.cs.ui.controller.dialog.DialogController;
+import com.cs.ui.controller.dialog.ProgressDialogController;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class

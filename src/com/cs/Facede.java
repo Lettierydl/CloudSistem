@@ -403,7 +403,7 @@ public class Facede {
                 c.acrecentarDebito(deb);
                 pes.edit(c);
                 if (this.buscarClientePorId(c.getId()).getDebito() != oud_deb + deb) {
-                    System.out.println("oud_deb: " + oud_deb+" + deb: " + deb + " = new: "+oud_deb + deb);
+                    System.out.println("oud_deb: " + oud_deb+" + deb: " + deb + " = new: "+ (oud_deb + deb) );
                     System.out.println("New: " + this.buscarClientePorId(c.getId()).getDebito());
                     throw new ParametrosInvalidosException("Falha na conexão com o banco de dados \nDebito não atualizado!");
                 }

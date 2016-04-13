@@ -10,7 +10,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="CloudSistem.jar" size="1385004" download="eager" />
+    <jar href="CloudSistem.jar" size="1390060" download="eager" />
     <jar href="lib/Bematech.jar" size="5396" download="eager" />
     <jar href="lib/DarumaFrameworkJNA.jar" size="25569" download="eager" />
     <jar href="lib/controlsfx-8.0.6_20.jar" size="856539" download="eager" />

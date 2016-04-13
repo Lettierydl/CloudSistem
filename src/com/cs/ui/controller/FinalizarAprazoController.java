@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -103,6 +104,11 @@ public class FinalizarAprazoController implements Initializable {
         }
         finalizarButton.setDisable(true);
         finalizarButton.setText("Finalizando...");
+        Platform.runLater(() -> {
+            finalizarButton.setDisable(true);
+            finalizarButton.setText("Finalizando...");
+        });
+        
         
         Venda atual = f.getVendaAtual();
         if (atual.getTotal() <= 0) {
@@ -134,6 +140,8 @@ public class FinalizarAprazoController implements Initializable {
                     .showError();
             return;
         }
+        
+        
         
         double debito = 0;
         try {
