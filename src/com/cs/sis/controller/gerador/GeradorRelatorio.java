@@ -4,6 +4,7 @@ import com.cs.sis.controller.Gerador;
 import com.cs.sis.model.financeiro.FormaDePagamento;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.Cliente;
+import com.cs.sis.util.OperacaoStringUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -265,17 +266,22 @@ public class GeradorRelatorio extends Gerador {
         di.set(Calendar.MINUTE, 0);
         di.set(Calendar.SECOND, 00);
 
+        
+        
         Calendar df = Calendar.getInstance();
 
+        System.err.print(OperacaoStringUtil.formatDataValor(di));
+        System.err.println(" - " + OperacaoStringUtil.formatDataValor(df));
+        
         String stringQuery = "select sum(r.qt) from ("
                 + "select DISTINCT it.id, it.quantidade as qt from item_de_venda as it, venda as v "
                 + "where it.produto_id = ? and "
                 + "v.dia between ? and ?) as r;";
         
         Query query = getEntityManager().createNativeQuery(stringQuery);
+        query.setParameter(1, idProduto);
         query.setParameter(2, di);
         query.setParameter(3, df);
-        query.setParameter(1, idProduto);
 
         try {
             double o = (double) query.getSingleResult();

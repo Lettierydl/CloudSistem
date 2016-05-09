@@ -12,6 +12,7 @@ import com.cs.sis.model.financeiro.Pagamento;
 import com.cs.sis.model.financeiro.Pagavel;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.Cliente;
+import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
 import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
@@ -19,14 +20,17 @@ import com.cs.sis.util.OperacaoStringUtil;
 import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import com.cs.ui.controller.dialog.DialogController;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
@@ -112,6 +116,49 @@ public class PagamentoController implements Initializable {
         iniciarPageDivida();
         iniciarPageVenda();
         JavaFXUtil.beginFoccusTextField(nomeP);
+
+        nomeP.addEventHandler(KeyEvent.KEY_RELEASED, (KeyEvent t) -> {
+            if (t.getCode() == KeyCode.F5) {
+                try {
+                    Cliente c = f.buscarClientePorNome(nomeP.getText());
+                } catch (Exception e) {
+                    return;
+                }
+                atualizarDebitoCliente();
+            }
+        });
+    }
+
+    public void atualizarDebitoCliente() {
+        try {
+            Cliente c = f.buscarClientePorNome(nomeP.getText());
+            double oud_debito = c.getDebito();
+            double new_debito = f.recalcularDebitoDoCliente(f.buscarClientePorNome(nomeP.getText()));
+            if (oud_debito != new_debito) {
+                Dialogs di = Dialogs.create()
+                        .title("Débito atualizado")
+                        .masthead("Débito do cliente atualizado com sucesso")
+                        .actions(Dialog.Actions.YES);
+                di.style(DialogStyle.UNDECORATED);
+                di.showWarning();
+            } else {
+                Dialogs di = Dialogs.create()
+                        .title("Débito já atualizado")
+                        .masthead("Débito do cliente já esta atualizado")
+                        .actions(Dialog.Actions.YES);
+                di.style(DialogStyle.UNDECORATED);
+                di.showInformation();
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(PagamentoController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            f.atualizarStatusPagaveis(f.buscarClientePorNome(nomeP.getText()));
+        } catch (EntidadeNaoExistenteException ex) {
+            Logger.getLogger(PagamentoController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     private void iniciarPagePagamento() {
@@ -506,7 +553,7 @@ public class PagamentoController implements Initializable {
     private DatePicker dataV;
     @FXML
     private TableView<Venda> vendasAVista;
-    
+
     @FXML
     private TableColumn colDataV;
     @FXML
@@ -536,25 +583,25 @@ public class PagamentoController implements Initializable {
         } catch (Exception e) {
         }
     }
-    
+
     @FXML
-    private void dataDigitada(ActionEvent event){
+    private void dataDigitada(ActionEvent event) {
         try {
             Calendar dia = OperacaoStringUtil.converterDataValor(dataV.getEditor().getText());
             atualizarListaVendasAVista();
         } catch (Exception e) {
         }
     }
-    
+
     @FXML
-    private void dataDigitadaPress(KeyEvent event){
+    private void dataDigitadaPress(KeyEvent event) {
         try {
             Calendar dia = OperacaoStringUtil.converterDataValor(dataV.getEditor().getText());
             atualizarListaVendasAVista();
         } catch (Exception e) {
         }
     }
-    
+
     private void iniciarTabelaVendasAVista() {
         colValorV.setCellValueFactory(new PropertyValueFactory<>("total"));
         colItensV.setCellValueFactory(new PropertyValueFactory<Venda, Integer>("quantidadeDeItens"));

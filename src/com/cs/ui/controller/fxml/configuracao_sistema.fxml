@@ -179,6 +179,39 @@
                         </AnchorPane>
                      </content>
                   </Tab>
+                  <Tab text="Permissão dos Funcionários">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <GridPane layoutX="50.0" layoutY="51.0" prefHeight="308.0" prefWidth="690.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Permissão:" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tipo de Funcionário:" GridPane.columnIndex="2" />
+                                    <ComboBox fx:id="box_permicoes" onAction="#atualizarStatusPermicao" prefHeight="27.0" prefWidth="275.0" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="box_tiposFunc" onAction="#atualizarStatusPermicao" prefHeight="27.0" prefWidth="275.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <CheckBox fx:id="autorizado" mnemonicParsing="false" text="autorizado" GridPane.rowIndex="2" />
+                                    <Button mnemonicParsing="false" onAction="#salvarStatusPermicao" text="Salvar" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <tooltip>
+                                          <Tooltip text="Salvar Alterações nas Permissões" />
+                                       </tooltip>
+                                    </Button>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="309.2068786621094" minWidth="10.0" prefWidth="295.8525390625" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="223.92984008789062" minWidth="0.0" prefWidth="74.1474609375" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="415.74652099609375" minWidth="10.0" prefWidth="320.44598388671875" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints maxHeight="62.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="99.0" minHeight="0.0" prefHeight="48.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="233.0" minHeight="10.0" prefHeight="230.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                              <Label fx:id="flag1" layoutX="50.0" layoutY="21.0" text="Registrado" textFill="#00ee00" visible="false" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
               </tabs>
             </TabPane>
          </children>

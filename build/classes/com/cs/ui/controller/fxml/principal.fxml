@@ -235,6 +235,7 @@
                               </Button>
                           </children>
                       </GridPane>
+                  <Label fx:id="version_system" layoutX="969.0" layoutY="441.0" text="2.0.0" textFill="#0000009a" />
                </children>
             </Pane>
          </children>

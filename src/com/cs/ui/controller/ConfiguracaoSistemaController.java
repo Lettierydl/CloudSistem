@@ -8,7 +8,10 @@ package com.cs.ui.controller;
 import com.cs.ControllerTelas;
 import com.cs.Facede;
 import com.cs.Main;
+import com.cs.sis.controller.configuracao.PermissaoFuncionario;
 import com.cs.sis.model.pessoas.Funcionario;
+import com.cs.sis.model.pessoas.TipoDeFuncionario;
+import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.util.Arquivo;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
@@ -17,11 +20,14 @@ import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import com.cs.ui.controller.dialog.DialogController;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -129,6 +135,13 @@ public class ConfiguracaoSistemaController implements Initializable {
     
     @FXML
     private Label chave_pc;
+    
+    @FXML
+    private ComboBox<String> box_permicoes;
+    @FXML
+    private ComboBox<TipoDeFuncionario> box_tiposFunc;
+    @FXML
+    private CheckBox autorizado;
     
     
     public ConfiguracaoSistemaController(){
@@ -302,8 +315,41 @@ public class ConfiguracaoSistemaController implements Initializable {
             colunaFun.setCellValueFactory(new PropertyValueFactory<>("tipoDeFuncionario"));
             atualizarLista();
             
+            ObservableList<String> permicoes = FXCollections.observableArrayList();
+            Class p = PermissaoFuncionario.class;
+            for(Field f : PermissaoFuncionario.class.getDeclaredFields()){
+                permicoes.add(f.getName());
+            }
+            permicoes.remove("controller");
+            box_permicoes.setItems(permicoes);
+            box_permicoes.setValue(permicoes.get(0));
+            
+            ObservableList<TipoDeFuncionario> tipos = FXCollections.observableArrayList(TipoDeFuncionario.values());
+            box_tiposFunc.setItems(tipos);
+            box_tiposFunc.setValue(TipoDeFuncionario.Gerente);
+            atualizarStatusPermicao();
+            
         }else{
             panelConfig.setDisable(true);
+        }
+        
+        
+    }
+    
+    @FXML
+    public void atualizarStatusPermicao(){
+        autorizado.setSelected(PermissaoFuncionario.getValor(box_permicoes.getValue(), box_tiposFunc.getValue()));
+    }
+    
+    @FXML
+    public void salvarStatusPermicao(){
+        try {
+            PermissaoFuncionario.putValor(box_permicoes.getValue(), autorizado.isSelected(), box_tiposFunc.getValue());
+            Dialogs.create().title("Permissão Atualizada")
+                    .masthead("Permissão Atualizada com sucesso")
+                    .showInformation();
+        } catch (FuncionarioNaoAutorizadoException ex) {
+            Logger.getLogger(ConfiguracaoSistemaController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

@@ -172,7 +172,7 @@ public class ControllerPessoa extends ControllerEntity<Pessoa> {
         for (Pagavel p : di_ve) {
             deb_real += p.getValorNaoPago();
         }
-
+        deb_real = new BigDecimal(deb_real).setScale(2, RoundingMode.HALF_UP).doubleValue();
         c = getEntityManager().find(Cliente.class, c.getId());
         try {
             if (deb_real != c.getDebito()) {

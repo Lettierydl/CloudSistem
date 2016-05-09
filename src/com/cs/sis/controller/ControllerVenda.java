@@ -14,6 +14,8 @@ import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
 import com.cs.sis.model.pessoas.exception.EstadoInvalidoDaVendaAtualException;
 import com.cs.sis.model.pessoas.exception.VariasVendasPendentesException;
 import com.cs.sis.model.pessoas.exception.VendaPendenteException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -272,10 +274,28 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
                 edit((Divida) pag);
             }
         }
+
+
         // logo em seguida deve diminuir o debito do cliente com o valor do
         // Venda
     }
 
+    public void atualizarStatusPagaveis(List<Pagavel> pagaveis) throws EntidadeNaoExistenteException{
+        for (Pagavel pag : pagaveis) {
+            if (!pag.isPaga() && new BigDecimal(pag.getValorNaoPago()).setScale(2, RoundingMode.HALF_UP).doubleValue() == 0) {
+                if (pag instanceof Venda) {
+                    Venda v = ((Venda) pag);
+                    v.setPaga(true);
+                    edit(v);
+                } else if (pag instanceof Divida) {
+                    Divida d = ((Divida) pag);
+                    d.setPaga(true);
+                    edit(d);
+                }
+            }
+        }
+    }
+    
     /**
      *
      * @throws VendaPendenteException se existir uma venda atual sem ser
@@ -308,13 +328,17 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         atual = null;
     }
 
-    public double finalizarVendaAPrazo(Cliente c, double partePaga)throws EntidadeNaoExistenteException, EstadoInvalidoDaVendaAtualException, Exception {
-        return finalizarVendaAPrazo(atual ,c,partePaga);
+    public double finalizarVendaAPrazo(Cliente c, double partePaga) throws EntidadeNaoExistenteException, EstadoInvalidoDaVendaAtualException, Exception {
+        return finalizarVendaAPrazo(atual, c, partePaga);
     }
-    
+
     // retorna o que deve ser acrecentado a conta do cliente
     public double finalizarVendaAPrazo(Venda v, Cliente c,
             double partePaga) throws EntidadeNaoExistenteException, EstadoInvalidoDaVendaAtualException, Exception {
+        try {
+            v = em.getReference(Venda.class, v.getId());
+        } catch (Exception e) {
+        }
         if (v.getFormaDePagamento() != null) {
             throw new EstadoInvalidoDaVendaAtualException("Venda já finalizada anteriormente, inicie uma nova venda");
         }
@@ -428,9 +452,8 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         edit(atual);
 
     }
-    
-    
-     public void removerVenda(Pagavel p)
+
+    public void removerVenda(Pagavel p)
             throws EntidadeNaoExistenteException, Exception {
 
         try {

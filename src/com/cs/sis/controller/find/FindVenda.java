@@ -240,7 +240,7 @@ public class FindVenda extends FindEntity {
     public static List<Venda> vendasNaoPagaDoCliente(Cliente cliente) {
         String stringQuery = "select v FROM Venda as v ";
         stringQuery += "WHERE v.paga = false and v.cliente = :cli"
-                + " order by v.total , v.dia DESC ";
+                + " order by v.dia, v.total ";
 
         Query query = getEntityManager().createQuery(stringQuery, Venda.class);
         query.setParameter("cli", cliente);
@@ -291,7 +291,7 @@ public class FindVenda extends FindEntity {
     public static List<Divida> dividasNaoPagaDoCliente(Cliente cliente) {
         String stringQuery = "select d FROM Divida as d ";
         stringQuery += "WHERE d.paga = false and d.cliente = :cli "
-                + " order by d.total , d.dia DESC ";
+                + " order by d.dia, d.total ";
 
         Query query = getEntityManager().createQuery(stringQuery);
         query.setParameter("cli", cliente);

@@ -198,7 +198,7 @@ public class Venda implements Comparable<Venda>, Pagavel {
     @Override
     public void acrescentarPartePaga(double partePagaDaVenda) {
         this.partePaga += partePagaDaVenda;
-        this.partePaga = new BigDecimal(partePaga).setScale(5, RoundingMode.HALF_UP).doubleValue();
+        this.partePaga = new BigDecimal(partePaga).setScale(3, RoundingMode.HALF_UP).doubleValue();
         if (this.partePaga >= getTotalComDesconto()) {
             setPaga(true);
         }
@@ -250,7 +250,7 @@ public class Venda implements Comparable<Venda>, Pagavel {
             item.setVenda(this);
             this.desconto += item.getDesconto();
             this.total += item.getTotal();
-            total = new BigDecimal(total).setScale(5, RoundingMode.HALF_UP).doubleValue();
+            total = new BigDecimal(total).setScale(3, RoundingMode.HALF_UP).doubleValue();
         }
     }
 

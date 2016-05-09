@@ -40,13 +40,13 @@ public class PermissaoFuncionario {
 	
 	public static boolean isAutorizado(Funcionario func, final String acao) throws FuncionarioNaoAutorizadoException{
 		if(getControllerConfiguracao().cont(Configuracao.class)== 0){
-			configuracoesDefalt();
+                    configuracoesDefalt();
 		}
 		
 		if(getValor(acao, func.getTipoDeFuncionario())){
-			return true;
+                    return true;
 		}else{
-			throw new FuncionarioNaoAutorizadoException("( "+acao+" )");
+                    throw new FuncionarioNaoAutorizadoException("( "+acao+" )");
 		}
 	}
 	

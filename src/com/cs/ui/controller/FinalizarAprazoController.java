@@ -151,11 +151,13 @@ public class FinalizarAprazoController implements Initializable {
                finalizando = true; 
             }
             try{
-                debito = f.finalizarVendaAprazo(c, val, observacao.getText());
+                f.finalizarVendaAprazo(c, val, observacao.getText());
+                debito = f.buscarClientePorId(c.getId()).getDebito();
             }catch(EstadoInvalidoDaVendaAtualException iee){
                 debito = f.buscarClientePorId(c.getId()).getDebito();
             }catch(ParametrosInvalidosException pe){
                 pe.printStackTrace();
+                debito = f.buscarClientePorId(c.getId()).getDebito();
             }
             atual.setObservacao(observacao.getText());
             atual.setCliente(c);
