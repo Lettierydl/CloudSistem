@@ -297,8 +297,8 @@ public class ClienteDialogController extends DialogController<Cliente> {
             return;
         } catch (FuncionarioNaoAutorizadoException ex) {
             dialog = Dialogs.create().title("Funcionário não autorizado")
-                .masthead("Funcionário não autorizado")
-                .message("Por favor, entre com um funcionário autorizado para esta operação!");
+                .masthead("Funcionário não autorizado à remover Pagáveis e Pagamentos")
+                .message("Por favor, entre com um funcionário autorizado para estas operações!");
             dialog.style(DialogStyle.UNDECORATED);
             dialog.showError();
             return;

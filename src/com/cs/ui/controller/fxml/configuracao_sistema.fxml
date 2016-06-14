@@ -212,6 +212,48 @@
                         </AnchorPane>
                      </content>
                   </Tab>
+                  <Tab text="Impressora">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <GridPane layoutX="50.0" layoutY="51.0" prefHeight="308.0" prefWidth="690.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Impressão Teste" />
+                                    <Button mnemonicParsing="false" onAction="#imprimirTextoTeste" text="Imprimir" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <tooltip>
+                                          <Tooltip text="Imprimir Texto Teste" />
+                                       </tooltip>
+                                       <GridPane.margin>
+                                          <Insets left="5.0" top="230.0" />
+                                       </GridPane.margin>
+                                    </Button>
+                                    <TextArea fx:id="textoImpressao" prefHeight="200.0" prefWidth="200.0" promptText="Texto para impressão" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font name="Times New Roman" size="13.0" />
+                                       </font>
+                                    </TextArea>
+                                    <Button mnemonicParsing="false" onAction="#verificarRetornoImpressora" text="Status" GridPane.columnIndex="2">
+                                       <tooltip>
+                                          <Tooltip text="Verificar Status da Conecção com a impressora" />
+                                       </tooltip>
+                                    </Button>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="309.2068786621094" minWidth="10.0" prefWidth="295.8525390625" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="223.92984008789062" minWidth="0.0" prefWidth="74.1474609375" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="415.74652099609375" minWidth="10.0" prefWidth="320.44598388671875" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints maxHeight="62.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="253.0" minHeight="0.0" prefHeight="17.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="261.0" minHeight="10.0" prefHeight="261.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                              <Label fx:id="flag11" layoutX="50.0" layoutY="21.0" text="Registrado" textFill="#00ee00" visible="false" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
               </tabs>
             </TabPane>
          </children>

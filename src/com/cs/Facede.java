@@ -21,7 +21,6 @@ import java.util.Map;
 
 public class Facede {
     
-    public static String version_system = "2.0.1";
     
     private int limit = 100;
 
@@ -66,9 +65,13 @@ public class Facede {
         }
         new Thread(){
             public void run(){
-                int retorno = imp.retornoECF();
-                if(imp.retornoECF() < 0){
-                    System.out.println("impressora não conectada... Retorno: " + retorno);
+                try{
+                    int retorno = imp.testeConectividadeImpressora();
+                    if(imp.testeConectividadeImpressora() < 0){
+                        System.err.println("impressora não conectada... Retorno: " + retorno);
+                    }
+                }catch(Throwable e){
+                        System.err.println("Não foi possivel carregar a DLL da impressora...");
                 }
             }
         }.start();
@@ -584,29 +587,54 @@ public class Facede {
 
     //balanco
     public String getMinDiaRegistroVenda() {
-        return rel.getMinDia();
+        return GeradorRelatorio.getMinDia();
     }
 
     public double[] getRelatorioDeEntradaDeCaixa(Date diaInicio,
             Date diaFim) throws FuncionarioNaoAutorizadoException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
-        return rel.getRelatorioDeEntradaDeCaixa(diaInicio, diaFim);
+        return GeradorRelatorio.getRelatorioDeEntradaDeCaixa(diaInicio, diaFim);
     }
 
     public double[] getRelatorioDeVendas(Date diaInicio, Date diaFim) throws FuncionarioNaoAutorizadoException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
-        return rel.getRelatorioDeVendas(diaInicio, diaFim);
+        return GeradorRelatorio.getRelatorioDeVendas(diaInicio, diaFim);
     }
 
     public double[] getRelatorioDeProduto(Date diaInicio, Date diaFim) throws FuncionarioNaoAutorizadoException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
-        return rel.getRelatorioProduto(diaInicio, diaFim);
+        return GeradorRelatorio.getRelatorioProduto(diaInicio, diaFim);
+    }
+    
+    public List<Object[]> getRelatorioDebitoDosClientes() throws FuncionarioNaoAutorizadoException {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
+        return GeradorRelatorio.getRelatorioDebitoDosClientes();
+    }
+    
+    public double getRelatorioSomaTotalDeDebitos() throws FuncionarioNaoAutorizadoException {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
+        return GeradorRelatorio.getRelatorioSomaTotalDeDebitos();
+    }
+    
+    public List<Object[]> getRelatorioClientesComDebitoMaiorQue(double debito) throws FuncionarioNaoAutorizadoException {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
+        return GeradorRelatorio.getRelatorioClientesComDebitoMaiorQue(debito);
+    }
+    
+    public double getRelatorioSomaTotalDeDebitosMaiorQue(double debito) throws FuncionarioNaoAutorizadoException {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
+        return GeradorRelatorio.getRelatorioSomaTotalDeDebitosMaiorQue(debito);
     }
 
     public double getRelatorioDeProduto30Dias(int idProduto) {
         return GeradorRelatorio.getRelatorioDeProduto30Dias(idProduto);
     }
-
+    
+    public String gerarPdfRelatorioDebitoClientes(double maiorQue, File destino) throws FuncionarioNaoAutorizadoException{
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
+        return pdf.gerarPdfRelatorioDebitoClientes(maiorQue, destino);
+    }
+    
     public String gerarPdfRelatorioBalancoProdutos(Date inicio, Date fim) throws FuncionarioNaoAutorizadoException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
         return pdf.gerarPdfRelatorioBalancoProdutos(inicio, fim);
@@ -615,6 +643,11 @@ public class Facede {
     public String gerarPdfRelatorioBalancoProdutos(Date inicio, Date fim, File f) throws FuncionarioNaoAutorizadoException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
         return pdf.gerarPdfRelatorioBalancoProdutos(inicio, fim, f);
+    }
+    
+    public String gerarPdfRelatorioEstoqueProdutos(boolean valoresNegativos ,File f) throws FuncionarioNaoAutorizadoException {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
+        return pdf.gerarPdfRelatorioEstoqueProdutos(valoresNegativos, f);
     }
 
     public String gerarPdfDaVendaVenda(Venda v, List<ItemDeVenda> itens) throws FuncionarioNaoAutorizadoException {
@@ -626,7 +659,13 @@ public class Facede {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
         return pdf.gerarPdfDaVenda(v, itens, destino);
     }
-
+    
+    
+    public String gerarPlanilhaRelatorioEstoqueProdutos(boolean estoqueNegativo, File destino) throws FuncionarioNaoAutorizadoException {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
+        return pla.gerarPlanilhaRelatorioEstoqueProdutos(estoqueNegativo, destino);
+    }
+    
     public String gerarPlanilhaRelatorioBalancoProdutos(Date inicio, Date fim,File destino) throws FuncionarioNaoAutorizadoException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
         return pla.gerarPlanilhaRelatorioBalancoProdutos(inicio, fim, destino);
@@ -715,8 +754,18 @@ public class Facede {
         }
     }
     
+    //sem tratamento de erros
     public int retornoImpressora() {
-        return imp.retornoECF();
+        return imp.testeConectividadeImpressora();
+    }
+    
+    //sem tratamento de erros
+    public boolean imprimirTexto(String texto) {
+        return imp.imprimirTexto(texto);
+    }
+
+    public String gerarCodigo() {
+        return est.gerarCodigo();
     }
 
 }

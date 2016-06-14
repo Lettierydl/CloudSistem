@@ -8,6 +8,7 @@ package com.cs.ui.controller;
 import com.cs.ControllerTelas;
 import com.cs.Facede;
 import com.cs.Main;
+import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -57,7 +58,7 @@ public class PrincipalController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        version_system.setText(Facede.version_system);
+        version_system.setText(VariaveisDeConfiguracaoUtil.VERSION_SYSTEM);
         adicionarAtalhos();
     }
     

@@ -3,7 +3,9 @@ package com.cs.sis.util;
 import javafx.util.Duration;
 
 public class VariaveisDeConfiguracaoUtil {
-
+        
+        public static final String VERSION_SYSTEM = "2.0.4";
+    
 	public static final boolean LIBERAR_VENDA_DE_PRODUTO_SEM_ESTOQUE = true;
 	
 	public static final boolean ATIVAR_DESCONTO_DE_PROMOCOES = true;
@@ -27,4 +29,25 @@ public class VariaveisDeConfiguracaoUtil {
         public static final String ATIVAR_LIMITE_REGISTRO_MOSTRADOS = "ATIVAR_LIMITE_REGISTRO_MOSTRADOS";
         
         
-}
+        
+        public static final String INFORMACAO_ATALHOS ="Atalhos das Telas\n"
+                + "Login"
+                + "\n\t\tShift + Esc: Configurações do Sistema"
+                + "\nPagamento"
+                + "\n\t\tF5: Atualiza débito do cliente"
+                + "\nVenda"
+                + "\n\t\tEsc: Tela Principal"
+                + "\n\t\tShift + Esc: Tela de Mercadorias"
+                + "\n\t\tControl: Finalizar Venda à Vista"
+                + "\n\t\tAlt: Finalizar Venda à Prazo"
+                + "\nMercadorias"
+                + "\n\t\tEsc: Tela de Vendas"
+                + "\n\t\tShift + P: Tela Principal"
+                + "\nVendas à Prazo"
+                + "\n\t\tEsc: Tela de Vendas"
+                + "\nVendas à Vista"
+                + "\n\t\tEsc: Tela de Vendas";
+        
+        public static String INFORMACAO_SISTEMA = "Versão do Sistema "+ VERSION_SYSTEM+"\n\n"+INFORMACAO_ATALHOS;
+        
+}        

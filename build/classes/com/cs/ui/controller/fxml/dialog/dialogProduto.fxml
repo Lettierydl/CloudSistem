@@ -41,6 +41,13 @@
                      <tooltip>
                         <Tooltip text="Código de Barras" />
                      </tooltip>
+                     <contextMenu>
+                        <ContextMenu>
+                          <items>
+                            <MenuItem mnemonicParsing="false" onAction="#gerarCodigo" text="Gerar Código" />
+                          </items>
+                        </ContextMenu>
+                     </contextMenu>
                   </TextField>
                   <Label text="Valor de Venda" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <TextField fx:id="valorV" GridPane.columnIndex="2" GridPane.rowIndex="2" />

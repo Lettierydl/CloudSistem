@@ -8,6 +8,7 @@ package com.cs.sis.controller.gerador;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.util.Arquivo;
+import com.cs.sis.util.OperacaoStringUtil;
 import com.cs.ui.img.IMG;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -22,12 +23,11 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +45,62 @@ public class GeradorPDF {
         a = new Arquivo();
     }
 
+    public String gerarPdfRelatorioEstoqueProdutos(boolean valoresNegativos, File destino) {
+        Document doc = new Document();
+        try {
+            String path = a.getRelatorio().getCanonicalPath() + destino.getName();
+            PdfWriter.getInstance(doc, new FileOutputStream(path));
+            doc.open();
+            String subTitulo = "Estoque Verificado no dia "
+                    + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime());
+            inserirHead(doc, "Estoque dos Produtos", subTitulo);
+
+            PdfPTable table = getTableEstoqueProdutos(valoresNegativos);
+
+            doc.add(table);
+
+            doc.close();
+            Arquivo.copyFile(new File(path), destino);
+            return destino.getAbsolutePath();
+        } catch (DocumentException | IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+    
+    public String gerarPdfRelatorioDebitoClientes(double maiorQue, File destino) {
+        Document doc = new Document();
+        try {
+            String path = a.getRelatorio().getCanonicalPath() + destino.getName();
+            PdfWriter.getInstance(doc, new FileOutputStream(path));
+            doc.open();
+            String subTitulo ;
+            if(maiorQue == 0){
+                subTitulo = "Débito dos Clientes \n Referênte ao dia "
+                    + new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+            }else{
+                subTitulo = "Clientes com Débitos Maiores que "
+                    +OperacaoStringUtil.formatarStringValorMoedaComDescricao(maiorQue)
+                    +"\n Referênte ao dia "
+                    + new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+            }
+            inserirHead(doc, "Débito dos Clientes", subTitulo);
+
+            PdfPTable table = getTableDebitoClientes(maiorQue);
+
+            doc.add(table);
+
+            doc.close();
+            Arquivo.copyFile(new File(path), destino);
+            return destino.getAbsolutePath();
+        } catch (DocumentException | IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+
+    }
+    
+    
     public String gerarPdfRelatorioBalancoProdutos(Date inicio, Date fim, File destino) {
         Document doc = new Document();
         try {
@@ -183,6 +239,61 @@ public class GeradorPDF {
         return table;
 
     }
+    
+    private PdfPTable getTableEstoqueProdutos(boolean valoresNegativos) throws DocumentException {
+        Map<String, Double[]> saida = GeradorRelatorio.getRelatorioEstoqueProdutos(valoresNegativos);
+
+        PdfPTable table = new PdfPTable(4);
+        table.setWidths(new int[]{5, 2, 1, 1});
+        table.setWidthPercentage(100f);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+
+        table.getDefaultCell().setBackgroundColor(new BaseColor(60, 171, 198));
+        table.addCell("Produto");
+        table.addCell("Quantidade em Estoque");
+        table.addCell("Valor de Venda");
+        table.addCell("SubTotal");
+        table.getDefaultCell().setBackgroundColor(null);
+        double quantidade = 0, total = 0;
+        List<String> c = new ArrayList<String>();
+        c.addAll(saida.keySet());
+        Collections.sort(c);
+        for (String produto : c) {
+            table.addCell(produto);
+            Double[] val = saida.get(produto);
+            
+            table.addCell(new DecimalFormat("0.000").format(val[0]));
+            table.addCell(new DecimalFormat("0.00").format(val[1]));
+            if(val[0] > 0){
+                quantidade += val[0];
+                total += val[0] * val[1];
+                table.addCell(new DecimalFormat("0.00").format(val[0]*val[1]));
+            }else{
+                table.addCell(new DecimalFormat("0.00").format(val[1]));
+            }
+            
+        }
+
+        table.getDefaultCell().setBackgroundColor(new BaseColor(60, 171, 198));
+
+        PdfPCell cell = new PdfPCell(new Paragraph("Total"));
+        //cell.setColspan(4);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setBackgroundColor(new BaseColor(60, 171, 198));
+        table.addCell(cell);
+
+        table.addCell(OperacaoStringUtil.formatarStringValorIntegerEPonto(
+                saida.size()) + " Produtos");
+
+        table.addCell(OperacaoStringUtil.formatarStringQuantidadeEPonto(quantidade)
+                + " Itens");
+        table.addCell(OperacaoStringUtil.formatarStringValorMoedaComDescricaoEPonto(total));
+
+        return table;
+    }
 
     private PdfPTable getTableBalancoProdutos(Date inicio, Date fim) throws DocumentException {
         Map<String, Double[]> saida = GeradorRelatorio.getRelatorioDetalhadoSaidaProduto(inicio, fim);
@@ -257,4 +368,45 @@ public class GeradorPDF {
         doc.add(p);
         doc.add(p2);
     }
+
+    private PdfPTable getTableDebitoClientes(double maiorQue) throws DocumentException {
+        List<Object[]> debitos = GeradorRelatorio.getRelatorioClientesComDebitoMaiorQue(maiorQue);
+
+        PdfPTable table = new PdfPTable(2);
+        table.setWidths(new int[]{5, 2});
+        table.setWidthPercentage(100f);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+
+        table.getDefaultCell().setBackgroundColor(new BaseColor(60, 171, 198));
+        table.addCell("Cliente");
+        table.addCell("Débito");
+        table.getDefaultCell().setBackgroundColor(null);
+        double total = 0;
+        for (Object[] d : debitos) {
+            table.addCell((String) d[0]);
+            double val = (double) d[1];
+            table.addCell(OperacaoStringUtil.formatarStringValorMoedaEPonto(val));
+            total+= val;
+        }
+
+        table.getDefaultCell().setBackgroundColor(new BaseColor(60, 171, 198));
+
+        PdfPCell cell = new PdfPCell(new Paragraph("Total"));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setBackgroundColor(new BaseColor(60, 171, 198));
+        table.addCell(cell);
+
+        table.addCell(OperacaoStringUtil.formatarStringValorMoedaComDescricaoEPonto(total));
+
+        
+        table.addCell("Quantidade de Clientes");
+        table.addCell(OperacaoStringUtil.formatarStringValorInteger(debitos.size()));
+
+        
+        return table;
+    }
+
 }

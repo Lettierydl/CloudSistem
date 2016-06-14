@@ -1,11 +1,13 @@
 package com.cs.sis.controller;
 
+import com.cs.sis.controller.find.FindProduto;
 import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
 import com.cs.sis.model.pessoas.exception.ProdutoABaixoDoEstoqueException;
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -118,6 +120,22 @@ public class ControllerEstoque extends ControllerEntity<Produto> {
         entity = em.getReference(Produto.class, entity.getId());
         entity.getId();
         return entity;
+    }
+
+    public String gerarCodigo() {
+        int cod = 0;
+        for(int i = 1 ; i< cont(Produto.class); i++){
+            try{
+                if(FindProduto.produtoComCodigoEDescricao(String.valueOf(i)) == null){
+                    cod = i;
+                    break;
+                }
+            }catch(NoResultException ne){
+                cod = i;
+                break;
+            }
+        }
+        return String.valueOf(cod);
     }
     
 	

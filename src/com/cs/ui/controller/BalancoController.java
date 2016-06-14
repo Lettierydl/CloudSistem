@@ -20,17 +20,24 @@ import javafx.scene.control.TableView;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 import org.controlsfx.dialog.Dialogs;
 
 /**
@@ -102,6 +109,9 @@ public class BalancoController implements Initializable {
     private DatePicker gDe;
     @FXML
     private DatePicker gAte;
+    
+    @FXML
+    private CheckBox gEstoqueNegativo;
 
     /*Saida de Produtos*/
     @FXML
@@ -115,6 +125,21 @@ public class BalancoController implements Initializable {
     @FXML
     private Label sVendido;
 
+    /*Debitos dos clientes*/
+    //@FXML
+    public TextField dDebito;
+    @FXML
+    public Label dSomaDebito;
+    @FXML
+    public Label dTotalClientes;
+
+    @FXML
+    private TableView<String> dTable;
+    @FXML
+    private TableColumn<String, Object[]> colNomeD;
+    @FXML
+    private TableColumn<String, Object[]> colDebitoD;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         hNome.setList(f.buscarNomeClientePorNomeQueInicia(""));
@@ -125,6 +150,92 @@ public class BalancoController implements Initializable {
 
         MaskFieldUtil.upperCase(hNome);
         JavaFXUtil.nextFielOnAction(hNome, hDe);
+
+        MaskFieldUtil.monetaryField(dDebito);
+        try {
+            configurarColunasDebito();
+            double sum = f.getRelatorioSomaTotalDeDebitos();
+            dSomaDebito.setText(OperacaoStringUtil.formatarStringValorMoedaComDescricaoEPonto(sum));
+            List<Object[]> data = f.getRelatorioClientesComDebitoMaiorQue(0);
+            dTotalClientes.setText(OperacaoStringUtil.formatarStringValorInteger(data.size()));
+            
+            ObservableList tableData = FXCollections.observableArrayList(data);
+            dTable.setItems(tableData);
+        } catch (FuncionarioNaoAutorizadoException ex) {
+        }
+
+    }
+
+    @FXML
+    void gerarDebito() {
+        double deb = OperacaoStringUtil.converterStringValor(dDebito.getText());
+        try {
+            double sum = f.getRelatorioSomaTotalDeDebitosMaiorQue(deb);
+            dSomaDebito.setText(OperacaoStringUtil.formatarStringValorMoedaComDescricaoEPonto(sum));
+            
+            dTable.getItems().clear();
+            
+            List<Object[]> data;
+            if(deb == 0){
+                data = f.getRelatorioClientesComDebitoMaiorQue(deb);
+            }else{
+                data = f.getRelatorioDebitoDosClientes();
+            }
+            
+            dTotalClientes.setText(OperacaoStringUtil.formatarStringValorInteger(data.size()));
+            
+            ObservableList tableData = FXCollections.observableArrayList(data);
+            dTable.setItems(tableData);
+        } catch (FuncionarioNaoAutorizadoException ex) {
+            Dialogs.create()
+                    .title("Funcionário não autorizado")
+                    .masthead("Funcionário não autorizado a gerar PDFs")
+                    .message("Por favor entre com um funcionário autorizado")
+                    .showError();
+        }
+    }
+
+    @FXML
+    void gerarPDFDebito() {
+        double deb = OperacaoStringUtil.converterStringValor(dDebito.getText());
+        try {
+            double sum = f.getRelatorioSomaTotalDeDebitosMaiorQue(deb);
+            dSomaDebito.setText(OperacaoStringUtil.formatarStringValorMoedaComDescricaoEPonto(sum));
+            
+            dTable.getItems().clear();
+            List<Object[]> data = f.getRelatorioClientesComDebitoMaiorQue(deb);
+            
+            dTotalClientes.setText(OperacaoStringUtil.formatarStringValorInteger(data.size()));
+            ObservableList tableData = FXCollections.observableArrayList(data);
+            dTable.setItems(tableData);
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Salvar PDF");
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+            String name = "Relatório_Debito_Clientes"
+                    + new SimpleDateFormat("dd_MM_yyyy").format(Calendar.getInstance().getTime()) 
+                    + ".pdf";
+
+            fileChooser.setInitialFileName(name);
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("PDF", "*.pdf")
+            );
+
+            File file = fileChooser.showSaveDialog(dSomaDebito.getScene().getWindow());
+            if (file != null) {
+                f.gerarPdfRelatorioDebitoClientes(deb, file);
+                Dialogs.create().title("PDF salvo com sucesso")
+                        .masthead("PDF salvo com sucesso")
+                        .message(file.getAbsolutePath())
+                        .showInformation();
+            }
+        } catch (FuncionarioNaoAutorizadoException ex) {
+            Dialogs.create()
+                    .title("Funcionário não autorizado")
+                    .masthead("Funcionário não autorizado a gerar PDFs")
+                    .message("Por favor entre com um funcionário autorizado")
+                    .showError();
+        }
     }
 
     @FXML
@@ -367,6 +478,131 @@ public class BalancoController implements Initializable {
             }
 
         }
+    }
+    
+    @FXML
+    void  gerarPDFEstoqueGeral(){
+   
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Salvar PDF");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        String name = "Relatório_Produtos_em_Estoque"
+                + new SimpleDateFormat("dd_MM_yyyy").format(Calendar.getInstance().getTime())
+                + ".pdf";
+
+        fileChooser.setInitialFileName(name);
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("PDF", "*.pdf")
+        );
+
+        File file = fileChooser.showSaveDialog(gAte.getScene().getWindow());
+        if (file != null) {
+            try {
+                f.gerarPdfRelatorioEstoqueProdutos(gEstoqueNegativo.isSelected(),
+                        file);
+                Dialogs.create().title("PDF salvo com sucesso")
+                        .masthead("PDF salvo com sucesso")
+                        .message(file.getAbsolutePath())
+                        .showInformation();
+            } catch (FuncionarioNaoAutorizadoException ex) {
+                Dialogs.create()
+                        .title("Funcionário não autorizado")
+                        .masthead("Funcionário não autorizado a gerar PDFs")
+                        .message("Por favor entre com um funcionário autorizado")
+                        .showError();
+            }
+
+        }
+    }
+    
+    @FXML
+    void  gerarPlanilhaEstoqueGeral(){
+         FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Salvar Planilha");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        String name = "Relatório_Produtos_em_Estoque"
+                + new SimpleDateFormat("dd_MM_yyyy").format(Calendar.getInstance().getTime()) + "_"
+                + ".xls";
+
+        fileChooser.setInitialFileName(name);
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Planilha", "*.xls")
+        );
+
+        File file = fileChooser.showSaveDialog(gAte.getScene().getWindow());
+        if (file != null) {
+            try {
+                System.out.println(gEstoqueNegativo.isSelected());
+                f.gerarPlanilhaRelatorioEstoqueProdutos(gEstoqueNegativo.isSelected(),
+                        file);
+                Dialogs.create().title("Planilha salva com sucesso")
+                        .masthead("Planilha salva com sucesso")
+                        .message(file.getAbsolutePath())
+                        .showInformation();
+            } catch (FuncionarioNaoAutorizadoException ex) {
+                Dialogs.create()
+                        .title("Funcionário não autorizado")
+                        .masthead("Funcionário não autorizado a gerar PDFs")
+                        .message("Por favor entre com um funcionário autorizado")
+                        .showError();
+            }
+
+        }
+    }
+    
+    
+    
+    private void configurarColunasDebito() {
+        colNomeD.setComparator(new Comparator<Object[]>() {
+            @Override
+            public int compare(Object[] p1, Object[] p2) {
+                return p1[0].toString().compareTo(p2[0].toString());
+            }
+        });
+        colNomeD.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<String, Object[]>, ObservableValue<Object[]>>() {
+            @Override
+            public ObservableValue<Object[]> call(TableColumn.CellDataFeatures<String, Object[]> features) {
+                return new ReadOnlyObjectWrapper(features.getValue());
+            }
+        });
+        colNomeD.setCellFactory(col -> {
+            return new TableCell<String, Object[]>() {
+                @Override
+                public void updateItem(Object[] price, boolean empty) {
+                    super.updateItem(price, empty);
+                    if (empty || price == null) {
+                        setText(null);
+                    } else {
+                        setText((String) price[0]);
+                    }
+                }
+            };
+        });
+        colDebitoD.setComparator(new Comparator<Object[]>() {
+            @Override
+            public int compare(Object[] p1, Object[] p2) {
+                return Double.compare((double) p1[1], (double) p2[1]);
+            }
+        });
+        colDebitoD.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<String, Object[]>, ObservableValue<Object[]>>() {
+            @Override
+            public ObservableValue<Object[]> call(TableColumn.CellDataFeatures<String, Object[]> features) {
+                return new ReadOnlyObjectWrapper(features.getValue());
+            }
+        });
+        colDebitoD.setCellFactory(col -> {
+            return new TableCell<String, Object[]>() {
+                @Override
+                public void updateItem(Object[] price, boolean empty) {
+                    super.updateItem(price, empty);
+                    if (empty || price == null) {
+                        setText(null);
+                    } else {
+                        setText(OperacaoStringUtil.formatarStringValorMoedaEPonto((double) price[1]));
+                    }
+                }
+            };
+        });
     }
 
 }

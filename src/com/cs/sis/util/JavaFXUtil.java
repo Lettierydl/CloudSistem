@@ -13,7 +13,11 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Map;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -22,6 +26,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
+import javafx.util.Callback;
 
 /**
  *
@@ -139,6 +144,48 @@ public class JavaFXUtil {
                         }
                     }
                 });
+    }
+    
+    public static void colunMapKeyStringFormat(TableColumn colunaPessoa) {
+        colunaPessoa.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry, String> param) {
+                String key = (String) param.getValue().getKey();
+                return new SimpleObjectProperty<String>(key);
+            }
+        });
+    }
+    
+    public static void colunMapValueStringFormat(TableColumn colunaPessoa) {
+        colunaPessoa.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry, String> param) {
+                String value = (String) param.getValue().getValue();
+                return new SimpleStringProperty(value);
+            }
+        });
+    }
+    
+    public static void colunMapKeyDoubleFormat(TableColumn colunaPessoa) {
+        colunaPessoa.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry, String> param) {
+                double value = (double) param.getValue().getKey();
+                return new SimpleStringProperty(OperacaoStringUtil.formatarStringValorMoeda(value));
+            }
+        });
+    }
+    
+    public static void colunMapValueDoubleFormat(TableColumn colunaPessoa) {
+        colunaPessoa.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry, String> param) {
+                double value = (double) param.getValue().getValue();
+                return new SimpleStringProperty(OperacaoStringUtil.formatarStringValorMoeda(value));
+            }
+            
+        });
+        
     }
 
 }

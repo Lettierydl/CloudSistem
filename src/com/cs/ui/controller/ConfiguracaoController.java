@@ -9,6 +9,7 @@ import com.cs.ControllerTelas;
 import com.cs.Facede;
 import com.cs.Main;
 import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import com.cs.ui.controller.dialog.DialogController;
 import com.cs.ui.controller.dialog.ProgressDialogController;
 import java.io.File;
@@ -20,6 +21,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
@@ -40,11 +42,14 @@ public class ConfiguracaoController implements Initializable {
 
     @FXML
     private Button restaurarBut;
+    
+    @FXML
+    private TextArea informacoes;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         f = Facede.getInstance();
-
+        informacoes.setText(VariaveisDeConfiguracaoUtil.INFORMACAO_SISTEMA);
     }
 
     @FXML

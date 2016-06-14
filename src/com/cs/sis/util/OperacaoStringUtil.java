@@ -76,6 +76,14 @@ public class OperacaoStringUtil {
             return "";
         }
     }
+    
+    public static String formatarStringQuantidadeEPonto(double quantidade) {
+        if (quantidade != 0.0) {
+            return new DecimalFormat("#,##0.000").format(quantidade);
+        } else {
+            return "";
+        }
+    }
 
     public static String formatarStringQuantidadeInteger(double quantidade) {
         int valor2 = (int) quantidade;
@@ -91,8 +99,18 @@ public class OperacaoStringUtil {
 
     public static String formatarStringValorMoedaComDescricao(double valor) {
         if (valor != 0.0) {
-            return new DecimalFormat("0.00").format(valor)
-                    + DESCRICAO_MOEDA;
+            return DESCRICAO_MOEDA + " "+ new DecimalFormat("0.00").format(valor)
+                    ;
+        } else {
+            return "";
+        }
+    }
+    
+    //R$ 1.000.000,00
+    public static String formatarStringValorMoedaComDescricaoEPonto(double valor) {
+        if (valor != 0.0) {
+            return DESCRICAO_MOEDA + " "+ new DecimalFormat("#,##0.00").format(valor)
+                    ;
         } else {
             return "";
         }
@@ -101,6 +119,14 @@ public class OperacaoStringUtil {
     public static String formatarStringValorMoeda(double valor) {
         if (valor != 0.0) {
             return new DecimalFormat("0.00").format(valor);
+        } else {
+            return "";
+        }
+    }
+    
+    public static String formatarStringValorMoedaEPonto(double valor) {
+        if (valor != 0.0) {
+            return new DecimalFormat("#,##0.00").format(valor);
         } else {
             return "";
         }
@@ -116,6 +142,13 @@ public class OperacaoStringUtil {
         } else {
             return "";
         }
+    }
+    
+    public static String formatarStringValorInteger(int valor) {
+        return new DecimalFormat("0").format(valor);
+    }
+    public static String formatarStringValorIntegerEPonto(int valor) {
+        return new DecimalFormat("#,##0").format(valor);
     }
 
     public static String formatarStringParaMascaraDeCep(String cep) {

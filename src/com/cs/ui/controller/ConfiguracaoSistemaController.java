@@ -45,6 +45,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
@@ -143,11 +144,50 @@ public class ConfiguracaoSistemaController implements Initializable {
     @FXML
     private CheckBox autorizado;
     
+    @FXML
+    private TextArea textoImpressao;
+    
     
     public ConfiguracaoSistemaController(){
         
     }
     
+    
+    @FXML
+    public void imprimirTextoTeste(){
+        String texto = textoImpressao.getText();
+        if(texto.isEmpty()){
+            texto = "Impressão de Texto de Texte";
+        }
+        try{
+            f.imprimirTexto(texto);
+        }catch(Throwable e){
+            Dialogs.create().title("Erro Impressão texte")
+                    .showException(e);
+        }
+        
+    }
+    
+    @FXML
+    public void verificarRetornoImpressora(){
+        try{
+            int retorno = f.retornoImpressora();
+            String msg = retorno == 1 ? "Impressora conectada\nRetorno: 1" : "Impressora não conectada\nRetorno: "+retorno ;
+            Dialogs dialog = Dialogs.create().title("Cominicação com a Impressora")
+                    .masthead("Retorno comunicação com a impressora:")
+                    .message(msg);
+            dialog.style(DialogStyle.UNDECORATED);
+            if(retorno == 1){
+                dialog.showConfirm();
+            }else{
+                dialog.showError();
+            }
+        }catch(Error | Exception e){
+            Dialogs.create().title("Erro Impressão texte")
+                    .showException(e);
+        }
+        
+    }
 
     @FXML
     void irHome(MouseEvent event) {
@@ -338,7 +378,11 @@ public class ConfiguracaoSistemaController implements Initializable {
     
     @FXML
     public void atualizarStatusPermicao(){
-        autorizado.setSelected(PermissaoFuncionario.getValor(box_permicoes.getValue(), box_tiposFunc.getValue()));
+        try{
+            autorizado.setSelected(PermissaoFuncionario.getValor(box_permicoes.getValue(), box_tiposFunc.getValue()));
+        }catch(Exception e){
+            autorizado.setSelected(false);
+        }
     }
     
     @FXML

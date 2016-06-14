@@ -90,6 +90,13 @@ public class EstoqueDialogController extends DialogController<Produto> {
         //e verificar se for create se ja existe o produto com aquele codigo ou descricao
         //se for edit, verificar se ta editado certo e mostrar as menssagens
     }
+    
+    @FXML
+    public void gerarCodigo(){
+        String cd = f.gerarCodigo();
+        codigo.setText(cd);
+        codigo.selectAll();
+    } 
 
     @Override
     public boolean isEntradaValida() {

@@ -4,9 +4,9 @@ import com.cs.sis.controller.Gerador;
 import com.cs.sis.model.financeiro.FormaDePagamento;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.Cliente;
-import com.cs.sis.util.OperacaoStringUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -242,7 +242,53 @@ public class GeradorRelatorio extends Gerador {
             saida.put((String) o[0], valores);
         }
         return saida;
+    }
 
+    public static List<Object[]> getRelatorioDebitoDosClientes() {
+
+        List<Object[]> saida = new ArrayList<Object[]>();
+        EntityManager em = getEntityManager();
+        Query query = em
+                .createQuery(
+                        "SELECT c.nome, c.debito FROM Cliente  as c where c.debito != 0 order by c.debito desc");
+
+        for (Object obj : query.getResultList()) {
+            Object[] o = (Object[]) obj;
+            saida.add(o);
+        }
+        return saida;
+    }
+
+    public static double getRelatorioSomaTotalDeDebitos() {
+        EntityManager em = getEntityManager();
+        Query query = em
+                .createNativeQuery(
+                        "SELECT sum(debito) FROM cliente;");
+        return (double) query.getSingleResult();
+    }
+
+    public static double getRelatorioSomaTotalDeDebitosMaiorQue(double debito) {
+        EntityManager em = getEntityManager();
+        Query query = em
+                .createQuery(
+                        "SELECT sum(c.debito) FROM Cliente  as c where c.debito > :deb");
+        query.setParameter("deb", debito);
+        return (double) query.getSingleResult();
+    }
+
+    public static List<Object[]> getRelatorioClientesComDebitoMaiorQue(double debito) {
+        List<Object[]> saida = new ArrayList<>();
+        EntityManager em = getEntityManager();
+        Query query = em
+                .createQuery(
+                        "SELECT c.nome, c.debito FROM Cliente  as c where c.debito >= :deb order by c.debito desc");
+        query.setParameter("deb", debito);
+
+        for (Object obj : query.getResultList()) {
+            Object[] o = (Object[]) obj;
+            saida.add(o);
+        }
+        return saida;
     }
 
     public static List<Venda> vendasDoCliente(Cliente cliente, Date diaInicio, Date diaFim) {
@@ -266,18 +312,16 @@ public class GeradorRelatorio extends Gerador {
         di.set(Calendar.MINUTE, 0);
         di.set(Calendar.SECOND, 00);
 
-        
-        
         Calendar df = Calendar.getInstance();
 
-        System.err.print(OperacaoStringUtil.formatDataValor(di));
-        System.err.println(" - " + OperacaoStringUtil.formatDataValor(df));
-        
+        //System.err.print(OperacaoStringUtil.formatDataValor(di));
+        //System.err.println(" - " + OperacaoStringUtil.formatDataValor(df));
         String stringQuery = "select sum(r.qt) from ("
-                + "select DISTINCT it.id, it.quantidade as qt from item_de_venda as it, venda as v "
+                + "select it.id, it.quantidade as qt "
+                + "from item_de_venda as it left outer join venda as v on (it.venda_id = v.id) "
                 + "where it.produto_id = ? and "
                 + "v.dia between ? and ?) as r;";
-        
+
         Query query = getEntityManager().createNativeQuery(stringQuery);
         query.setParameter(1, idProduto);
         query.setParameter(2, di);
@@ -292,5 +336,28 @@ public class GeradorRelatorio extends Gerador {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    //key nome do produto, value {quantidadeEmEstoque, valorDeVenda}
+    public static Map<String, Double[]> getRelatorioEstoqueProdutos(boolean valoresNegativos) {
+        EntityManager em = getEntityManager();
+        String q = "select p.descricao, p.quantidadeEmEstoque, p.valorDeVenda "
+                        + " from Produto as p "
+                        + "where p.quantidadeEmEstoque > 0 order by p.descricao";
+        if(valoresNegativos){
+            q = "select p.descricao, p.quantidadeEmEstoque, p.valorDeVenda "
+                        + " from Produto as p "
+                        + "order by p.descricao";
+        }
+        Query query = em.createQuery(q);
+        Map<String, Double[]> saida = new HashMap<String, Double[]>();
+        for (Object obj : query.getResultList()) {
+            Object[] o = (Object[]) obj;
+            Double[] valores = {0.0, 0.0};
+            valores[0] = (Double) o[1];
+            valores[1] = (Double) o[2];
+            saida.put((String) o[0], valores);
+        }
+        return saida;
     }
 }

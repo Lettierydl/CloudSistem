@@ -83,9 +83,6 @@
                               <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                                  <children>
                                     <AutoCompleteTextField fx:id="hNome" prefHeight="27.0" prefWidth="407.0" promptText="Nome do Cliente">
-                                       <FlowPane.margin>
-                                          <Insets left="30.0" top="14.0" />
-                                       </FlowPane.margin>
                                     </AutoCompleteTextField>
                                  </children>
                               </FlowPane>
@@ -367,7 +364,7 @@
                      <children>
                         <GridPane layoutY="-1.0" prefHeight="443.0" prefWidth="1024.0">
                            <children>
-                              <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                              <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                                  <children>
                                     <DatePicker fx:id="gDe">
                                        <FlowPane.margin>
@@ -381,7 +378,7 @@
                                     </DatePicker>
                                  </children>
                               </FlowPane>
-                              <FlowPane prefHeight="200.0" prefWidth="200.0">
+                              <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                                  <children>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="De:">
                                        <FlowPane.margin>
@@ -395,13 +392,69 @@
                                     </Text>
                                  </children>
                               </FlowPane>
-                              <Pane nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Button mnemonicParsing="false" onAction="#gerarPDFGeral" text="Gerar PDF" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Button mnemonicParsing="false" onAction="#gerarPlanilhaGeral" text="Gerar Planilha" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <Button mnemonicParsing="false" onAction="#gerarPDFGeral" text="Gerar PDF" GridPane.rowIndex="3">
+                                 <tooltip>
+                                    <Tooltip text="Saida de Produtos" />
+                                 </tooltip>
                                  <GridPane.margin>
-                                    <Insets left="100.0" />
+                                    <Insets left="30.0" />
+                                 </GridPane.margin></Button>
+                              <Button mnemonicParsing="false" onAction="#gerarPlanilhaGeral" text="Gerar Planilha" GridPane.rowIndex="3">
+                                 <GridPane.margin>
+                                    <Insets left="130.0" />
                                  </GridPane.margin>
+                                 <tooltip>
+                                    <Tooltip text="Saida de Produtos" />
+                                 </tooltip>
                               </Button>
+                              <FlowPane prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Produtos Vendidos">
+                                       <FlowPane.margin>
+                                          <Insets left="30.0" top="10.0" />
+                                       </FlowPane.margin>
+                                    </Text>
+                                 </children>
+                              </FlowPane>
+                              <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="5">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Produtos em Estoque">
+                                       <FlowPane.margin>
+                                          <Insets left="30.0" top="20.0" />
+                                       </FlowPane.margin>
+                                    </Text>
+                                 </children>
+                              </FlowPane>
+                              <FlowPane prefHeight="95.0" prefWidth="523.0" GridPane.rowIndex="6">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#gerarPDFEstoqueGeral" text="Gerar PDF">
+                                       <tooltip>
+                                          <Tooltip text="Produtos em Estoque" />
+                                       </tooltip>
+                                       <FlowPane.margin>
+                                          <Insets left="30.0" />
+                                       </FlowPane.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#gerarPlanilhaEstoqueGeral" text="Gerar Planilha">
+                                       <tooltip>
+                                          <Tooltip text="Produtos em Estoque" />
+                                       </tooltip>
+                                       <FlowPane.margin>
+                                          <Insets left="20.0" />
+                                       </FlowPane.margin>
+                                    </Button>
+                                    <CheckBox fx:id="gEstoqueNegativo" mnemonicParsing="false" text="Estoque Negativo">
+                                       <FlowPane.margin>
+                                          <Insets left="50.0" />
+                                       </FlowPane.margin>
+                                       <tooltip>
+                                          <Tooltip text="Incluir Produtos com Estoque negativo" />
+                                       </tooltip>
+                                    </CheckBox>
+                                 </children>
+                              </FlowPane>
+                              <Separator prefHeight="7.0" prefWidth="713.0" GridPane.rowIndex="4" />
+                              <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                            </children>
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="523.0" minWidth="10.0" prefWidth="523.0" />
@@ -409,10 +462,99 @@
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints maxHeight="209.66339111328125" minHeight="10.0" prefHeight="33.5557861328125" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="209.66339111328125" minHeight="10.0" prefHeight="61.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="351.0" minHeight="10.0" prefHeight="347.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="209.66339111328125" minHeight="10.0" prefHeight="33.5557861328125" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="209.66339111328125" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="209.66339111328125" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="209.66339111328125" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="209.66339111328125" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="351.0" minHeight="10.0" prefHeight="227.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                         </GridPane>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Débito dos Clientes">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <GridPane layoutY="-1.0" prefHeight="80.0" prefWidth="1024.0">
+                           <children>
+                              <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" />
+                              <HBox prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Débito Maior que:">
+                                       <HBox.margin>
+                                          <Insets left="40.0" right="20.0" top="5.0" />
+                                       </HBox.margin>
+                                    </Text>
+                                    <TextField fx:id="dDebito" prefHeight="27.0" prefWidth="92.0" promptText="0,00">
+                                       <tooltip>
+                                          <Tooltip text="Selecionar Clientes com Débito superior" />
+                                       </tooltip>
+                                    </TextField>
+                                    <Button mnemonicParsing="false" onAction="#gerarDebito" text="Gerar">
+                                       <HBox.margin>
+                                          <Insets left="110.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#gerarPDFDebito" text="GerarPDF">
+                                       <HBox.margin>
+                                          <Insets left="20.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="539.1538696289062" minWidth="10.0" prefWidth="529.2340698242188" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="555.3868103027344" minWidth="10.0" prefWidth="494.76593017578125" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints maxHeight="209.66339111328125" minHeight="10.0" prefHeight="33.5557861328125" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="209.66339111328125" minHeight="10.0" prefHeight="61.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                        <Pane layoutY="74.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="357.0" prefWidth="1025.0">
+                           <children>
+                              <TableView fx:id="dTable" layoutX="29.0" prefHeight="323.0" prefWidth="501.0">
+                                 <columns>
+                                    <TableColumn fx:id="colNomeD" prefWidth="365.66035079956055" text="Nome" />
+                                    <TableColumn fx:id="colDebitoD" prefWidth="127.33966064453125" text="Débito" />
+                                 </columns>
+                              </TableView>
+                              <GridPane alignment="CENTER" gridLinesVisible="true" layoutX="548.0" layoutY="5.0" prefHeight="68.0" prefWidth="328.0">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total em Débito:" textAlignment="CENTER" textOrigin="CENTER" />
+                                    <Label fx:id="dSomaDebito" text="0,00" textFill="#d00808" GridPane.columnIndex="1">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Soma total dos débitos dos clientes ao lado" />
+                                       </tooltip>
+                                    </Label>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total de Clientes:" textAlignment="CENTER" textOrigin="CENTER" GridPane.rowIndex="1" />
+                                    <Label fx:id="dTotalClientes" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Quantidade total dos clientes ao lado" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="142.40313720703125" minWidth="10.0" prefWidth="118.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="142.0" minWidth="10.0" prefWidth="141.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </children>
+                        </Pane>
                      </children>
                   </AnchorPane>
                </content>

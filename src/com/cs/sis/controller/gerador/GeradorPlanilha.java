@@ -6,11 +6,13 @@
 package com.cs.sis.controller.gerador;
 
 import com.cs.sis.util.Arquivo;
+import com.cs.sis.util.OperacaoStringUtil;
 import com.cs.ui.img.IMG;
 import com.itextpdf.text.DocumentException;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import jxl.Workbook;
@@ -81,6 +83,72 @@ public class GeradorPlanilha {
             e.printStackTrace();
             return "";
         }
+
+    }
+    
+    
+    public String gerarPlanilhaRelatorioEstoqueProdutos(boolean estoqueNegativo, File destino) {
+        try {
+            String path = a.getRelatorio().getCanonicalPath() + "/PlanilhaEstoqueProdutos.xls";
+            WritableWorkbook workbook = Workbook.createWorkbook(new File(path));
+            WritableSheet folha = workbook.createSheet("Estoque Produtos", 0);
+
+            String subTitulo = "Estoque dos produtos \n Verificado no dia "
+                    + new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+            inserirHead(folha, "Estoque dos Produtos", subTitulo);
+
+            addDadosRelatorioEstoqueProduto(folha, estoqueNegativo);
+
+            workbook.write();
+            workbook.close();
+            Arquivo.copyFile(new File(path), destino);
+            return path;
+        } catch (DocumentException | IOException | WriteException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+    
+    private void addDadosRelatorioEstoqueProduto(WritableSheet folha, boolean estoqueNegativo) throws DocumentException, RowsExceededException, WriteException {
+        Map<String, Double[]> saida = GeradorRelatorio.getRelatorioEstoqueProdutos(estoqueNegativo);
+        
+        WritableCellFormat cour16 = new WritableCellFormat(new WritableFont(WritableFont.COURIER, 16));
+        WritableCellFormat cour14 = new WritableCellFormat(new WritableFont(WritableFont.COURIER, 14));
+
+        double total = 0, quantiade = 0;
+        int row = 7, colun = 0;
+        folha.addCell(new Label(colun++, row, "Produto", cour14));
+        folha.addCell(new Label(colun++, row, "Quantidade em Estoque", cour14));
+        folha.addCell(new Label(colun++, row, "Valor de Venda", cour14));
+        folha.addCell(new Label(colun++, row, "SubTotal", cour14));
+        for (String produto : saida.keySet()) {
+            colun = 0;
+            folha.addCell(new Label(colun++, row, produto, cour14));
+
+            Double[] val = saida.get(produto);
+            folha.addCell(new jxl.write.Number(colun++, row, val[0]));
+            folha.addCell(new jxl.write.Number(colun++, row, val[1]));
+            folha.addCell(new jxl.write.Number(colun++, row++, val[0]*val[1]));
+            if( val[0] > 0 ){
+                quantiade += val[1];
+                total += val[0] * val[1];
+                folha.addCell(new jxl.write.Number(colun++, row++, val[0]*val[1]));
+            }else{
+                folha.addCell(new jxl.write.Number(colun++, row++, val[1]));
+            }
+            
+        }
+        row++;
+        colun = 0;
+        folha.addCell(new Label(colun, ++row, "Total:", cour16));
+
+        folha.addCell(new Label(colun++, row, 
+                OperacaoStringUtil.formatarStringValorIntegerEPonto(
+                saida.size()) + " Produtos"
+                , cour14));
+
+        folha.addCell(new jxl.write.Number(colun++, row, quantiade));
+        folha.addCell(new jxl.write.Number(colun++, row, total));
 
     }
 

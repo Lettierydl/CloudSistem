@@ -159,8 +159,9 @@ public class FinalizarAprazoController implements Initializable {
                 pe.printStackTrace();
                 debito = f.buscarClientePorId(c.getId()).getDebito();
             }
-            atual.setObservacao(observacao.getText());
-            atual.setCliente(c);
+            atual = f.buscarVendaPeloId(atual.getId());
+            //atual.setObservacao(observacao.getText());
+            //atual.setCliente(c);
             if (imprimir.isSelected() && !f.imprimirVenda(atual)) {
                 Dialogs dialog = Dialogs.create()
                         .title("Impressora não conectada")
