@@ -9,7 +9,7 @@ import com.cs.sis.model.financeiro.Divida;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Pagavel;
 import com.cs.sis.model.financeiro.Venda;
-import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.OperacaoStringUtil;
 import java.io.File;

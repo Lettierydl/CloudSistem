@@ -197,7 +197,7 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                               </Button>
-                              <Button fx:id="cliente" layoutX="312.0" layoutY="275.0" mnemonicParsing="false" onAction="#botaoMenu" prefHeight="180.0" prefWidth="180.0" style="-fx-background-color: #ffffff;" GridPane.columnIndex="2">
+                              <Button fx:id="Cliente" layoutX="312.0" layoutY="275.0" mnemonicParsing="false" onAction="#botaoMenu" prefHeight="180.0" prefWidth="180.0" style="-fx-background-color: #ffffff;" GridPane.columnIndex="2">
                                   <graphic>
                                       <ImageView fitHeight="180.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
                                           <image>

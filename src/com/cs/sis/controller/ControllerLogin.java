@@ -3,8 +3,8 @@ package com.cs.sis.controller;
 import com.cs.sis.controller.find.FindFuncionario;
 import com.cs.sis.model.pessoas.Funcionario;
 import com.cs.sis.model.pessoas.TipoDeFuncionario;
-import com.cs.sis.model.pessoas.exception.LoginIncorretoException;
-import com.cs.sis.model.pessoas.exception.SenhaIncorretaException;
+import com.cs.sis.model.exception.LoginIncorretoException;
+import com.cs.sis.model.exception.SenhaIncorretaException;
 import com.cs.sis.util.OperacaoStringUtil;
 import javax.persistence.NoResultException;
 

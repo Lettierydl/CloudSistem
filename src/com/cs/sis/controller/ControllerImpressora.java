@@ -36,60 +36,58 @@ public class ControllerImpressora {
         }
         String userdir = System.getProperty("user.dir");
         String separator = System.getProperty("file.separator");
-        try{
+        try {
             System.load(userdir + separator + "DarumaFrameWork.dll");
             return;
-        }catch(Exception | Error  e){
+        } catch (Exception | Error e) {
         }
-        
-        try{
-            System.load(userdir+".jar" + separator + "DarumaFrameWork.dll");
+
+        try {
+            System.load(userdir + ".jar" + separator + "DarumaFrameWork.dll");
             return;
-        }catch(Exception | Error e){
+        } catch (Exception | Error e) {
         }
-        
-        try{
-            System.load(userdir+ separator +"CloudSistem" + separator + "DarumaFrameWork.dll");
+
+        try {
+            System.load(userdir + separator + "CloudSistem" + separator + "DarumaFrameWork.dll");
             return;
-        }catch(Exception | Error e){
+        } catch (Exception | Error e) {
         }
-        
+
         //System.out.println("Comunicacao com Impressora:" + ECF.eBuscarPortaVelocidade_ECF_Daruma());
     }
-    
+
     // ao utilizar esse metodo, deve ser feito um try com Error | Exception e e printar
-    public int testeConectividadeImpressora(){
+    public int testeConectividadeImpressora() {
         carregarDLL();
         return ECF.eBuscarPortaVelocidade_ECF_Daruma();
     }
-    
+
     //sem tratamento de erros
-    public boolean imprimirTexto(String texto){
+    public boolean imprimirTexto(String texto) {
         carregarDLL();
         ECF.iRGAbrirPadrao_ECF_Daruma();
         ECF.iRGImprimirTexto(texto);
         ECF.iRGFechar_ECF_Daruma();
         return true;
     }
-    
+
     public boolean imprimirVenda(Venda v) {
         carregarDLL();
 
         FindFuncionario ffunc = new FindFuncionario();
         FindCliente fcli = new FindCliente();
-        
+
         try {
             ECF.iRGAbrirPadrao_ECF_Daruma();
-        }catch(Error | Exception e){
+        } catch (Error | Exception e) {
             System.out.println("Não abriu Relatorio Gerencial");
         }
-        
-        
+
         int iRGImprimirTexto = 0;
         try {
             ECF.iRGAbrirPadrao_ECF_Daruma();
-            
-            
+
             String texto = " Data/Hora: "
                     + new SimpleDateFormat("dd/MM/yyyy  HH:mm:ss").format(v
                             .getDia().getTime()) + "  \n"
@@ -136,31 +134,47 @@ public class ControllerImpressora {
             texto += " ---------------------------------------------- \n";
             ECF.iRGImprimirTexto(texto);
             texto = "";
-            
-            
-            if(v.getPartePaga() > 0){
+
+            if (v.getPartePaga() > 0) {
                 String partePaga = new DecimalFormat("0.00").format(
-                    new BigDecimal(v.getPartePaga()).setScale(2,
-                            RoundingMode.HALF_UP).doubleValue()).replace(
-                            ".", ",");
+                        new BigDecimal(v.getPartePaga()- v.getDesconto()).setScale(2,
+                                RoundingMode.HALF_UP).doubleValue()).replace(
+                                ".", ",");
                 String subtotal = new DecimalFormat("0.00").format(
-                    new BigDecimal(v.getTotal()).setScale(2,
-                            RoundingMode.HALF_UP).doubleValue()).replace(
-                            ".", ",");
-                
+                        new BigDecimal(v.getTotal()).setScale(2,
+                                RoundingMode.HALF_UP).doubleValue()).replace(
+                                ".", ",");
+
                 String total = new DecimalFormat("0.00").format(
-                    new BigDecimal(v.getTotal() - v.getPartePaga()).setScale(2,
-                            RoundingMode.HALF_UP).doubleValue()).replace(
-                            ".", ",");
-                
-                texto += " Parte Paga: R$ " + partePaga + "  \n";
+                        new BigDecimal(v.getTotal() - v.getPartePaga()).setScale(2,
+                                RoundingMode.HALF_UP).doubleValue()).replace(
+                                ".", ",");
+
+                texto += " Valor Pago: R$ " + partePaga + "  \n";
+
+                if (v.getDesconto() > 0) {
+                    String desconto = new DecimalFormat("0.00").format(
+                            new BigDecimal(v.getDesconto()).setScale(2,
+                                    RoundingMode.HALF_UP).doubleValue()).replace(
+                                    ".", ",");
+                    texto += " Desconto: R$ " + desconto + "  \n";
+                }
+
                 texto += " TOTAL: R$ " + subtotal + "  \n\n";
-                texto += " Débito adicionado ao cliente: R$ " + total + "  \n\n";
-            }else{
+                texto += " Débito adicionado ao Cliente: R$ " + total + "  \n\n";
+            } else {
+                if (v.getDesconto() > 0) {
+                    String desconto = new DecimalFormat("0.00").format(
+                            new BigDecimal(v.getDesconto()).setScale(2,
+                                    RoundingMode.HALF_UP).doubleValue()).replace(
+                                    ".", ",");
+                    texto += " Desconto: R$ " + desconto + "  \n";
+                }
+
                 String subtotal = new DecimalFormat("0.00").format(
-                    new BigDecimal(v.getTotal()).setScale(2,
-                            RoundingMode.HALF_UP).doubleValue()).replace(
-                            ".", ",");
+                        new BigDecimal(v.getTotal()).setScale(2,
+                                RoundingMode.HALF_UP).doubleValue()).replace(
+                                ".", ",");
                 texto += " TOTAL: R$ " + subtotal + "  \n\n";
             }
 
@@ -171,15 +185,15 @@ public class ControllerImpressora {
 
             try {
                 Cliente c = fcli
-                        .clienteComId(v.getCliente().getId());
+                        .ClienteComId(v.getCliente().getId());
                 texto += " Cliente: " + c.getNome().toUpperCase() + " \n";
-                
+
                 String debito = new DecimalFormat("0.00").format(
                         new BigDecimal(c.getDebito()).setScale(2,
                                 RoundingMode.HALF_UP).doubleValue())
                         .replace(".", ",");
                 texto += " Saldo total: R$ " + debito + " \n \n";
-                
+
                 if (!v.getObservacao().isEmpty()) {
                     texto += " Obs: " + v.getObservacao().toUpperCase() + " \n";
                 }
@@ -233,33 +247,46 @@ public class ControllerImpressora {
             }
 
             texto += " ---------------------------------------------- \n";
-            
-            if(v.getPartePaga() > 0){
+
+            if (v.getPartePaga() > 0) {
                 String partePaga = new DecimalFormat("0.00").format(
-                    new BigDecimal(v.getPartePaga()).setScale(2,
-                            RoundingMode.HALF_UP).doubleValue()).replace(
-                            ".", ",");
+                        new BigDecimal(v.getPartePaga() - v.getDesconto()).setScale(2,
+                                RoundingMode.HALF_UP).doubleValue()).replace(
+                                ".", ",");
                 String subtotal = new DecimalFormat("0.00").format(
-                    new BigDecimal(v.getTotal()).setScale(2,
-                            RoundingMode.HALF_UP).doubleValue()).replace(
-                            ".", ",");
-                
+                        new BigDecimal(v.getTotal()).setScale(2,
+                                RoundingMode.HALF_UP).doubleValue()).replace(
+                                ".", ",");
+
                 String total = new DecimalFormat("0.00").format(
-                    new BigDecimal(v.getTotal() - v.getPartePaga()).setScale(2,
-                            RoundingMode.HALF_UP).doubleValue()).replace(
-                            ".", ",");
-                
-                texto += " Parte Paga: R$ " + partePaga + "  \n";
+                        new BigDecimal(v.getTotal() - v.getPartePaga()).setScale(2,
+                                RoundingMode.HALF_UP).doubleValue()).replace(
+                                ".", ",");
+
+                texto += " Valor Pago: R$ " + partePaga + "  \n";
+                if (v.getDesconto() > 0) {
+                    String desconto = new DecimalFormat("0.00").format(
+                            new BigDecimal(v.getDesconto()).setScale(2,
+                                    RoundingMode.HALF_UP).doubleValue()).replace(
+                                    ".", ",");
+                    texto += " Desconto: R$ " + desconto + "  \n";
+                }
                 texto += " TOTAL: R$ " + subtotal + "  \n\n";
-                texto += " Débito adicionado ao cliente: R$ " + total + "  \n\n";
-            }else{
+                texto += " Débito adicionado ao Cliente: R$ " + total + "  \n\n";
+            } else {
                 String subtotal = new DecimalFormat("0.00").format(
-                    new BigDecimal(v.getTotal()).setScale(2,
-                            RoundingMode.HALF_UP).doubleValue()).replace(
-                            ".", ",");
+                        new BigDecimal(v.getTotal()).setScale(2,
+                                RoundingMode.HALF_UP).doubleValue()).replace(
+                                ".", ",");
+                if (v.getDesconto() > 0) {
+                    String desconto = new DecimalFormat("0.00").format(
+                            new BigDecimal(v.getDesconto()).setScale(2,
+                                    RoundingMode.HALF_UP).doubleValue()).replace(
+                                    ".", ",");
+                    texto += " Desconto: R$ " + desconto + "  \n";
+                }
                 texto += " TOTAL: R$ " + subtotal + "  \n\n";
             }
-            
 
             texto += " Operador: "
                     + ffunc
@@ -268,7 +295,7 @@ public class ControllerImpressora {
 
             try {
                 Cliente c = fcli
-                        .clienteComId(v.getCliente().getId());
+                        .ClienteComId(v.getCliente().getId());
                 texto += " Cliente: " + c.getNome().toUpperCase() + " \n";
 
                 String debito = new DecimalFormat("0.00").format(

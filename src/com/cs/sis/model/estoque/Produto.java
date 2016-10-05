@@ -1,6 +1,6 @@
 package com.cs.sis.model.estoque;
 
-import com.cs.sis.model.pessoas.exception.ProdutoABaixoDoEstoqueException;
+import com.cs.sis.model.exception.ProdutoABaixoDoEstoqueException;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Basic;
@@ -151,6 +151,9 @@ public class Produto implements Serializable {
         if (this.quantidadeEmEstoque > 0) {
             throw new ProdutoABaixoDoEstoqueException();
         }
+    }
+    public void acrescentarQuantidadeDeEstoque(double quantidade) {
+        this.quantidadeEmEstoque += quantidade;
     }
 
     @Override

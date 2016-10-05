@@ -2,8 +2,8 @@ package com.cs.sis.controller;
 
 import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.financeiro.Pagamento;
-import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
-import com.cs.sis.model.pessoas.exception.ParametrosInvalidosException;
+import com.cs.sis.model.exception.EntidadeNaoExistenteException;
+import com.cs.sis.model.exception.ParametrosInvalidosException;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
@@ -101,7 +101,7 @@ public class ControllerPagamento extends ControllerEntity<Pagamento> {
         if (p.getValor() < 0) {//pagamentos nao podem ter o valor negativo
             throw new ParametrosInvalidosException("Pagamento com valor negativo");
         } else if (p.getCliente() == null) {
-            throw new ParametrosInvalidosException("Pagamento sem cliente");
+            throw new ParametrosInvalidosException("Pagamento sem Cliente");
         }
 
     }

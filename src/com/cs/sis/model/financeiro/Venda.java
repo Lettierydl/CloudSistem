@@ -2,6 +2,7 @@ package com.cs.sis.model.financeiro;
 
 import com.cs.sis.model.pessoas.Cliente;
 import com.cs.sis.model.pessoas.Funcionario;
+import com.cs.sis.model.exception.ParametrosInvalidosException;
 import com.cs.sis.util.OperacaoStringUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -27,6 +28,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
+import com.cs.sis.model.exception.ParametrosInvalidosException;
 
 /**
  *
@@ -71,7 +73,7 @@ public class Venda implements Comparable<Venda>, Pagavel {
     private double total;
 
     /**
-     * O cliente pode pagar apenas uma parte desta venda
+     * O Cliente pode pagar apenas uma parte desta venda
      */
     @Column(nullable = false, precision = 2)
     private double partePaga;
@@ -97,7 +99,7 @@ public class Venda implements Comparable<Venda>, Pagavel {
      */
     @ManyToOne
     @JoinColumn(updatable = true)
-    private Cliente cliente;
+    private Cliente Cliente;
 
     @Column
     private String observacao;
@@ -139,13 +141,21 @@ public class Venda implements Comparable<Venda>, Pagavel {
 
     @Override
     public Cliente getCliente() {
-        return cliente;
+        return Cliente;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setCliente(Cliente Cliente) {
+        this.Cliente = Cliente;
     }
 
+    public void setDesconto(double desconto) throws ParametrosInvalidosException{
+        if(desconto > this.total){
+            throw new ParametrosInvalidosException("Desconto maior que o valor da venda");
+        }else{
+            this.desconto = desconto;
+        }
+    }
+    
     public double getDesconto() {
         return desconto;
     }
@@ -161,6 +171,7 @@ public class Venda implements Comparable<Venda>, Pagavel {
     @Override
     public double getTotal() {
         return total;
+        //return getTotalComDesconto();
     }
 
     /**
@@ -372,5 +383,6 @@ public class Venda implements Comparable<Venda>, Pagavel {
     public String getOrigem() {
         return "Venda";
     }
+
 
 }

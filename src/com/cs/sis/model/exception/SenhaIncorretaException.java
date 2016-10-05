@@ -1,4 +1,4 @@
-package com.cs.sis.model.pessoas.exception;
+package com.cs.sis.model.exception;
 
 public class SenhaIncorretaException extends Exception {
 	

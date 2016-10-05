@@ -108,7 +108,7 @@
                   </Label>
                   <TextField fx:id="valorPago" layoutX="275.0" layoutY="286.0" onAction="#enterKeyEntrada" onKeyReleased="#entradaDigitado" prefHeight="27.0" prefWidth="103.0" promptText="Entrada">
                      <tooltip>
-                        <Tooltip text="Parte da venda paga pelo cliente" />
+                        <Tooltip text="Parte da venda paga pelo Cliente" />
                      </tooltip></TextField>
                   <Button fx:id="finalizarButton" layoutX="30.0" layoutY="392.0" mnemonicParsing="false" onAction="#finalizar" text="Finalizar">
                      <tooltip>
@@ -137,7 +137,7 @@
                   </Label>
                   <AutoCompleteTextField fx:id="nomeCli" layoutX="26.0" layoutY="286.0" onKeyReleased="#nomeDigitado" prefHeight="27.0" prefWidth="235.0" promptText="Nome do Cliente">
                      <tooltip>
-                        <Tooltip text="Nome do cliente" />
+                        <Tooltip text="Nome do Cliente" />
                      </tooltip>
                  </AutoCompleteTextField>
                   <TextField fx:id="observacao" layoutX="26.0" layoutY="321.0" prefHeight="27.0" prefWidth="235.0" promptText="Observação">

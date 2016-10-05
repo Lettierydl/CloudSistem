@@ -5,7 +5,7 @@
  */
 package com.cs.sis.controller;
 
-import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
+import com.cs.sis.model.exception.EntidadeNaoExistenteException;
 import com.cs.sis.util.Arquivo;
 import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import java.util.Properties;

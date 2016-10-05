@@ -5,7 +5,7 @@ import com.cs.sis.controller.configuracao.Configuracao;
 import com.cs.sis.controller.configuracao.ConfiguracaoPK;
 import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.pessoas.TipoDeFuncionario;
-import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
+import com.cs.sis.model.exception.EntidadeNaoExistenteException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;

@@ -33,13 +33,13 @@
                   <Label text="Nome" />
                   <TextField fx:id="nome" GridPane.rowIndex="1">
                      <tooltip>
-                        <Tooltip text="Nome do cliente" />
+                        <Tooltip text="Nome do Cliente" />
                      </tooltip>
                   </TextField>
                   <Label text="Nascimento" GridPane.columnIndex="4" />
                   <TextField fx:id="endereco" promptText="Rua rita pereira de almenda, 51, centro" GridPane.rowIndex="4">
                      <tooltip>
-                        <Tooltip text="Endereço do cliente" />
+                        <Tooltip text="Endereço do Cliente" />
                      </tooltip>
                   </TextField>
                   <Label text="Endereço" GridPane.rowIndex="3" />
@@ -49,12 +49,12 @@
                   <Label layoutX="354.0" layoutY="109.0" text="Celular" GridPane.columnIndex="4" GridPane.rowIndex="3" />
                   <TextField fx:id="celular" layoutX="354.0" layoutY="132.0" promptText="(  )   -    " GridPane.columnIndex="4" GridPane.rowIndex="4">
                      <tooltip>
-                        <Tooltip text="Celular para contato do cliente" />
+                        <Tooltip text="Celular para contato do Cliente" />
                      </tooltip>
                   </TextField>
                   <TextField fx:id="cpf" layoutX="10.0" layoutY="131.0" promptText="   .   .   -  " GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <tooltip>
-                        <Tooltip text="CPF do cliente" />
+                        <Tooltip text="CPF do Cliente" />
                      </tooltip>
                   </TextField>
                   <DatePicker fx:id="nascimento" promptText="  /  /     " GridPane.columnIndex="4" GridPane.rowIndex="1" />
@@ -69,7 +69,7 @@
                   <Font name="System Bold" size="13.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Excluir dados do cliente do sistema" />
+                  <Tooltip text="Excluir dados do Cliente do sistema" />
                </tooltip>
             </Button>
         <Pane maxWidth="+Infinity" prefHeight="31.0" prefWidth="384.0" HBox.hgrow="ALWAYS" />

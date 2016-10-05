@@ -12,7 +12,7 @@ import com.cs.sis.model.financeiro.Pagamento;
 import com.cs.sis.model.financeiro.Pagavel;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.Cliente;
-import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
+import com.cs.sis.model.exception.EntidadeNaoExistenteException;
 import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
@@ -137,14 +137,14 @@ public class PagamentoController implements Initializable {
             if (oud_debito != new_debito) {
                 Dialogs di = Dialogs.create()
                         .title("Débito atualizado")
-                        .masthead("Débito do cliente atualizado com sucesso")
+                        .masthead("Débito do Cliente atualizado com sucesso")
                         .actions(Dialog.Actions.YES);
                 di.style(DialogStyle.UNDECORATED);
                 di.showWarning();
             } else {
                 Dialogs di = Dialogs.create()
                         .title("Débito já atualizado")
-                        .masthead("Débito do cliente já esta atualizado")
+                        .masthead("Débito do Cliente já esta atualizado")
                         .actions(Dialog.Actions.YES);
                 di.style(DialogStyle.UNDECORATED);
                 di.showInformation();
@@ -281,7 +281,7 @@ public class PagamentoController implements Initializable {
     }
 
     public void preencherTabelaPagaveis() {
-        cliColP.setCellValueFactory(new PropertyValueFactory<Pagavel, Cliente>("cliente"));
+        cliColP.setCellValueFactory(new PropertyValueFactory<Pagavel, Cliente>("Cliente"));
         origColP.setCellValueFactory(new PropertyValueFactory<Pagavel, Pagavel>("origem"));
         dataColP.setCellValueFactory(new PropertyValueFactory<Pagavel, String>("data"));
         restColP.setCellValueFactory(new PropertyValueFactory<Pagavel, Double>("valorNaoPago"));
@@ -439,7 +439,7 @@ public class PagamentoController implements Initializable {
     @FXML
     private AutoCompleteTextField nomeD;
     @FXML
-    private TableColumn clienteH;
+    private TableColumn ClienteH;
     @FXML
     private AutoCompleteTextField nomeH;
     @FXML
@@ -457,7 +457,7 @@ public class PagamentoController implements Initializable {
 
     private void iniciarTabelaHistorico() {
         valorH.setCellValueFactory(new PropertyValueFactory<>("valor"));
-        clienteH.setCellValueFactory(new PropertyValueFactory<>("cliente"));
+        ClienteH.setCellValueFactory(new PropertyValueFactory<>("Cliente"));
         dataH.setCellValueFactory(new PropertyValueFactory<>("data"));
         funcionarioH.setCellValueFactory(new PropertyValueFactory<>("funcionario"));
         obsH.setCellValueFactory(new PropertyValueFactory<>("observacao"));
@@ -542,7 +542,7 @@ public class PagamentoController implements Initializable {
             }
         } catch (NonUniqueResultException | NoResultException ne) {
             Dialogs.create().title("Cliente não selecionado")
-                    .masthead("Selecione o cliente para a dívida")
+                    .masthead("Selecione o Cliente para a dívida")
                     .showError();
             nomeD.selectAll();
             nomeD.requestFocus();

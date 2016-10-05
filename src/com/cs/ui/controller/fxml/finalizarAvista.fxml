@@ -107,10 +107,10 @@
                   </Label>
                   <TextField fx:id="valorPago" layoutX="30.0" layoutY="171.0" onAction="#enterKey" onKeyReleased="#valDigitado" prefHeight="27.0" prefWidth="142.0">
                      <tooltip>
-                        <Tooltip text="Valor pago pelo cliente" />
+                        <Tooltip text="Valor pago pelo Cliente" />
                      </tooltip></TextField>
                   <Text layoutX="31.0" layoutY="165.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Valor pago" />
-                  <Text layoutX="183.0" layoutY="165.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Troco" />
+                  <Text layoutX="337.0" layoutY="163.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Troco" />
                   <Button fx:id="finalizarButton" layoutX="30.0" layoutY="245.0" mnemonicParsing="false" onAction="#finalizar" text="Finalizar">
                      <tooltip>
                         <Tooltip text="Finalizar venda à vista" />
@@ -120,12 +120,18 @@
                         <Tooltip text="Voltar para editar a venda" />
                      </tooltip></Button>
                   <FlowPane layoutX="2.0" layoutY="419.0" prefHeight="39.0" prefWidth="513.0" />
-                  <Label fx:id="troco" layoutX="183.0" layoutY="176.0" text="0,00" />
+                  <Label fx:id="troco" layoutX="337.0" layoutY="174.0" text="0,00" />
                   <CheckBox fx:id="imprimir" layoutX="30.0" layoutY="211.0" mnemonicParsing="false" text="Imprimir cupom">
                      <tooltip>
                         <Tooltip text="Imprimir cupom fiscal pela ECF" />
                      </tooltip>
                   </CheckBox>
+                  <TextField fx:id="desconto" layoutX="186.0" layoutY="170.0" onAction="#enterKey" onKeyReleased="#valDigitado" prefHeight="27.0" prefWidth="142.0" promptText="0,0%">
+                     <tooltip>
+                        <Tooltip text="Desconto da Venda" />
+                     </tooltip>
+                  </TextField>
+                  <Text layoutX="186.0" layoutY="165.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Desconto" />
                </children>
                <styleClass>
                   <String fx:value="../../css/principal.css" />

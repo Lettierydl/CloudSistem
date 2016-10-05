@@ -7,8 +7,8 @@ package com.cs.ui.controller.dialog;
  */
 import com.cs.sis.model.pessoas.Funcionario;
 import com.cs.sis.model.pessoas.TipoDeFuncionario;
-import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
-import com.cs.sis.model.pessoas.exception.SenhaIncorretaException;
+import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.model.exception.SenhaIncorretaException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import org.controlsfx.dialog.Dialogs;

@@ -11,7 +11,7 @@ import com.cs.Main;
 import com.cs.sis.controller.configuracao.PermissaoFuncionario;
 import com.cs.sis.model.pessoas.Funcionario;
 import com.cs.sis.model.pessoas.TipoDeFuncionario;
-import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.util.Arquivo;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;

@@ -8,7 +8,7 @@ import javax.persistence.Query;
 public class FindCliente extends FindEntity {
 
     @SuppressWarnings("unchecked")
-    public static List<Cliente> clientesQueNomeLike(String nome) {
+    public static List<Cliente> ClientesQueNomeLike(String nome) {
         if (nome == null || nome.length() == 0) {
             throw new IllegalArgumentException(
                     "nome inválido");
@@ -25,13 +25,13 @@ public class FindCliente extends FindEntity {
                         "select o from Cliente as o where LOWER(o.nome) LIKE LOWER(:nome)",
                         Cliente.class);
         q.setParameter("nome", nome);
-        List<Cliente> clientes = q.getResultList();
+        List<Cliente> Clientes = q.getResultList();
 
-        return clientes;
+        return Clientes;
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Cliente> clientesQueCPFLike(String cpf) {
+    public static List<Cliente> ClientesQueCPFLike(String cpf) {
         if (cpf == null || cpf.length() == 0) {
             throw new IllegalArgumentException(
                     "cpf inválido");
@@ -49,13 +49,13 @@ public class FindCliente extends FindEntity {
                         "SELECT o FROM Cliente AS o WHERE LOWER(o.cpf) LIKE LOWER(:cpf)",
                         Cliente.class);
         q.setParameter("cpf", cpf.replace(" ", "%"));
-        List<Cliente> clientes = q.getResultList();
+        List<Cliente> Clientes = q.getResultList();
 
-        return clientes;
+        return Clientes;
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Cliente> clientesQueNomeInicia(String nome) {
+    public static List<Cliente> ClientesQueNomeInicia(String nome) {
         if (nome == null || nome.length() == 0) {
             throw new IllegalArgumentException(
                     "nome inválido");
@@ -76,7 +76,7 @@ public class FindCliente extends FindEntity {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Cliente> clientesQueCPFInicia(String cpf) {
+    public static List<Cliente> ClientesQueCPFInicia(String cpf) {
         if (cpf == null || cpf.length() == 0) {
             throw new IllegalArgumentException(
                     "cpf inválido");
@@ -97,7 +97,7 @@ public class FindCliente extends FindEntity {
     }
     
     @SuppressWarnings("unchecked")
-    public static List<Cliente> clientesQueNomeOuCPFIniciam(String nomeOuCpf) {
+    public static List<Cliente> ClientesQueNomeOuCPFIniciam(String nomeOuCpf) {
         String stringQuery = "select c FROM Cliente as c ";
         stringQuery += "where LOWER(c.nome) LIKE LOWER(:nome) or "
                 + "LOWER(c.cpf) LIKE LOWER(:cpf) order by c.nome, c.cpf";
@@ -113,7 +113,7 @@ public class FindCliente extends FindEntity {
         return Clientes;
     }
 
-    public static List<Cliente> clientesQueNomeOuCPFIniciam(String nomeOuCpf,
+    public static List<Cliente> ClientesQueNomeOuCPFIniciam(String nomeOuCpf,
             int maxResult) {
         String stringQuery = "select c FROM Cliente as c ";
         stringQuery += "where LOWER(c.nome) LIKE LOWER(:nome) or "
@@ -133,7 +133,7 @@ public class FindCliente extends FindEntity {
         return Clientes;
     }
 
-    public static Cliente clientesQueNomeOuCPFIqualA(String nomeOuCpf) {
+    public static Cliente ClientesQueNomeOuCPFIqualA(String nomeOuCpf) {
         String stringQuery = "select c FROM Cliente as c ";
         stringQuery += "where LOWER(c.nome) = LOWER(:nome) or "
                 + "LOWER(c.cpf) = LOWER(:cpf)";
@@ -143,8 +143,8 @@ public class FindCliente extends FindEntity {
         query.setParameter("nome", nomeOuCpf);
         query.setParameter("cpf", nomeOuCpf);
 
-        Cliente cliente = (Cliente) query.getSingleResult();
-        return cliente;
+        Cliente Cliente = (Cliente) query.getSingleResult();
+        return Cliente;
     }
 
     public static List<String> nomeClientesQueNomeInicia(String nome) {
@@ -166,8 +166,8 @@ public class FindCliente extends FindEntity {
 
         Query consulta = getEntityManager()
                 .createQuery("select c from Cliente c order by c.nome");
-        List<Cliente> clientes = consulta.getResultList();
-        return clientes;
+        List<Cliente> Clientes = consulta.getResultList();
+        return Clientes;
     }
     
     @SuppressWarnings("unchecked")
@@ -176,11 +176,11 @@ public class FindCliente extends FindEntity {
         Query consulta = getEntityManager()
                 .createQuery("select c from Cliente c order by c.nome");
         consulta.setMaxResults(limit);
-        List<Cliente> clientes = consulta.getResultList();
-        return clientes;
+        List<Cliente> Clientes = consulta.getResultList();
+        return Clientes;
     }
 
-    public static Cliente clienteComId(int idCliente) {
+    public static Cliente ClienteComId(int idCliente) {
         Query consulta = getEntityManager().createQuery(
                 "select c from Cliente as c where c.id = :idCliente ",
                 Cliente.class);
@@ -189,7 +189,7 @@ public class FindCliente extends FindEntity {
         return c;
     }
 
-    public static Cliente clienteComNome(String nome) {
+    public static Cliente ClienteComNome(String nome) {
         if (nome == null || nome.length() == 0) {
             throw new IllegalArgumentException(
                     "nome inválido");
@@ -199,11 +199,11 @@ public class FindCliente extends FindEntity {
                         "select o from Cliente as o where LOWER(o.nome) = LOWER(:nome)",
                         Cliente.class);
         q.setParameter("nome", nome);
-        Cliente cliente = (Cliente) q.getSingleResult();
-        return cliente;
+        Cliente Cliente = (Cliente) q.getSingleResult();
+        return Cliente;
     }
 
-    public static Cliente clienteComCPF(String cpf) {
+    public static Cliente ClienteComCPF(String cpf) {
         if (cpf == null || cpf.length() == 0) {
             throw new IllegalArgumentException(
                     "nome inválido");
@@ -212,9 +212,9 @@ public class FindCliente extends FindEntity {
                 "select o from Cliente as o where LOWER(o.cpf) = LOWER(:cpf)",
                 Cliente.class);
         q.setParameter("cpf", cpf);
-        Cliente cliente = (Cliente) q.getSingleResult();
+        Cliente Cliente = (Cliente) q.getSingleResult();
 
-        return cliente;
+        return Cliente;
     }
 
 }

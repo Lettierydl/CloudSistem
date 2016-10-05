@@ -24,7 +24,7 @@ public class FindPagamento extends FindEntity {
         return pagamentos;
     }
 
-    public static List<Pagamento> pagamentosDoCliente(Cliente cliente, Date diaInicio,
+    public static List<Pagamento> pagamentosDoCliente(Cliente Cliente, Date diaInicio,
             Date diaFim) {
 
         Calendar di = Calendar.getInstance();
@@ -40,12 +40,12 @@ public class FindPagamento extends FindEntity {
         df.set(Calendar.SECOND, 59);
 
         String stringQuery = "select p FROM Pagamento as p ";
-        stringQuery += "WHERE p.cliente = :cli and p.data between :diaInicio and :diaFim"
+        stringQuery += "WHERE p.Cliente = :cli and p.data between :diaInicio and :diaFim"
                 + " order by p.data DESC";
 
         Query query = getEntityManager().createQuery(stringQuery, Pagamento.class);
 
-        query.setParameter("cli", cliente);
+        query.setParameter("cli", Cliente);
         query.setParameter("diaInicio", di);
         query.setParameter("diaFim", df);
 
@@ -55,15 +55,15 @@ public class FindPagamento extends FindEntity {
         return pagamentos;
     }
 
-    public static List<Pagamento> pagamentosDoCliente(Cliente cliente) {
+    public static List<Pagamento> pagamentosDoCliente(Cliente Cliente) {
 
         String stringQuery = "select p FROM Pagamento as p ";
-        stringQuery += "WHERE p.cliente = :cli"
+        stringQuery += "WHERE p.Cliente = :cli"
                 + " order by p.data DESC";
 
         Query query = getEntityManager().createQuery(stringQuery, Pagamento.class);
 
-        query.setParameter("cli", cliente);
+        query.setParameter("cli", Cliente);
 
         @SuppressWarnings("unchecked")
         List<Pagamento> pagamentos = (List<Pagamento>) query.getResultList();
@@ -71,15 +71,15 @@ public class FindPagamento extends FindEntity {
         return pagamentos;
     }
 
-    public static List<Pagamento> pagamentosDosClientes(List<Cliente> clientes) {
-        //vai rodando pelo cliente_id //for clientes cli{ p.cliente = cli or }
+    public static List<Pagamento> pagamentosDosClientes(List<Cliente> Clientes) {
+        //vai rodando pelo Cliente_id //for Clientes cli{ p.Cliente = cli or }
         String stringQuery = "select p FROM Pagamento as p ";
-        stringQuery += "WHERE (p.cliente != NULL) ";
-        for (int i = 0; i < clientes.size(); i++) {
+        stringQuery += "WHERE (p.Cliente != NULL) ";
+        for (int i = 0; i < Clientes.size(); i++) {
             if (i > 0) {
-                stringQuery += "or p.cliente = :cli" + i + " ";
+                stringQuery += "or p.Cliente = :cli" + i + " ";
             } else {
-                stringQuery += "and ( p.cliente = :cli" + i + " ";
+                stringQuery += "and ( p.Cliente = :cli" + i + " ";
             }
         }
 
@@ -87,8 +87,8 @@ public class FindPagamento extends FindEntity {
 
         Query query = getEntityManager().createQuery(stringQuery, Pagamento.class);
 
-        for (int i = 0; i < clientes.size(); i++) {
-            query.setParameter("cli" + i, clientes.get(i));
+        for (int i = 0; i < Clientes.size(); i++) {
+            query.setParameter("cli" + i, Clientes.get(i));
         }
 
         @SuppressWarnings("unchecked")

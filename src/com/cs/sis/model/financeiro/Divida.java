@@ -64,7 +64,7 @@ public class Divida implements Comparable<Divida>, Pagavel {
     private double total;
 
     /**
-     * O cliente pode pagar apenas uma parte desta divida
+     * O Cliente pode pagar apenas uma parte desta divida
      */
     @Column(nullable = false, precision = 2)
     private double partePaga;
@@ -85,7 +85,7 @@ public class Divida implements Comparable<Divida>, Pagavel {
      */
     @ManyToOne
     @JoinColumn(updatable = true )
-    private Cliente cliente;
+    private Cliente Cliente;
 
     public int getId() {
         return id;
@@ -120,11 +120,11 @@ public class Divida implements Comparable<Divida>, Pagavel {
     }
 
     public Cliente getCliente() {
-        return cliente;
+        return Cliente;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setCliente(Cliente Cliente) {
+        this.Cliente = Cliente;
     }
 
     public String getDescricao() {

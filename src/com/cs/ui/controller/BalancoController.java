@@ -1,15 +1,19 @@
 package com.cs.ui.controller;
 
+import com.cs.ControllerTelas;
 import com.cs.Facede;
 import com.cs.sis.model.financeiro.Pagamento;
 import com.cs.sis.model.financeiro.Pagavel;
 import com.cs.sis.model.pessoas.Cliente;
-import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
+import com.cs.ui.controller.dialog.DialogController;
 import java.io.File;
+import java.io.IOException;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.control.DatePicker;
@@ -29,14 +33,22 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.controlsfx.dialog.Dialogs;
 
@@ -96,6 +108,8 @@ public class BalancoController implements Initializable {
     private TableColumn<?, ?> colTotalH;
     @FXML
     private TableColumn<?, ?> colPagaH;
+    @FXML
+    private TableColumn colVerH;
 
     @FXML
     private DatePicker hDe;
@@ -125,7 +139,7 @@ public class BalancoController implements Initializable {
     @FXML
     private Label sVendido;
 
-    /*Debitos dos clientes*/
+    /*Debitos dos Clientes*/
     //@FXML
     public TextField dDebito;
     @FXML
@@ -147,7 +161,8 @@ public class BalancoController implements Initializable {
         colDataH.setCellValueFactory(new PropertyValueFactory<>("dia"));
         colTotalH.setCellValueFactory(new PropertyValueFactory<>("total"));
         colPagaH.setCellValueFactory(new PropertyValueFactory<>("partePaga"));
-
+        colVerH.setCellValueFactory(new PropertyValueFactory<>(""));
+        
         MaskFieldUtil.upperCase(hNome);
         JavaFXUtil.nextFielOnAction(hNome, hDe);
 
@@ -268,6 +283,7 @@ public class BalancoController implements Initializable {
         JavaFXUtil.colunValueMoedaFormat(colPagaH);
         JavaFXUtil.colunValueMoedaFormat(colTotalH);
         JavaFXUtil.colunDataTimeFormat(colDataH);
+        configurarVerColunVenda();
 
         hTable.setItems(FXCollections.observableList(pagaveis));
 
@@ -550,7 +566,72 @@ public class BalancoController implements Initializable {
         }
     }
     
+    public void configurarVerColunVenda() {
+        colVerH.setComparator(new Comparator<Venda>() {
+            @Override
+            public int compare(Venda p1, Venda p2) {
+                return Double.compare(p1.getValorNaoPago(), p2.getValorNaoPago());
+            }
+        });
+        colVerH.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Venda, Venda>, ObservableValue<Venda>>() {
+            @Override
+            public ObservableValue<Venda> call(TableColumn.CellDataFeatures<Venda, Venda> features) {
+                return new ReadOnlyObjectWrapper(features.getValue());
+            }
+        });
+        colVerH.setCellFactory(new Callback<TableColumn<Venda, Venda>, TableCell<Venda, Venda>>() {
+            public TableCell<Venda, Venda> call(TableColumn<Venda, Venda> btnCol) {
+                return new TableCell<Venda, Venda>() {
+                    @Override
+                    public void updateItem(final Venda obj, boolean empty) {
+                        if (empty || obj == null) {
+                            return;
+                        }
+                        final Label button = new Label(obj.getOrigem());
+                        button.setCursor(Cursor.HAND);
+                        super.updateItem(obj, empty);
+                        setGraphic(button);
+                        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+                                showDialogView(obj);
+                            }
+                        });
+                    }
+                };
+            }
+        });
+    }
     
+    public boolean showDialogView(Pagavel entity) {
+        try {
+            // Carrega o arquivo fxml e cria um novo stage para a janela popup.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("fxml/dialog/dialogPagavel.fxml"));
+            GridPane page = (GridPane) loader.load();
+
+            // Cria o palco dialogStage.
+            Stage dialogStage = new Stage();
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(ControllerTelas.stage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Define a pessoa no controller.
+            DialogController<Pagavel> controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setEntity(entity);
+            dialogStage.setTitle(controller.getTitulo());
+            dialogStage.setResizable(false);
+            // Mostra a janela e espera até o usuário fechar.
+            dialogStage.showAndWait();
+
+            return controller.isOkClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     
     private void configurarColunasDebito() {
         colNomeD.setComparator(new Comparator<Object[]>() {

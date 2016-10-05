@@ -8,7 +8,7 @@ package com.cs.ui.controller;
 import com.cs.ControllerTelas;
 import com.cs.Facede;
 import com.cs.Main;
-import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import com.cs.ui.controller.dialog.DialogController;
 import com.cs.ui.controller.dialog.ProgressDialogController;

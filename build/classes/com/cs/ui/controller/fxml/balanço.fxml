@@ -70,11 +70,12 @@
                               </FlowPane>
                               <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <children>
-                                    <TableView fx:id="hTable" layoutX="32.0" layoutY="15.0" prefHeight="298.0" prefWidth="407.0">
+                                    <TableView fx:id="hTable" layoutX="32.0" layoutY="15.0" prefHeight="298.0" prefWidth="489.0">
                                       <columns>
-                                        <TableColumn fx:id="colDataH" prefWidth="174.7774658203125" text="Data" />
-                                        <TableColumn fx:id="colTotalH" prefWidth="120.4442138671875" text="Total" />
-                                          <TableColumn fx:id="colPagaH" prefWidth="104.5557861328125" text="Parte Paga" />
+                                        <TableColumn fx:id="colDataH" prefWidth="165.0" text="Data" />
+                                        <TableColumn fx:id="colTotalH" prefWidth="101.0" text="Total" />
+                                          <TableColumn fx:id="colPagaH" prefWidth="119.0" text="Parte Paga" />
+                                          <TableColumn fx:id="colVerH" prefWidth="97.0" text="Vizualizar" />
                                       </columns>
                                     </TableView>
                                  </children>
@@ -531,7 +532,7 @@
                                           <Font name="System Bold" size="13.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Soma total dos débitos dos clientes ao lado" />
+                                          <Tooltip text="Soma total dos débitos dos Clientes ao lado" />
                                        </tooltip>
                                     </Label>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total de Clientes:" textAlignment="CENTER" textOrigin="CENTER" GridPane.rowIndex="1" />
@@ -540,7 +541,7 @@
                                           <Font name="System Bold" size="13.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Quantidade total dos clientes ao lado" />
+                                          <Tooltip text="Quantidade total dos Clientes ao lado" />
                                        </tooltip>
                                     </Label>
                                  </children>

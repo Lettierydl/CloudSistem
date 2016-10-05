@@ -5,7 +5,7 @@
  */
 package com.cs.sis.model.pessoas;
 
-import com.cs.sis.model.pessoas.exception.ParametrosInvalidosException;
+import com.cs.sis.model.exception.ParametrosInvalidosException;
 import com.cs.sis.util.OperacaoStringUtil;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Lettiery
  */
 @Entity
-@Table(name = "cliente")
+@Table(name = "Cliente")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Cliente.findAll", query = "SELECT c FROM Cliente c"),
@@ -55,7 +55,7 @@ public class Cliente implements Serializable, Pessoa {
 	private String nome;
 
 	/**
-	 * Valor total de quanto o cliente deve
+	 * Valor total de quanto o Cliente deve
      */
 	@Column(nullable = false, precision = 2)
 	private double debito;
@@ -82,7 +82,7 @@ public class Cliente implements Serializable, Pessoa {
 
 	/**
      
-	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "cliente")
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "Cliente")
 	private List<Pagamento> pagamentos = new ArrayList<Pagamento>();
 	*/
 	 
@@ -175,7 +175,7 @@ public class Cliente implements Serializable, Pessoa {
 			debito = new BigDecimal(this.debito).setScale(2,
 					RoundingMode.HALF_UP).doubleValue();
 		} else {
-			throw new ParametrosInvalidosException("Não pode ser acencentado um valor negativo ao debito do cliente");
+			throw new ParametrosInvalidosException("Não pode ser acencentado um valor negativo ao debito do Cliente");
 		}
 	}
 
@@ -186,7 +186,7 @@ public class Cliente implements Serializable, Pessoa {
 			debito = new BigDecimal(this.debito).setScale(2,
 					RoundingMode.HALF_UP).doubleValue();
 		} else {
-			throw new ParametrosInvalidosException("N��o pode ser retirado um valor negativo ao debito do cliente");
+			throw new ParametrosInvalidosException("N��o pode ser retirado um valor negativo ao debito do Cliente");
 		}
 	}
 

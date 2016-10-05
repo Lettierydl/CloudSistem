@@ -56,7 +56,7 @@
                                                 <Insets top="10.0" />
                                              </FlowPane.margin>
                                              <tooltip>
-                                                <Tooltip text="Débito total do cliente" />
+                                                <Tooltip text="Débito total do Cliente" />
                                              </tooltip>
                                           </Label>
                                           <Button mnemonicParsing="false" onAction="#adicionarObservacao" prefHeight="27.0" prefWidth="103.0" text="Add Obs">
@@ -118,7 +118,7 @@
                            <columns>
                               <TableColumn fx:id="dataH" prefWidth="150.0" text="Data" />
                               <TableColumn fx:id="valorH" prefWidth="125.0" text="Valor" />
-                              <TableColumn fx:id="clienteH" prefWidth="300.0" text="Cliente" />
+                              <TableColumn fx:id="ClienteH" prefWidth="300.0" text="Cliente" />
                               <TableColumn fx:id="funcionarioH" prefWidth="120.0" text="Funcionário" />
                               <TableColumn fx:id="obsH" prefWidth="150.0" text="Observações" />
                            </columns>

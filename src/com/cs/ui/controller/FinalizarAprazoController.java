@@ -11,8 +11,8 @@ import com.cs.Main;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.Cliente;
-import com.cs.sis.model.pessoas.exception.EstadoInvalidoDaVendaAtualException;
-import com.cs.sis.model.pessoas.exception.ParametrosInvalidosException;
+import com.cs.sis.model.exception.EstadoInvalidoDaVendaAtualException;
+import com.cs.sis.model.exception.ParametrosInvalidosException;
 import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
@@ -124,7 +124,7 @@ public class FinalizarAprazoController implements Initializable {
         if (val >= atual.getTotal()) {
             Dialogs.create()
                     .title("Valor incorreto")
-                    .masthead("O valor pago pelo cliente deve ser inferior ao valor da venda")
+                    .masthead("O valor pago pelo Cliente deve ser inferior ao valor da venda")
                     .showError();
             valorPago.requestFocus();
             valorPago.selectAll();
@@ -136,7 +136,7 @@ public class FinalizarAprazoController implements Initializable {
         }catch(NoResultException | NonUniqueResultException ne){
             Dialogs.create()
                     .title("Cliente não cadastrado")
-                    .masthead("Por favor digite um nome válido para o cliente")
+                    .masthead("Por favor digite um nome válido para o Cliente")
                     .showError();
             return;
         }
@@ -180,7 +180,7 @@ public class FinalizarAprazoController implements Initializable {
                 .masthead("Venda à prazo finalizada com sucesso")
                 .message("Cliente: " + c.getNome()
                         +"\nValor não pago da venda: " + OperacaoStringUtil.formatarStringValorMoeda(atual.getValorNaoPago())
-                        + "\nNovo Débito do cliente: "+ OperacaoStringUtil.formatarStringValorMoeda(debito));
+                        + "\nNovo Débito do Cliente: "+ OperacaoStringUtil.formatarStringValorMoeda(debito));
         dialog.style(DialogStyle.UNDECORATED);
         dialog.showInformation();
     }
@@ -210,7 +210,7 @@ public class FinalizarAprazoController implements Initializable {
         if (val >= atual.getTotal()) {
             Dialogs.create()
                     .title("Valor incorreto")
-                    .masthead("O valor pago pelo cliente deve ser inferior ao valor da venda")
+                    .masthead("O valor pago pelo Cliente deve ser inferior ao valor da venda")
                     .showError();
             valorPago.requestFocus();
             valorPago.selectAll();

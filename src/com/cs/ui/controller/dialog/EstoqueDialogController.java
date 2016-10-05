@@ -5,26 +5,37 @@ package com.cs.ui.controller.dialog;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.cs.ControllerTelas;
 import com.cs.sis.model.estoque.CategoriaProduto;
 import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.estoque.UnidadeProduto;
-import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
-import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.model.exception.EntidadeNaoExistenteException;
+import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import org.controlsfx.dialog.Dialogs;
 import com.cs.sis.util.OperacaoStringUtil;
+import com.cs.ui.controller.ControllerUI;
+import com.cs.ui.controller.EstoqueController;
+import com.cs.ui.controller.fxml.dialog.DialogFXML;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.DialogStyle;
@@ -52,6 +63,8 @@ public class EstoqueDialogController extends DialogController<Produto> {
     private Label erro;
 
     @FXML
+    private Button entrada;
+    @FXML
     private ComboBox<CategoriaProduto> categoria;
     @FXML
     private ComboBox<UnidadeProduto> unidade;
@@ -60,6 +73,38 @@ public class EstoqueDialogController extends DialogController<Produto> {
         super();
     }
 
+    public void entradaDeProduto(){
+        //abre modal entrada de produto
+        try {
+            // Carrega o arquivo fxml e cria um novo stage para a janela popup.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(DialogFXML.class.getResource("dialogEntradaProduto.fxml"));
+            GridPane page = (GridPane) loader.load();
+
+            // Cria o palco dialogStage.
+            Stage dialogStage = new Stage();
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(ControllerTelas.stage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Define a pessoa no controller.
+            DialogController<Produto> controller = loader.getController();
+            controller.setTipe(tipe);
+            controller.setDialogStage(dialogStage);
+            controller.setEntity(entity);
+            dialogStage.setTitle(controller.getTitulo());
+            dialogStage.setResizable(false);
+            // Mostra a janela e espera até o usuário fechar.
+            dialogStage.showAndWait();
+           
+            this.dialogStage.close();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         MaskFieldUtil.upperCase(descricao);
@@ -252,6 +297,7 @@ public class EstoqueDialogController extends DialogController<Produto> {
                 descricao.setText(entity.getDescricao());
                 categoria.setValue(entity.getCategoria());
                 unidade.setValue(entity.getDescricaoUnidade());
+                estoque.setDisable(true);
                 break;
             case CREATE_MODAL:
                 super.entity = new Produto();
@@ -264,6 +310,7 @@ public class EstoqueDialogController extends DialogController<Produto> {
                 descricao.setText("");
                 categoria.setValue(CategoriaProduto.Alimentos);
                 unidade.setValue(UnidadeProduto.UND);
+                entrada.setVisible(false);
                 break;
             case VIEW_MODAL:
                 page.setText("Produto ID: " + entity.getId());
@@ -284,6 +331,7 @@ public class EstoqueDialogController extends DialogController<Produto> {
                 valorC.setEditable(false);
                 estoque.setEditable(false);
                 cancelButton.setVisible(false);
+                entrada.setVisible(false);
                 break;
         }
     }

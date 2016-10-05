@@ -6,7 +6,7 @@ import com.cs.Main;
 import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Venda;
-import com.cs.sis.model.pessoas.exception.VendaPendenteException;
+import com.cs.sis.model.exception.VendaPendenteException;
 import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;

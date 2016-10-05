@@ -45,7 +45,7 @@ public class FindVenda extends FindEntity {
         }
         if (c != null) {
             parametros.put("cli", c);
-            consulta += " and v.cliente :cli";
+            consulta += " and v.Cliente :cli";
         }
         Query query = getEntityManager().createQuery(consulta, Venda.class);
         for (Map.Entry<String, Object> param : parametros.entrySet()) {
@@ -109,7 +109,7 @@ public class FindVenda extends FindEntity {
     public static List<Venda> vendasNaoPagaDeHoje() {
         String stringQuery = "select v FROM Venda as v ";
         stringQuery += "WHERE v.paga = false and day(v.dia) = day(curdate()) and v.dia >= curdate() "
-                + "and v.cliente != null order by v.dia DESC ";
+                + "and v.Cliente != null order by v.dia DESC ";
 
         Query query = getEntityManager().createQuery(stringQuery, Venda.class);
         query.setMaxResults(LIMITE_DA_LISTA_DE_VENDAS_DE_HOJE);
@@ -164,7 +164,7 @@ public class FindVenda extends FindEntity {
         return vendas;
     }
 
-    public static List<Venda> vendasDoCliente(Cliente cliente, Date diaInicio,
+    public static List<Venda> vendasDoCliente(Cliente Cliente, Date diaInicio,
             Date diaFim) {
 
         Calendar di = Calendar.getInstance();
@@ -180,11 +180,11 @@ public class FindVenda extends FindEntity {
         df.set(Calendar.SECOND, 59);
 
         String stringQuery = "select v FROM Venda as v ";
-        stringQuery += "WHERE v.cliente = :cli and  v.dia between :diaInicio and :diaFim"
+        stringQuery += "WHERE v.Cliente = :cli and  v.dia between :diaInicio and :diaFim"
                 + " order by v.dia , v.total DESC";
 
         Query query = getEntityManager().createQuery(stringQuery, Venda.class);
-        query.setParameter("cli", cliente);
+        query.setParameter("cli", Cliente);
         query.setParameter("diaInicio", di);
         query.setParameter("diaFim", df);
 
@@ -194,13 +194,13 @@ public class FindVenda extends FindEntity {
         return vendas;
     }
     
-    public static List<Venda> vendasDoCliente(Cliente cliente) {
+    public static List<Venda> vendasDoCliente(Cliente Cliente) {
 
         String stringQuery = "select v FROM Venda as v ";
-        stringQuery += "WHERE v.cliente = :cli order by v.dia , v.total DESC";
+        stringQuery += "WHERE v.Cliente = :cli order by v.dia , v.total DESC";
 
         Query query = getEntityManager().createQuery(stringQuery, Venda.class);
-        query.setParameter("cli", cliente);
+        query.setParameter("cli", Cliente);
 
         @SuppressWarnings("unchecked")
         List<Venda> vendas = (List<Venda>) query.getResultList();
@@ -208,15 +208,15 @@ public class FindVenda extends FindEntity {
         return vendas;
     }
 
-    public static List<Venda> vendasNaoPagasDosClientes(List<Cliente> clientes) {
+    public static List<Venda> vendasNaoPagasDosClientes(List<Cliente> Clientes) {
         String stringQuery = "select v FROM Venda as v ";
         stringQuery += "WHERE v.paga = false ";
 
-        for (int i = 0; i < clientes.size(); i++) {
+        for (int i = 0; i < Clientes.size(); i++) {
             if (i > 0) {
-                stringQuery += "or v.cliente = :cli" + i + " ";
+                stringQuery += "or v.Cliente = :cli" + i + " ";
             } else {
-                stringQuery += "and ( v.cliente = :cli" + i + " ";
+                stringQuery += "and ( v.Cliente = :cli" + i + " ";
             }
         }
 
@@ -224,8 +224,8 @@ public class FindVenda extends FindEntity {
 
         Query query = getEntityManager().createQuery(stringQuery, Venda.class);
 
-        for (int i = 0; i < clientes.size(); i++) {
-            query.setParameter("cli" + i, clientes.get(i));
+        for (int i = 0; i < Clientes.size(); i++) {
+            query.setParameter("cli" + i, Clientes.get(i));
         }
 
         @SuppressWarnings("unchecked")
@@ -237,13 +237,13 @@ public class FindVenda extends FindEntity {
         return vendas;
     }
 
-    public static List<Venda> vendasNaoPagaDoCliente(Cliente cliente) {
+    public static List<Venda> vendasNaoPagaDoCliente(Cliente Cliente) {
         String stringQuery = "select v FROM Venda as v ";
-        stringQuery += "WHERE v.paga = false and v.cliente = :cli"
+        stringQuery += "WHERE v.paga = false and v.Cliente = :cli"
                 + " order by v.dia, v.total ";
 
         Query query = getEntityManager().createQuery(stringQuery, Venda.class);
-        query.setParameter("cli", cliente);
+        query.setParameter("cli", Cliente);
 
         @SuppressWarnings("unchecked")
         List<Venda> vendas = (List<Venda>) query.getResultList();
@@ -254,47 +254,47 @@ public class FindVenda extends FindEntity {
         return vendas;
     }
 
-    public static List<Pagavel> pagavelCliente(Cliente cliente, Date diaInicio,
+    public static List<Pagavel> pagavelCliente(Cliente Cliente, Date diaInicio,
             Date diaFim) {
         List<Pagavel> pag = new ArrayList<Pagavel>();
-        pag.addAll(vendasDoCliente(cliente, diaInicio, diaFim));
-        pag.addAll(dividasDoCliente(cliente, diaInicio, diaFim));
+        pag.addAll(vendasDoCliente(Cliente, diaInicio, diaFim));
+        pag.addAll(dividasDoCliente(Cliente, diaInicio, diaFim));
         return pag;
     }
     
-    public static List<Pagavel> pagavelCliente(Cliente cliente) {
+    public static List<Pagavel> pagavelCliente(Cliente Cliente) {
         List<Pagavel> pag = new ArrayList<Pagavel>();
-        pag.addAll(vendasDoCliente(cliente));
-        pag.addAll(dividasDoCliente(cliente));
+        pag.addAll(vendasDoCliente(Cliente));
+        pag.addAll(dividasDoCliente(Cliente));
         return pag;
     }
 
-    public static List<Pagavel> pagavelNaoPagoDoCliente(Cliente cliente) {
+    public static List<Pagavel> pagavelNaoPagoDoCliente(Cliente Cliente) {
         List<Pagavel> pag = new ArrayList<Pagavel>();
-        pag.addAll(dividasNaoPagaDoCliente(cliente));
-        pag.addAll(vendasNaoPagaDoCliente(cliente));
+        pag.addAll(dividasNaoPagaDoCliente(Cliente));
+        pag.addAll(vendasNaoPagaDoCliente(Cliente));
         return pag;
     }
     
-    public static List<Pagavel> pagavelNaoPagoDoCliente(String cliente) {
-        Cliente cl = FindCliente.clienteComNome(cliente);
+    public static List<Pagavel> pagavelNaoPagoDoCliente(String Cliente) {
+        Cliente cl = FindCliente.ClienteComNome(Cliente);
         return pagavelNaoPagoDoCliente(cl);
     }
 
-    public static List<Pagavel> pagavelNaoPagoDosClientes(List<Cliente> clientes) {
+    public static List<Pagavel> pagavelNaoPagoDosClientes(List<Cliente> Clientes) {
         List<Pagavel> pag = new ArrayList<Pagavel>();
-        pag.addAll(dividasNaoPagasDosClientes(clientes));
-        pag.addAll(vendasNaoPagasDosClientes(clientes));
+        pag.addAll(dividasNaoPagasDosClientes(Clientes));
+        pag.addAll(vendasNaoPagasDosClientes(Clientes));
         return pag;
     }
 
-    public static List<Divida> dividasNaoPagaDoCliente(Cliente cliente) {
+    public static List<Divida> dividasNaoPagaDoCliente(Cliente Cliente) {
         String stringQuery = "select d FROM Divida as d ";
-        stringQuery += "WHERE d.paga = false and d.cliente = :cli "
+        stringQuery += "WHERE d.paga = false and d.Cliente = :cli "
                 + " order by d.dia, d.total ";
 
         Query query = getEntityManager().createQuery(stringQuery);
-        query.setParameter("cli", cliente);
+        query.setParameter("cli", Cliente);
         
         @SuppressWarnings("unchecked")
         List<Divida> dividas = (List<Divida>) query.getResultList();
@@ -302,15 +302,15 @@ public class FindVenda extends FindEntity {
         return dividas;
     }
 
-    public static List<Divida> dividasNaoPagasDosClientes(List<Cliente> clientes) {
+    public static List<Divida> dividasNaoPagasDosClientes(List<Cliente> Clientes) {
         String stringQuery = "select d FROM Divida as d ";
         stringQuery += "WHERE d.paga = false ";
 
-        for (int i = 0; i < clientes.size(); i++) {
+        for (int i = 0; i < Clientes.size(); i++) {
             if (i > 0) {
-                stringQuery += "or d.cliente = :cli" + i + " ";
+                stringQuery += "or d.Cliente = :cli" + i + " ";
             } else {
-                stringQuery += "and ( d.cliente = :cli" + i + " ";
+                stringQuery += "and ( d.Cliente = :cli" + i + " ";
             }
         }
 
@@ -318,8 +318,8 @@ public class FindVenda extends FindEntity {
 
         Query query = getEntityManager().createQuery(stringQuery, Divida.class);
 
-        for (int i = 0; i < clientes.size(); i++) {
-            query.setParameter("cli" + i, clientes.get(i));
+        for (int i = 0; i < Clientes.size(); i++) {
+            query.setParameter("cli" + i, Clientes.get(i));
         }
 
         @SuppressWarnings("unchecked")
@@ -328,7 +328,7 @@ public class FindVenda extends FindEntity {
         return dividas;
     }
 
-    public static List<Divida> dividasDoCliente(Cliente cliente, Date diaInicio,
+    public static List<Divida> dividasDoCliente(Cliente Cliente, Date diaInicio,
             Date diaFim) {
 
         Calendar di = Calendar.getInstance();
@@ -344,11 +344,11 @@ public class FindVenda extends FindEntity {
         df.set(Calendar.SECOND, 59);
 
         String stringQuery = "select d FROM Divida as d ";
-        stringQuery += "WHERE d.cliente  = :cli and d.dia between :diaInicio and :diaFim"
+        stringQuery += "WHERE d.Cliente  = :cli and d.dia between :diaInicio and :diaFim"
                 + " order by d.dia, d.total DESC";
 
         Query query = getEntityManager().createQuery(stringQuery, Divida.class);
-        query.setParameter("cli", cliente);
+        query.setParameter("cli", Cliente);
         query.setParameter("diaInicio", di);
         query.setParameter("diaFim", df);
 
@@ -359,13 +359,13 @@ public class FindVenda extends FindEntity {
     }
 
     
-    public static List<Divida> dividasDoCliente(Cliente cliente) {
+    public static List<Divida> dividasDoCliente(Cliente Cliente) {
 
         String stringQuery = "select d FROM Divida as d ";
-        stringQuery += "WHERE d.cliente  = :cli order by d.dia, d.total DESC";
+        stringQuery += "WHERE d.Cliente  = :cli order by d.dia, d.total DESC";
 
         Query query = getEntityManager().createQuery(stringQuery, Divida.class);
-        query.setParameter("cli", cliente);
+        query.setParameter("cli", Cliente);
 
         @SuppressWarnings("unchecked")
         List<Divida> dividas = (List<Divida>) query.getResultList();

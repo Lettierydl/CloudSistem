@@ -10,10 +10,11 @@ import com.cs.sis.model.financeiro.Pagavel;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.pessoas.Cliente;
 import com.cs.sis.model.pessoas.Funcionario;
-import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
-import com.cs.sis.model.pessoas.exception.EstadoInvalidoDaVendaAtualException;
-import com.cs.sis.model.pessoas.exception.VariasVendasPendentesException;
-import com.cs.sis.model.pessoas.exception.VendaPendenteException;
+import com.cs.sis.model.exception.EntidadeNaoExistenteException;
+import com.cs.sis.model.exception.EstadoInvalidoDaVendaAtualException;
+import com.cs.sis.model.exception.ParametrosInvalidosException;
+import com.cs.sis.model.exception.VariasVendasPendentesException;
+import com.cs.sis.model.exception.VendaPendenteException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -242,7 +243,7 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
      * venda
      *
      * @see ControllerPessoa.edit(Cliente c) deve ser chamado logo em seguida
-     * para atualizar o debito do cliente
+     * para atualizar o debito do Cliente
      * @param Pagamento que foi efetuado
      * @throws Exception
      * @throws EntidadeNaoExistenteException se venda não existir
@@ -276,7 +277,7 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         }
 
 
-        // logo em seguida deve diminuir o debito do cliente com o valor do
+        // logo em seguida deve diminuir o debito do Cliente com o valor do
         // Venda
     }
 
@@ -327,12 +328,26 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         edit(v);
         atual = null;
     }
+    
+    public void finalizarVendaAVista(Venda v, double desconto)
+            throws EntidadeNaoExistenteException, ParametrosInvalidosException,Exception {
+        if (v.getFormaDePagamento() != null) {
+            throw new EstadoInvalidoDaVendaAtualException("Venda já finalizada anteriormente, inicie uma nova venda");
+        }
+        v.setDesconto(desconto);
+        
+        v.setFormaDePagamento(FormaDePagamento.A_Vista);
+        v.setPaga(true);
+        v.setPartePaga(v.getTotal());
+        edit(v);
+        atual = null;
+    }
 
     public double finalizarVendaAPrazo(Cliente c, double partePaga) throws EntidadeNaoExistenteException, EstadoInvalidoDaVendaAtualException, Exception {
         return finalizarVendaAPrazo(atual, c, partePaga);
     }
 
-    // retorna o que deve ser acrecentado a conta do cliente
+    // retorna o que deve ser acrecentado a conta do Cliente
     public double finalizarVendaAPrazo(Venda v, Cliente c,
             double partePaga) throws EntidadeNaoExistenteException, EstadoInvalidoDaVendaAtualException, Exception {
         try {

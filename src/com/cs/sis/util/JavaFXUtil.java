@@ -6,6 +6,9 @@
 package com.cs.sis.util;
 
 import com.cs.sis.model.pessoas.Pessoa;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +36,14 @@ import javafx.util.Callback;
  * @author Lettiery
  */
 public class JavaFXUtil {
-
+    
+    // serve para o sistema chamar o programa padrao que abre esse tipo de arquivo
+    public static void abrirArquivoDoSistema(File file) throws IOException{
+        Desktop.getDesktop().open(file);    
+    } 
+    
+    
+    
     public static void colunValueMoedaFormat(TableColumn colunaDouble) {
         colunaDouble.setCellFactory(col
                 -> new TableCell<Double, Number>() {

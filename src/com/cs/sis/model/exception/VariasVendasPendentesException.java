@@ -1,4 +1,4 @@
-package com.cs.sis.model.pessoas.exception;
+package com.cs.sis.model.exception;
 
 import com.cs.sis.model.financeiro.Venda;
 import java.util.List;

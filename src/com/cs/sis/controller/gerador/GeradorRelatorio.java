@@ -263,7 +263,7 @@ public class GeradorRelatorio extends Gerador {
         EntityManager em = getEntityManager();
         Query query = em
                 .createNativeQuery(
-                        "SELECT sum(debito) FROM cliente;");
+                        "SELECT sum(debito) FROM Cliente;");
         return (double) query.getSingleResult();
     }
 
@@ -291,13 +291,13 @@ public class GeradorRelatorio extends Gerador {
         return saida;
     }
 
-    public static List<Venda> vendasDoCliente(Cliente cliente, Date diaInicio, Date diaFim) {
+    public static List<Venda> vendasDoCliente(Cliente Cliente, Date diaInicio, Date diaFim) {
         String stringQuery = "select v FROM Venda as v ";
-        stringQuery += "WHERE v.paga = false and v.cliente = ?"
+        stringQuery += "WHERE v.paga = false and v.Cliente = ?"
                 + " order by v.total , v.dia DESC ";
 
         Query query = getEntityManager().createQuery(stringQuery, Venda.class);
-        query.setParameter(1, cliente);
+        query.setParameter(1, Cliente);
 
         @SuppressWarnings("unchecked")
         List<Venda> vendas = (List<Venda>) query.getResultList();

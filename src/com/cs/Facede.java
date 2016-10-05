@@ -1,5 +1,13 @@
 package com.cs;
 
+import com.cs.sis.model.exception.VariasVendasPendentesException;
+import com.cs.sis.model.exception.SenhaIncorretaException;
+import com.cs.sis.model.exception.EntidadeNaoExistenteException;
+import com.cs.sis.model.exception.EstadoInvalidoDaVendaAtualException;
+import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.model.exception.VendaPendenteException;
+import com.cs.sis.model.exception.LoginIncorretoException;
+import com.cs.sis.model.exception.ParametrosInvalidosException;
 import com.cs.sis.controller.*;
 import com.cs.sis.controller.configuracao.PermissaoFuncionario;
 import com.cs.sis.controller.find.*;
@@ -7,7 +15,6 @@ import com.cs.sis.controller.gerador.*;
 import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.financeiro.*;
 import com.cs.sis.model.pessoas.*;
-import com.cs.sis.model.pessoas.exception.*;
 import com.cs.sis.util.*;
 import java.io.File;
 import java.io.IOException;
@@ -85,28 +92,28 @@ public class Facede {
     }
 
     public void adicionarCliente(Cliente c) throws FuncionarioNaoAutorizadoException {
-        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.CADASTRAR_CLIENTES);
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.CADASTRAR_ClienteS);
         pes.create(c);
     }
 
     public void removerCliente(Cliente c) throws EntidadeNaoExistenteException, FuncionarioNaoAutorizadoException {
-        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.REMOVER_CLIENTES);
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.REMOVER_ClienteS);
         pes.destroy(c);
     }
 
     public void atualizarCliente(Cliente c)
             throws EntidadeNaoExistenteException, FuncionarioNaoAutorizadoException, Exception {
-        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.ALTERAR_CLIENTES);
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.ALTERAR_ClienteS);
         pes.edit(c);
     }
 
     public double recalcularDebitoDoCliente(Cliente c) throws EntidadeNaoExistenteException, Exception {
-        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.ALTERAR_CLIENTES);
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.ALTERAR_ClienteS);
         return pes.recalcularDebitoDoCliente(c);
     }
 
     public Cliente buscarClientePorId(int id) {
-        return FindCliente.clienteComId(id);
+        return FindCliente.ClienteComId(id);
     }
 
     public List<Cliente> getListaClientes() {
@@ -118,15 +125,15 @@ public class Facede {
     }
 
     public Cliente buscarClientePorCPFOuNomeIqualA(String cpfOuNome) {
-        return FindCliente.clientesQueNomeOuCPFIqualA(cpfOuNome);
+        return FindCliente.ClientesQueNomeOuCPFIqualA(cpfOuNome);
     }
 
     public List<Cliente> buscarClientePorCPFOuNomeQueIniciam(String cpfOuNome) {
-        return FindCliente.clientesQueNomeOuCPFIniciam(cpfOuNome);
+        return FindCliente.ClientesQueNomeOuCPFIniciam(cpfOuNome);
     }
 
     public List<Cliente> buscarClientePorCPFOuNomeQueIniciam(String cpfOuNome, int maxResult) {
-        return FindCliente.clientesQueNomeOuCPFIniciam(cpfOuNome, maxResult);
+        return FindCliente.ClientesQueNomeOuCPFIniciam(cpfOuNome, maxResult);
     }
 
     public List<String> buscarNomeClientePorNomeQueInicia(String nome) {
@@ -134,12 +141,12 @@ public class Facede {
     }
 
     public Cliente buscarClientePorNome(String nome) {
-        return FindCliente.clienteComNome(nome);
+        return FindCliente.ClienteComNome(nome);
     }
 
     // Verificar necessidade
     public Cliente buscarClientePorCPF(String cpf) {
-        return FindCliente.clienteComCPF(cpf);
+        return FindCliente.ClienteComCPF(cpf);
     }
 
     /*-------------------------
@@ -386,11 +393,20 @@ public class Facede {
         }
     }
     
+    public void finalizarVendaAVista(Venda v, double desconto)
+            throws EntidadeNaoExistenteException,ParametrosInvalidosException, Exception {
+        vend.finalizarVendaAVista(v, desconto);
+        double valor = est.retirarItensDoEstoque(v.getItensDeVenda());
+        if (valor != v.getTotal()) {
+            System.err.println("venda com valor errado");
+        }
+    }
+    
     /**
      * Metodo utilizado para finalizar uma venda a prazo<br/>
      *
-     * @return Retorna o valor da conta do cliente
-     * @param Venda e Valor que o cliente pagou
+     * @return Retorna o valor da conta do Cliente
+     * @param Venda e Valor que o Cliente pagou
      * @throws Exception
      * @throws EntidadeNaoExistenteException
      * @throws ParametrosInvalidosException
@@ -418,9 +434,9 @@ public class Facede {
                     //throw new ParametrosInvalidosException("Falha na conexão com o banco de dados \nDebito não atualizado!");
                 }
             } catch (Exception e) {// ver se esse codigo ta complicando, se tiver excue
-                System.err.println("ERRO ao tentar editar o cliente\nQuando acrecentar o Débito");
+                System.err.println("ERRO ao tentar editar o Cliente\nQuando acrecentar o Débito");
                 e.printStackTrace();
-                throw new Exception("Venda salva, porém o débito não inserido na conta do cliente");
+                throw new Exception("Venda salva, porém o débito não inserido na conta do Cliente");
                 /*
                 if (this.buscarClientePorId(c.getId()).getDebito() != oud_deb + deb) {
                     List<Pagavel> di_ve = FindVenda.pagavelNaoPagoDoCliente(c);
@@ -500,13 +516,13 @@ public class Facede {
         return FindPagamento.pagamentosDoCliente(c, diaInicio, diaFim);
     }
 
-    public List<Pagamento> getListaPagamentoDosClientes(List<Cliente> clientes) {
-        return FindPagamento.pagamentosDosClientes(clientes);
+    public List<Pagamento> getListaPagamentoDosClientes(List<Cliente> Clientes) {
+        return FindPagamento.pagamentosDosClientes(Clientes);
     }
 
     public double adicionarPagamento(Pagamento pagamento)
             throws EntidadeNaoExistenteException, ParametrosInvalidosException, Exception {
-        Cliente c = FindCliente.clienteComId(pagamento.getCliente().getId());
+        Cliente c = FindCliente.ClienteComId(pagamento.getCliente().getId());
         double troco = 0;
         if (c.getDebito() < pagamento.getValor()) {
             troco = c.getDebito() - pagamento.getValor();
@@ -524,12 +540,12 @@ public class Facede {
         return FindVenda.vendasNaoPagaDeHoje();
     }
 
-    public List<Venda> buscarVendasNaoPagasDosClientes(List<Cliente> clientes) {
-        return FindVenda.vendasNaoPagasDosClientes(clientes);
+    public List<Venda> buscarVendasNaoPagasDosClientes(List<Cliente> Clientes) {
+        return FindVenda.vendasNaoPagasDosClientes(Clientes);
     }
 
-    public List<Venda> buscarVendaNaoPagaDoCliente(Cliente cliente) {
-        return FindVenda.vendasNaoPagaDoCliente(cliente);
+    public List<Venda> buscarVendaNaoPagaDoCliente(Cliente Cliente) {
+        return FindVenda.vendasNaoPagaDoCliente(Cliente);
     }
 
     public List<Venda> buscarVendaNaoFinalizadasPorFuncionario(Funcionario f) {
@@ -548,20 +564,20 @@ public class Facede {
         return FindVenda.itemDeVendaIdDaVenda(id);
     }
 
-    public List<Pagavel> buscarPagaveisDoCliente(Cliente cliente, Date diaInicio, Date diaFim) {
-        return FindVenda.pagavelCliente(cliente, diaInicio, diaFim);
+    public List<Pagavel> buscarPagaveisDoCliente(Cliente Cliente, Date diaInicio, Date diaFim) {
+        return FindVenda.pagavelCliente(Cliente, diaInicio, diaFim);
     }
     
-    public List<Pagavel> buscarPagaveisDoCliente(Cliente cliente) {
-        return FindVenda.pagavelCliente(cliente);
+    public List<Pagavel> buscarPagaveisDoCliente(Cliente Cliente) {
+        return FindVenda.pagavelCliente(Cliente);
     }
 
-    public List<Pagavel> buscarPagaveisNaoPagosDosClientes(List<Cliente> clientes) {
-        return FindVenda.pagavelNaoPagoDosClientes(clientes);
+    public List<Pagavel> buscarPagaveisNaoPagosDosClientes(List<Cliente> Clientes) {
+        return FindVenda.pagavelNaoPagoDosClientes(Clientes);
     }
 
-    public List<Pagavel> buscarPagaveisNaoPagoDoCliente(Cliente cliente) {
-        return FindVenda.pagavelNaoPagoDoCliente(cliente);
+    public List<Pagavel> buscarPagaveisNaoPagoDoCliente(Cliente Cliente) {
+        return FindVenda.pagavelNaoPagoDoCliente(Cliente);
     }
 
     public List<Pagavel> buscarPagaveisNaoPagoDoCliente(String nome) {
@@ -712,9 +728,9 @@ public class Facede {
 
     //Operacao de Risco
     public List<String> dividaSistemaAntigo() throws EntidadeNaoExistenteException, Exception {
-        List<Cliente> clientes = FindCliente.listClientes();
+        List<Cliente> Clientes = FindCliente.listClientes();
         List<String> msg = new ArrayList<String>();
-        for (Cliente c : clientes) {
+        for (Cliente c : Clientes) {
             double deb = c.getDebito();
             List<Pagavel> di_ve = FindVenda.pagavelNaoPagoDoCliente(c);
             double consta = 0;
@@ -731,11 +747,11 @@ public class Facede {
                 d.getDia().set(2015, 8, 1);
                 d.setCliente(c);
                 vend.create(d);
-                //System.out.println("Divida adicionada no cliente "+c.getNome()+" no valor de "+OperacaoStringUtil.formatarStringValorMoedaComDescricao(d.getValorNaoPago()));
-                msg.add("Divida adicionada no cliente " + c.getNome() + " no valor de " + OperacaoStringUtil.formatarStringValorMoedaComDescricao(d.getValorNaoPago()));
+                //System.out.println("Divida adicionada no Cliente "+c.getNome()+" no valor de "+OperacaoStringUtil.formatarStringValorMoedaComDescricao(d.getValorNaoPago()));
+                msg.add("Divida adicionada no Cliente " + c.getNome() + " no valor de " + OperacaoStringUtil.formatarStringValorMoedaComDescricao(d.getValorNaoPago()));
             }
         }
-        //System.out.println(msg.size() +" clientes do antigo sistema com debito.");
+        //System.out.println(msg.size() +" Clientes do antigo sistema com debito.");
         return msg;
     }
 

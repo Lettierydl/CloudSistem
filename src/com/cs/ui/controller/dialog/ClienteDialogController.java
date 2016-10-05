@@ -8,8 +8,8 @@ package com.cs.ui.controller.dialog;
 import com.cs.sis.model.financeiro.Pagamento;
 import com.cs.sis.model.financeiro.Pagavel;
 import com.cs.sis.model.pessoas.Cliente;
-import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
-import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.model.exception.EntidadeNaoExistenteException;
+import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import org.controlsfx.dialog.Dialogs;
@@ -266,9 +266,9 @@ public class ClienteDialogController extends DialogController<Cliente> {
     @FXML
     public void excluirClicado(){
         
-        Dialogs dialog = Dialogs.create().title("Excluir cliente")
-                .masthead("Tem certeza que deseja excluir todas as informações do cliente "+entity.getNome()+"?")
-                .message("Todas as vendas e pagamentos desse cliente serão apagadas\n"
+        Dialogs dialog = Dialogs.create().title("Excluir Cliente")
+                .masthead("Tem certeza que deseja excluir todas as informações do Cliente "+entity.getNome()+"?")
+                .message("Todas as vendas e pagamentos desse Cliente serão apagadas\n"
                         + "Essa operação não pode ser revertida!");
         dialog.actions(Dialog.Actions.CANCEL, Dialog.Actions.YES);
         dialog.style(DialogStyle.UNDECORATED);
@@ -309,7 +309,7 @@ public class ClienteDialogController extends DialogController<Cliente> {
         }
         dialog = Dialogs.create().title("Cliente excuido")
                 .masthead("Cliente excuido com sucesso!")
-                .message("Cadastro do cliente "+entity.getNome()+ " excuido com sucesso!");
+                .message("Cadastro do Cliente "+entity.getNome()+ " excuido com sucesso!");
             dialog.style(DialogStyle.UNDECORATED);
             dialog.showError();
         this.cancelarClicado();

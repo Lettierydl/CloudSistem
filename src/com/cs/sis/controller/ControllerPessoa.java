@@ -6,8 +6,8 @@ import com.cs.sis.model.financeiro.Pagavel;
 import com.cs.sis.model.pessoas.Cliente;
 import com.cs.sis.model.pessoas.Funcionario;
 import com.cs.sis.model.pessoas.Pessoa;
-import com.cs.sis.model.pessoas.exception.EntidadeNaoExistenteException;
-import com.cs.sis.model.pessoas.exception.ParametrosInvalidosException;
+import com.cs.sis.model.exception.EntidadeNaoExistenteException;
+import com.cs.sis.model.exception.ParametrosInvalidosException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -22,27 +22,27 @@ public class ControllerPessoa extends ControllerEntity<Pessoa> {
     /*
      * Cliente
      */
-    public void create(Cliente cliente) {
+    public void create(Cliente Cliente) {
         try {
             beginTransaction();
-            em.persist(cliente);
+            em.persist(Cliente);
             commitTransaction();
         } finally {
             closeEntityManager();
         }
     }
 
-    public void edit(Cliente cliente) throws EntidadeNaoExistenteException{
+    public void edit(Cliente Cliente) throws EntidadeNaoExistenteException{
         try {
             beginTransaction();
-            cliente = em.merge(cliente);
+            Cliente = em.merge(Cliente);
             commitTransaction();
         } catch (Exception ex) {
             try {
-                em.find(Cliente.class, cliente.getId());
+                em.find(Cliente.class, Cliente.getId());
             } catch (EntityNotFoundException enfe) {
-                throw new EntidadeNaoExistenteException("O cliente "
-                        + cliente.getNome() + " não existe.");
+                throw new EntidadeNaoExistenteException("O Cliente "
+                        + Cliente.getNome() + " não existe.");
             }
             throw ex;
         } finally {
@@ -50,16 +50,16 @@ public class ControllerPessoa extends ControllerEntity<Pessoa> {
         }
     }
 
-    public void destroy(Cliente cliente) throws EntidadeNaoExistenteException {
+    public void destroy(Cliente Cliente) throws EntidadeNaoExistenteException {
         try {
             beginTransaction();
             try {
-                refresh(cliente);
+                refresh(Cliente);
             } catch (EntityNotFoundException enfe) {
-                throw new EntidadeNaoExistenteException("O cliente "
-                        + cliente.getNome() + " não existe.");
+                throw new EntidadeNaoExistenteException("O Cliente "
+                        + Cliente.getNome() + " não existe.");
             }
-            em.remove(em.getReference(cliente.getClass(), cliente.getId()));
+            em.remove(em.getReference(Cliente.getClass(), Cliente.getId()));
             commitTransaction();
         } finally {
             closeEntityManager();

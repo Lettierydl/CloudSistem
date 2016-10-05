@@ -3,7 +3,7 @@ package com.cs.sis.controller.configuracao;
 import com.cs.sis.controller.ControllerConfiguracao;
 import com.cs.sis.model.pessoas.Funcionario;
 import com.cs.sis.model.pessoas.TipoDeFuncionario;
-import com.cs.sis.model.pessoas.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
 
 
 public class PermissaoFuncionario {
@@ -14,13 +14,16 @@ public class PermissaoFuncionario {
 	
 	public static final String ALTERAR_FUNCIONARIO = "ALTERAR_FUNCIONARIO";
 	public static final String ALTERAR_PRODUTO = "ALTERAR_PRODUTO";
-	public static final String ALTERAR_CLIENTES = "ALTERAR_CLIENTES";
+	public static final String ALTERAR_ClienteS = "ALTERAR_ClienteS";
 	
 	public static final String CADASTRAR_FUNCIONARIO = "CADASTRAR_FUNCIONARIO";
 	public static final String CADASTRAR_PRODUTO = "CADASTRAR_PRODUTO";
-	public static final String CADASTRAR_CLIENTES = "CADASTRAR_CLIENTES";
+	public static final String CADASTRAR_ClienteS = "CADASTRAR_ClienteS";
         
-        public static final String REMOVER_CLIENTES = "REMOVER_CLIENTES";
+        public static final String DESCONTO_NA_VENDA = "DESCONTO_NA_VENDA";
+        
+        
+        public static final String REMOVER_ClienteS = "REMOVER_ClienteS";
         public static final String REMOVER_PAGAVEIS = "REMOVER_PAGAVEIS";
         public static final String REMOVER_PAGAMENTOS = "REMOVER_PAGAMENTOS";
         public static final String REMOVER_PRODUTOS = "REMOVER_PRODUTOS";
@@ -67,9 +70,9 @@ public class PermissaoFuncionario {
 		getControllerConfiguracao().putValor(ALTERAR_CONFIGURACOES, true, TipoDeFuncionario.Gerente);
 		getControllerConfiguracao().putValor(CADASTRAR_FUNCIONARIO, true, TipoDeFuncionario.Gerente);
 		
-		getControllerConfiguracao().putValor(ALTERAR_CLIENTES, true, TipoDeFuncionario.Caixa);
-		getControllerConfiguracao().putValor(ALTERAR_CLIENTES, true, TipoDeFuncionario.Supervisor);
-		getControllerConfiguracao().putValor(ALTERAR_CLIENTES, true, TipoDeFuncionario.Gerente);
+		getControllerConfiguracao().putValor(ALTERAR_ClienteS, true, TipoDeFuncionario.Caixa);
+		getControllerConfiguracao().putValor(ALTERAR_ClienteS, true, TipoDeFuncionario.Supervisor);
+		getControllerConfiguracao().putValor(ALTERAR_ClienteS, true, TipoDeFuncionario.Gerente);
 		
 		getControllerConfiguracao().putValor(ALTERAR_PRODUTO, true, TipoDeFuncionario.Supervisor);
 		getControllerConfiguracao().putValor(ALTERAR_PRODUTO, true, TipoDeFuncionario.Gerente);
@@ -78,14 +81,21 @@ public class PermissaoFuncionario {
 		getControllerConfiguracao().putValor(CADASTRAR_PRODUTO, true, TipoDeFuncionario.Supervisor);
 		getControllerConfiguracao().putValor(CADASTRAR_PRODUTO, true, TipoDeFuncionario.Gerente);
 		
-		getControllerConfiguracao().putValor(CADASTRAR_CLIENTES, true, TipoDeFuncionario.Caixa);
-		getControllerConfiguracao().putValor(CADASTRAR_CLIENTES, true, TipoDeFuncionario.Supervisor);
-		getControllerConfiguracao().putValor(CADASTRAR_CLIENTES, true, TipoDeFuncionario.Gerente);
+		getControllerConfiguracao().putValor(CADASTRAR_ClienteS, true, TipoDeFuncionario.Caixa);
+		getControllerConfiguracao().putValor(CADASTRAR_ClienteS, true, TipoDeFuncionario.Supervisor);
+		getControllerConfiguracao().putValor(CADASTRAR_ClienteS, true, TipoDeFuncionario.Gerente);
 		
+                
+                //getControllerConfiguracao().putValor(DESCONTO_NA_VENDA, false, TipoDeFuncionario.Caixa);
+		//getControllerConfiguracao().putValor(DESCONTO_NA_VENDA, false, TipoDeFuncionario.Supervisor);
+		getControllerConfiguracao().putValor(DESCONTO_NA_VENDA, true, TipoDeFuncionario.Gerente);
+		
+                
+                
 		getControllerConfiguracao().putValor(GERAR_RELATORIOS, true, TipoDeFuncionario.Supervisor);
 		getControllerConfiguracao().putValor(GERAR_RELATORIOS, true, TipoDeFuncionario.Gerente);
                 
-                getControllerConfiguracao().putValor(REMOVER_CLIENTES, true, TipoDeFuncionario.Gerente);
+                getControllerConfiguracao().putValor(REMOVER_ClienteS, true, TipoDeFuncionario.Gerente);
                 getControllerConfiguracao().putValor(REMOVER_PAGAMENTOS, true, TipoDeFuncionario.Gerente);
                 getControllerConfiguracao().putValor(REMOVER_PAGAVEIS, true, TipoDeFuncionario.Gerente);
                 getControllerConfiguracao().putValor(REMOVER_PRODUTOS, true, TipoDeFuncionario.Gerente);

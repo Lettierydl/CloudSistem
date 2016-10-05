@@ -8,8 +8,11 @@ package com.cs.ui.controller;
 import com.cs.ControllerTelas;
 import com.cs.Facede;
 import com.cs.Main;
+import com.cs.sis.controller.configuracao.PermissaoFuncionario;
+import com.cs.sis.model.exception.ParametrosInvalidosException;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Venda;
+import com.cs.sis.model.pessoas.TipoDeFuncionario;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
@@ -61,6 +64,9 @@ public class FinalizarAvistaController implements Initializable {
     @FXML
     private TextField valorPago;
     @FXML
+    private TextField desconto;
+    
+    @FXML
     private Button finalizarButton;
     @FXML
     CheckBox imprimir;
@@ -94,17 +100,34 @@ public class FinalizarAvistaController implements Initializable {
         }
         String txt = valorPago.getText();
         double val = OperacaoStringUtil.converterStringValor(valorPago.getText());
-        if (val < atual.getTotal()) {
+        double desc = OperacaoStringUtil.converterStringValor(desconto.getText());
+        desc = (atual.getTotal() * desc)/100;
+                
+        if ((val+desc) < atual.getTotal()) {
             Dialogs.create()
                     .title("Valor incorreto")
-                    .masthead("O valor pago pelo cliente é inferior ao valor da venda")
+                    .masthead("O valor pago pelo Cliente é inferior ao valor da venda")
                     .showError();
             valorPago.requestFocus();
             valorPago.selectAll();
             return;
         }
         try {
-            f.finalizarVendaAVista(atual);
+            if(desc > 0){
+                try{
+                    f.finalizarVendaAVista(atual, desc);
+                }catch(ParametrosInvalidosException ee){
+                    Dialogs dialog = Dialogs.create()
+                        .title("Desconto com valor superior à venda")
+                        .masthead("Desconto com valor superior à venda")
+                        .message("Por favor, altera o valor do desconto");
+                    dialog.showError();
+                    desconto.requestFocus();
+                    return;
+                }
+            }else{
+                f.finalizarVendaAVista(atual);
+            }
             if (imprimir.isSelected() && !f.imprimirVenda(atual)) {
                 Dialogs dialog = Dialogs.create()
                         .title("Impressora não conectada")
@@ -129,10 +152,13 @@ public class FinalizarAvistaController implements Initializable {
     void enterKey(ActionEvent event) {
         String txt = valorPago.getText();
         double val = OperacaoStringUtil.converterStringValor(valorPago.getText());
-        if (val < atual.getTotal()) {
+        double desc = OperacaoStringUtil.converterStringValor(desconto.getText());
+        desc = (atual.getTotal() * desc)/100;
+        
+        if ((val+desc) < atual.getTotal()) {
             Dialogs.create()
                     .title("Valor incorreto")
-                    .masthead("O valor pago pelo cliente é inferior ao valor da venda")
+                    .masthead("O valor pago pelo Cliente é inferior ao valor da venda")
                     .showError();
             valorPago.requestFocus();
             valorPago.selectAll();
@@ -143,10 +169,12 @@ public class FinalizarAvistaController implements Initializable {
 
     @FXML
     void valDigitado(KeyEvent event) {
-        String txt = event.getText();
         double val = OperacaoStringUtil.converterStringValor(valorPago.getText());
-        if (val > atual.getTotal()) {
-            troco.setText(OperacaoStringUtil.formatarStringValorMoeda(val - atual.getTotal()));
+        double desc = OperacaoStringUtil.converterStringValor(desconto.getText());
+        desc = (atual.getTotal() * desc)/100;
+        
+        if ((val+desc) > atual.getTotal()) {
+            troco.setText(OperacaoStringUtil.formatarStringValorMoeda((val+desc) - atual.getTotal()));
         } else {
             troco.setText("0,00");
         }
@@ -163,10 +191,15 @@ public class FinalizarAvistaController implements Initializable {
         produtoCol.setCellValueFactory(new PropertyValueFactory<>("DescricaoProduto"));
 
         MaskFieldUtil.monetaryField(valorPago);
+        MaskFieldUtil.monetaryField(desconto);
         JavaFXUtil.colunValueMoedaFormat(totalCol);
         JavaFXUtil.colunValueMoedaFormat(valorCol);
         JavaFXUtil.colunValueQuantidadeFormat(qtCol);
         preencherInformacoes();
+        
+        if(!f.getValor(PermissaoFuncionario.DESCONTO_NA_VENDA, f.getFuncionarioLogado().getTipoDeFuncionario())){
+            desconto.setDisable(true);
+        }
         
         finalizarButton.setOnKeyPressed((KeyEvent e) -> {
             if (e.getCode() == KeyCode.ENTER) {

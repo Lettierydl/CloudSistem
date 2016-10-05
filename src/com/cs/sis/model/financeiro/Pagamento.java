@@ -64,7 +64,7 @@ public class Pagamento {
 
 	@ManyToOne
 	@JoinColumn(updatable = true)
-	private Cliente cliente;
+	private Cliente Cliente;
 
 	@ManyToOne
 	@JoinColumn(updatable = true)
@@ -74,11 +74,11 @@ public class Pagamento {
 		this.data = Calendar.getInstance();
 	}
 
-	public Pagamento(double valor, Cliente cliente, Funcionario funcionario) {
+	public Pagamento(double valor, Cliente Cliente, Funcionario funcionario) {
 		super();
 		this.data = Calendar.getInstance();
 		this.valor = valor;
-		this.cliente = cliente;
+		this.Cliente = Cliente;
 		this.funcionario = funcionario;
 	}
 
@@ -103,11 +103,11 @@ public class Pagamento {
 	}
 
 	public Cliente getCliente() {
-		return cliente;
+		return Cliente;
 	}
 
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
+	public void setCliente(Cliente Cliente) {
+		this.Cliente = Cliente;
 	}
 
 	public Funcionario getFuncionario() {

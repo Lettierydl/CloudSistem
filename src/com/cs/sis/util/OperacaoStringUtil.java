@@ -34,7 +34,7 @@ public class OperacaoStringUtil {
             return 0.0;
         }
         return Double.valueOf(valor.replace(".", "").replace(" ", "")
-                .replace(",", "."));
+                .replace(",", ".").replace("%", ""));
     }
 
     public static Calendar converterDataTimeValor(String valor) {

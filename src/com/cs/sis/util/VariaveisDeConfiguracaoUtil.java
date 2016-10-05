@@ -4,7 +4,7 @@ import javafx.util.Duration;
 
 public class VariaveisDeConfiguracaoUtil {
         
-        public static final String VERSION_SYSTEM = "2.0.4";
+        public static final String VERSION_SYSTEM = "2.5.0";
     
 	public static final boolean LIBERAR_VENDA_DE_PRODUTO_SEM_ESTOQUE = true;
 	
@@ -34,7 +34,7 @@ public class VariaveisDeConfiguracaoUtil {
                 + "Login"
                 + "\n\t\tShift + Esc: Configurações do Sistema"
                 + "\nPagamento"
-                + "\n\t\tF5: Atualiza débito do cliente"
+                + "\n\t\tF5: Atualiza débito do Cliente"
                 + "\nVenda"
                 + "\n\t\tEsc: Tela Principal"
                 + "\n\t\tShift + Esc: Tela de Mercadorias"
