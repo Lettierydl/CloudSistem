@@ -43,6 +43,7 @@ public class Facede {
     private ControllerConfiguracao config;
     private Backup bac;
     private Arquivo arq;
+    private Registro reg;
 
     private static Facede instance = null;
 
@@ -65,6 +66,7 @@ public class Facede {
         bac = new Backup();
         config = new ControllerConfiguracao();
         arq = new Arquivo();
+        reg = Registro.getIntance();
 
         try {
             imp = ControllerImpressora.getInstance();
@@ -492,6 +494,17 @@ public class Facede {
         vend.create(d);
     }
 
+    public void removerVendaAVista(Venda v) throws EntidadeNaoExistenteException, FuncionarioNaoAutorizadoException, EntidadeNaoExistenteException, Exception {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.REMOVER_VENDA_A_VISTA);
+        est.devolverItensDoEstoque(FindVenda.itemDeVendaIdDaVenda(v.getId()));
+        try{
+            vend.removerVendaAVista(v);
+        }catch(EstadoInvalidoDaVendaAtualException e){
+            est.retirarItensDoEstoque(FindVenda.itemDeVendaIdDaVenda(v.getId()));
+            throw e;
+        }
+    }
+    
     public void selecionarVendaPendente(int idVenda) throws EntidadeNaoExistenteException, Exception {
         vend.selecionarVendaPendente(idVenda);
     }
@@ -782,6 +795,26 @@ public class Facede {
 
     public String gerarCodigo() {
         return est.gerarCodigo();
+    }
+    
+    public String getChaveRegistro(){
+        return reg.getChaveRegistro();
+    }
+    
+    public boolean isBloqueado(){
+        return reg.isBloqueado();
+    }
+    
+    public boolean isRegistrado(){
+        return reg.isRegistrado();
+    }
+    
+    public boolean registrar(String registro,String razao,String endereco,String proprietario){
+        return reg.registrar(registro, razao, endereco, proprietario);
+    }
+    
+    public Registro gerRegistro(){
+        return reg;
     }
 
 }

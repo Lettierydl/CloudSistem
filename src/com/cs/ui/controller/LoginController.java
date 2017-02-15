@@ -11,10 +11,13 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -22,8 +25,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
-import org.controlsfx.dialog.DialogStyle;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  *
@@ -49,10 +50,14 @@ public class LoginController implements Initializable {
         try {
             f = Facede.getInstance();
         } catch (Error | Exception er) {
-            Dialogs err = Dialogs.create().title("Erro ao Conectar com o banco")
-                    .masthead("Erro ao Conectar com o Banco de Dados");
-            err.style(DialogStyle.UNDECORATED);
-            err.showException(er);
+            JavaFXUtil.showDialog("Erro ao Conectar com o banco",er);
+        }
+        if(f.isBloqueado()){
+            JavaFXUtil.showDialog("Avaliação Encerrada",
+                    "Sistema bloqueado!\nPeríodo de avaliação finalizado.",
+                    "Entre em contato com o suporte para ativar o seu sistema.",
+                    AlertType.ERROR);
+            return;
         }
         String name = nome.getText();
         String pass = senha.getText();
@@ -89,10 +94,14 @@ public class LoginController implements Initializable {
                     @Override
                     public void handle(ActionEvent event) {
                         if (Main.messagem_erro_fachada != null) {
-                            Dialogs err = Dialogs.create().title("Erro ao Conectar com o banco")
-                            .masthead("Erro ao Conectar com o Banco de Dados");
-                            err.style(DialogStyle.UNDECORATED);
-                            err.showException(Main.messagem_erro_fachada);
+                            delayTimeline.stop();
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    JavaFXUtil.showDialog("Erro ao Conectar com o banco",
+                                    Main.messagem_erro_fachada);
+                            
+                            }});
                             delayTimeline.stop();
                         }else if(timout-- <= 0){
                             delayTimeline.stop();

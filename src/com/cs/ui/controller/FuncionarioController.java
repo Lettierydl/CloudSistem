@@ -8,19 +8,20 @@ package com.cs.ui.controller;
 import com.cs.ControllerTelas;
 import com.cs.sis.model.pessoas.Funcionario;
 import com.cs.sis.model.pessoas.TipoDeFuncionario;
+import com.cs.sis.util.JavaFXUtil;
 import com.cs.ui.controller.dialog.DialogController;
 import java.io.IOException;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -103,10 +104,9 @@ public class FuncionarioController extends ControllerUI<Funcionario> {
         if (f.getFuncionarioLogado().getTipoDeFuncionario().equals(TipoDeFuncionario.Gerente)) {
             super.showDialog("dialogFuncionario", editar, DialogController.EDIT_MODAL);
         } else {
-            Dialogs.create()
-                    .title("Funcionário não autorizado")
-                    .masthead("Por favor, entre com um usuário diferente")
-                    .showError();
+            JavaFXUtil.showDialog("Funcionário não autorizado",
+                    "Por favor, entre com um usuário diferente",
+                    Alert.AlertType.ERROR);
         }
     }
 

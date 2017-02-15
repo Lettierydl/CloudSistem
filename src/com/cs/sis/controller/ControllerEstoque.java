@@ -82,6 +82,22 @@ public class ControllerEstoque extends ControllerEntity<Produto> {
         return valor;
     }
     
+    public void devolverItensDoEstoque(List<ItemDeVenda> list) throws EntidadeNaoExistenteException{
+        try {
+            beginTransaction();
+            for (ItemDeVenda it : list) {
+                Produto p = FindProduto.produtoComId(it.getProduto().getId());
+                p.acrescentarQuantidadeDeEstoque(it.getQuantidade());
+                em.merge(p);
+            }
+            commitTransaction();
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            closeEntityManager();
+        }
+    }
+    
     //metodos para testes
     @Override
     public void removeAll(Class t){

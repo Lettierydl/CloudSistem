@@ -14,6 +14,7 @@ public class PermissaoFuncionario {
 	
 	public static final String ALTERAR_FUNCIONARIO = "ALTERAR_FUNCIONARIO";
 	public static final String ALTERAR_PRODUTO = "ALTERAR_PRODUTO";
+        public static final String ALTERAR_ESTORQUE_PRODUTO = "ALTERAR_ESTORQUE_PRODUTO";
 	public static final String ALTERAR_ClienteS = "ALTERAR_ClienteS";
 	
 	public static final String CADASTRAR_FUNCIONARIO = "CADASTRAR_FUNCIONARIO";
@@ -27,6 +28,7 @@ public class PermissaoFuncionario {
         public static final String REMOVER_PAGAVEIS = "REMOVER_PAGAVEIS";
         public static final String REMOVER_PAGAMENTOS = "REMOVER_PAGAMENTOS";
         public static final String REMOVER_PRODUTOS = "REMOVER_PRODUTOS";
+        public static final String REMOVER_VENDA_A_VISTA = "REMOVER_VENDA_A_VISTA";
         
 
 	public static final String GERAR_RELATORIOS = "GERAR_RELATORIOS";
@@ -64,7 +66,7 @@ public class PermissaoFuncionario {
 	
 	
 	public static void configuracoesDefalt(){
-		getControllerConfiguracao().removeAll(Configuracao.class);
+		//getControllerConfiguracao().removeAll(Configuracao.class);
 		
 		getControllerConfiguracao().putValor(ALTERAR_FUNCIONARIO, true, TipoDeFuncionario.Gerente);
 		getControllerConfiguracao().putValor(ALTERAR_CONFIGURACOES, true, TipoDeFuncionario.Gerente);
@@ -77,6 +79,7 @@ public class PermissaoFuncionario {
 		getControllerConfiguracao().putValor(ALTERAR_PRODUTO, true, TipoDeFuncionario.Supervisor);
 		getControllerConfiguracao().putValor(ALTERAR_PRODUTO, true, TipoDeFuncionario.Gerente);
 		
+		getControllerConfiguracao().putValor(ALTERAR_ESTORQUE_PRODUTO, true, TipoDeFuncionario.Gerente);
 		
 		getControllerConfiguracao().putValor(CADASTRAR_PRODUTO, true, TipoDeFuncionario.Supervisor);
 		getControllerConfiguracao().putValor(CADASTRAR_PRODUTO, true, TipoDeFuncionario.Gerente);
@@ -99,6 +102,7 @@ public class PermissaoFuncionario {
                 getControllerConfiguracao().putValor(REMOVER_PAGAMENTOS, true, TipoDeFuncionario.Gerente);
                 getControllerConfiguracao().putValor(REMOVER_PAGAVEIS, true, TipoDeFuncionario.Gerente);
                 getControllerConfiguracao().putValor(REMOVER_PRODUTOS, true, TipoDeFuncionario.Gerente);
+		getControllerConfiguracao().putValor(REMOVER_VENDA_A_VISTA, true, TipoDeFuncionario.Gerente);
 		
 		
 	}

@@ -6,6 +6,7 @@ package com.cs.ui.controller.dialog;
  * and open the template in the editor.
  */
 import com.cs.ControllerTelas;
+import com.cs.sis.controller.configuracao.PermissaoFuncionario;
 import com.cs.sis.model.estoque.CategoriaProduto;
 import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.estoque.UnidadeProduto;
@@ -13,10 +14,7 @@ import com.cs.sis.model.exception.EntidadeNaoExistenteException;
 import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
-import org.controlsfx.dialog.Dialogs;
 import com.cs.sis.util.OperacaoStringUtil;
-import com.cs.ui.controller.ControllerUI;
-import com.cs.ui.controller.EstoqueController;
 import com.cs.ui.controller.fxml.dialog.DialogFXML;
 import java.io.IOException;
 import java.net.URL;
@@ -27,7 +25,9 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -36,9 +36,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.DialogStyle;
+
 
 /**
  * FXML Controller class
@@ -99,6 +97,11 @@ public class EstoqueDialogController extends DialogController<Produto> {
             dialogStage.showAndWait();
            
             this.dialogStage.close();
+            entity.setQuantidadeEmEstoque(f.buscarProdutoPorId(entity.getId()).getQuantidadeEmEstoque());
+            estoque.setText(OperacaoStringUtil.formatarStringQuantidade(entity.getQuantidadeEmEstoque()));
+            //System.out.println(entity.getQuantidadeEmEstoque());
+       
+            okClicado();
             
         } catch (IOException e) {
             e.printStackTrace();
@@ -124,7 +127,13 @@ public class EstoqueDialogController extends DialogController<Produto> {
 
         categoria.setItems(FXCollections.observableArrayList(CategoriaProduto.values()));
         unidade.setItems(FXCollections.observableArrayList(UnidadeProduto.values()));
-
+        
+        if(f.getValor(PermissaoFuncionario.ALTERAR_ESTORQUE_PRODUTO, f.getFuncionarioLogado().getTipoDeFuncionario())){
+            estoque.setEditable(true);
+        }else{
+            estoque.setEditable(false);
+        }
+       
         okButton.setOnKeyReleased((KeyEvent e) -> {
             if (e.getCode() == KeyCode.ENTER) {
                 okClicado();
@@ -214,11 +223,11 @@ public class EstoqueDialogController extends DialogController<Produto> {
             }
         }
         if (!msgErro.isEmpty()) {
-            Dialogs.create()
-                    .title("Campos Inválidos")
-                    .masthead("Por favor, corrija os campos inválidos")
-                    .message(msgErro)
-                    .showError();
+            JavaFXUtil.showDialog(
+                    "Campos Inválidos"
+                    ,"Por favor, corrija os campos inválidos"
+                    ,msgErro,
+                    Alert.AlertType.ERROR);
 
         }
         return msgErro.isEmpty();
@@ -241,10 +250,10 @@ public class EstoqueDialogController extends DialogController<Produto> {
                     //merge
                     f.atualizarProduto(entity);
                 } catch (FuncionarioNaoAutorizadoException ex) {
-                    Dialogs.create()
-                            .title("Funcionário não autorizado")
-                            .masthead("Por favor, entre com um usuário diferente")
-                            .showError();
+                    JavaFXUtil.showDialog(
+                            "Funcionário não autorizado"
+                            ,"Por favor, entre com um usuário diferente",
+                            Alert.AlertType.ERROR);
                 } catch (Exception ex) {
                     Logger.getLogger(EstoqueDialogController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -261,19 +270,18 @@ public class EstoqueDialogController extends DialogController<Produto> {
                 //create
                 try {
                     f.adicionarProduto(entity);
-                    Dialogs.create()
-                            .title("Produto Criado com Sucesso")
-                            .masthead("Código de Barras: " + entity.getCodigoDeBarras() + "\n"
+                    JavaFXUtil.showDialog(
+                            "Produto Criado com Sucesso"
+                            ,"Código de Barras: " + entity.getCodigoDeBarras() + "\n"
                                     + "Descrição: " + entity.getDescricao() + "\n"
                                     + "Valor de Venda: " + OperacaoStringUtil.formatarStringValorMoeda(entity.getValorDeVenda()) + "\n"
                                     + "Valor de Compra: " + OperacaoStringUtil.formatarStringValorMoeda(entity.getValorDeCompra()) + "\n"
-                                    + "Estoque: " + OperacaoStringUtil.formatarStringQuantidade(entity.getQuantidadeEmEstoque()) + "\n")
-                            .showInformation();
+                                    + "Estoque: " + OperacaoStringUtil.formatarStringQuantidade(entity.getQuantidadeEmEstoque()) + "\n");
                 } catch (FuncionarioNaoAutorizadoException ex) {
-                    Dialogs.create()
-                            .title("Funcionário não autorizado")
-                            .masthead("Por favor, entre com um usuário diferente")
-                            .showError();
+                    JavaFXUtil.showDialog(
+                            "Funcionário não autorizado"
+                            ,"Por favor, entre com um usuário diferente",
+                            Alert.AlertType.ERROR);
                 } catch (Exception ex) {
                     Logger.getLogger(EstoqueDialogController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -297,7 +305,6 @@ public class EstoqueDialogController extends DialogController<Produto> {
                 descricao.setText(entity.getDescricao());
                 categoria.setValue(entity.getCategoria());
                 unidade.setValue(entity.getDescricaoUnidade());
-                estoque.setDisable(true);
                 break;
             case CREATE_MODAL:
                 super.entity = new Produto();
@@ -308,7 +315,8 @@ public class EstoqueDialogController extends DialogController<Produto> {
                 limite.setText("0,000");
                 codigo.setText("");
                 descricao.setText("");
-                categoria.setValue(CategoriaProduto.Alimentos);
+                //categoria.setValue(CategoriaProduto.Alimentos);
+                categoria.setValue(CategoriaProduto.Roupa);
                 unidade.setValue(UnidadeProduto.UND);
                 entrada.setVisible(false);
                 break;
@@ -339,14 +347,11 @@ public class EstoqueDialogController extends DialogController<Produto> {
     @FXML      
     public void excluirClicado(){
         
-        Dialogs dialog = Dialogs.create().title("Excluir Produto")
-                .masthead("Tem certeza que deseja excluir o produto "+entity.getDescricao()+" do sistema?")
-                .message("O produto será retirado de todo o histórico de vendas e balanços do sistema\n"
+        ButtonType act = JavaFXUtil.showDialogOptions("Excluir Produto"
+                ,"Tem certeza que deseja excluir o produto "+entity.getDescricao()+" do sistema?"
+                ,"O produto será retirado de todo o histórico de vendas e balanços do sistema\n"
                         + "Essa operação não pode ser revertida!");
-        dialog.actions(Dialog.Actions.CANCEL, Dialog.Actions.YES);
-        dialog.style(DialogStyle.UNDECORATED);
-        Action act = dialog.showError();
-        if(act.equals(Dialog.Actions.CANCEL)){
+        if(act.equals(ButtonType.CANCEL)){
             return;
         }
         
@@ -354,28 +359,21 @@ public class EstoqueDialogController extends DialogController<Produto> {
             f.removerProduto(entity);
         } catch (EntidadeNaoExistenteException ex) {
             Logger.getLogger(EstoqueDialogController.class.getName()).log(Level.SEVERE, null, ex);
-            dialog = Dialogs.create().title("Erro na operação")
-                .masthead("Erro na operação de excuisão");
-            dialog.style(DialogStyle.UNDECORATED);
-            dialog.showError();
+            JavaFXUtil.showDialog("Erro na operação"
+                ,"Erro na operação de excuisão",
+                Alert.AlertType.ERROR);
             return;
         } catch (FuncionarioNaoAutorizadoException ex) {
-            dialog = Dialogs.create().title("Funcionário não autorizado")
-                .masthead("Funcionário não autorizado")
-                .message("Por favor, entre com um funcionário autorizado para esta operação!");
-            dialog.style(DialogStyle.UNDECORATED);
-            dialog.showError();
+            JavaFXUtil.showDialog(ex);
             return;
         }catch(Exception ee){
             ee.printStackTrace();
-            Dialogs.create().showException(ee);
+            JavaFXUtil.showDialog(ee);
             return;
         }
-        dialog = Dialogs.create().title("Produto excuido")
-                .masthead("Produto excuido com sucesso!")
-                .message("Cadastro do produto "+entity.getDescricao()+ " excuido com sucesso!");
-            dialog.style(DialogStyle.UNDECORATED);
-            dialog.showError();
+        JavaFXUtil.showDialog("Produto excuido"
+                ,"Produto excuido com sucesso!"
+                ,"Cadastro do produto "+entity.getDescricao()+ " excuido com sucesso!");
         this.cancelarClicado();
     }
     

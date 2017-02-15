@@ -164,7 +164,7 @@
                               <TableColumn fx:id="colFuncV" prefWidth="307.3788146972656" text="Funcionário" />
                               <TableColumn fx:id="colValorV" prefWidth="119.1138916015625" text="Valor" />
                               <TableColumn fx:id="colItensV" prefWidth="187.5479736328125" text="Intes" />
-                              <TableColumn fx:id="colVerV" prefWidth="90.0" text="Vizualizar" />
+                              <TableColumn fx:id="colVerV" prefWidth="90.0" text="Visualizar" />
                            </columns>
                         </TableView>
                         <DatePicker fx:id="dataV" layoutX="82.0" layoutY="14.0" onAction="#dataDigitada" onKeyReleased="#dataDigitadaPress" />

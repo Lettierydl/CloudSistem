@@ -11,12 +11,13 @@ import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.model.exception.SenhaIncorretaException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
-import org.controlsfx.dialog.Dialogs;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
@@ -78,6 +79,18 @@ public class FuncionarioDialogController extends DialogController<Funcionario> {
             gerente.setDisable(true);
             supervisor.setDisable(true);
             caixa.setDisable(true);
+            okButton.setDisable(true);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Permissão negada");
+                alert.setHeaderText("Você não tem permissão para criar um funcionário");
+                alert.setContentText("Por favor, entre como um funcionário adequado\n"
+                        + "Sem permissão");
+                alert.showAndWait();
+                dialogStage.close();
+            }
+            );
+            //dialogStage.close();
         }
 
         MaskFieldUtil.upperCase(nome);
@@ -85,14 +98,16 @@ public class FuncionarioDialogController extends DialogController<Funcionario> {
         MaskFieldUtil.upperCase(endereco);
         MaskFieldUtil.cpfField(cpf);
         MaskFieldUtil.foneField(telefone);
+        MaskFieldUtil.foneField(celular);
 
-        JavaFXUtil.nextFielOnAction(nome, cpf);
-        JavaFXUtil.nextFielOnAction(cpf, telefone);
-        JavaFXUtil.nextFielOnAction(telefone, endereco);
-        JavaFXUtil.nextFielOnAction(endereco, login);
+        JavaFXUtil.nextFielOnAction(nome, telefone);
+        JavaFXUtil.nextFielOnAction(telefone, celular);
+        JavaFXUtil.nextFielOnAction(celular, endereco);
+        JavaFXUtil.nextFielOnAction(endereco, cpf);
+        JavaFXUtil.nextFielOnAction(cpf, login);
         JavaFXUtil.nextFielOnAction(login, senha);
         JavaFXUtil.nextFielOnAction(senha, senha2);
-        JavaFXUtil.nextFielOnAction(senha, okButton);
+        JavaFXUtil.nextFielOnAction(senha2, okButton);
 
         okButton.setOnKeyReleased((KeyEvent e) -> {
             if (e.getCode() == KeyCode.ENTER) {
@@ -188,9 +203,9 @@ public class FuncionarioDialogController extends DialogController<Funcionario> {
                 }
                 if (!senha.getText().isEmpty() && !senha2.getText().isEmpty() && !senha.getText().equals(senha2.getText())) {
                     msgErro += "Senhas distintas\n";
-                }else if (senha.getText().isEmpty()) {
+                } else if (senha.getText().isEmpty()) {
                     msgErro += "É reqerido uma senha\n";
-                }else if (senha2.getText().isEmpty()) {
+                } else if (senha2.getText().isEmpty()) {
                     msgErro += "É confirme a senha digitada\n";
                 }
             } catch (Exception e) {
@@ -200,11 +215,10 @@ public class FuncionarioDialogController extends DialogController<Funcionario> {
             }
         }
         if (!msgErro.isEmpty()) {
-            Dialogs.create()
-                    .title("Campos Inválidos")
-                    .masthead("Por favor, corrija os campos inválidos")
-                    .message(msgErro)
-                    .showError();
+            JavaFXUtil.showDialog(
+                    "Campos Inválidos", "Por favor, corrija os campos inválidos", msgErro,
+                    Alert.AlertType.ERROR
+            );
 
         }
         return msgErro.isEmpty();
@@ -220,7 +234,17 @@ public class FuncionarioDialogController extends DialogController<Funcionario> {
                 entity.setTelefone(telefone.getText());
                 entity.setCelular(celular.getText());
                 entity.setCpf(cpf.getText());
-                entity.setLogin(login.getText());
+                if (entity.getTipoDeFuncionario() != TipoDeFuncionario.Gerente && f.getFuncionarioLogado().getTipoDeFuncionario().equals(TipoDeFuncionario.Gerente)) {
+                    entity.setLogin(login.getText());
+                    TipoDeFuncionario t = TipoDeFuncionario.Caixa;
+                    if (supervisor.isSelected()) {
+                        t = TipoDeFuncionario.Supervisor;
+                    } else if (gerente.isSelected()) {
+                        t = TipoDeFuncionario.Gerente;
+                    }
+
+                    entity.setTipoDeFuncionario(t);
+                }
 
                 try {
                     f.atualizarFuncionario(entity);
@@ -228,27 +252,26 @@ public class FuncionarioDialogController extends DialogController<Funcionario> {
                         try {
                             f.alterarSenhaDoFuncionario(entity, senha.getText(), senha2.getText());
                             f.atualizarFuncionario(entity);
-                            Dialogs.create()
-                            .title("Funcionário Editado")
-                            .masthead("Senha do funcionário " + entity.getNome() + " anterada com secesso")
-                            .showInformation();
+                            JavaFXUtil.showDialog(
+                                    "Funcionário Editado", "Senha do funcionário " + entity.getNome() + " anterada com secesso");
                         } catch (SenhaIncorretaException se) {
-                            Dialogs.create()
-                                    .title("Senha incorreta")
-                                    .masthead("Senha incorreta, insira a senha do funcionário "+entity.getNome())
-                                    .showError();
+                            JavaFXUtil.showDialog(
+                                    "Senha incorreta", "Senha incorreta, insira a senha do funcionário " + entity.getNome(),
+                                    Alert.AlertType.ERROR
+                            );
                         }
                     }
                 } catch (FuncionarioNaoAutorizadoException ex) {
-                    Dialogs.create()
-                            .title("Funcionário não autorizado")
-                            .masthead("Por favor, entre com um usuário diferente")
-                            .showError();
+                    JavaFXUtil.showDialog(
+                            "Funcionário não autorizado", "Por favor, entre com um usuário diferente",
+                            Alert.AlertType.ERROR
+                    );
                 } catch (Exception ex) {
                     Logger.getLogger(FuncionarioDialogController.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 dialogStage.close();
             } else if (tipe == CREATE_MODAL) {
+                entity = new Funcionario();
                 entity.setNome(nome.getText());
                 entity.setEndereco(endereco.getText());
                 entity.setTelefone(telefone.getText());
@@ -261,23 +284,22 @@ public class FuncionarioDialogController extends DialogController<Funcionario> {
                         t = TipoDeFuncionario.Supervisor;
                     } else if (gerente.isSelected()) {
                         t = TipoDeFuncionario.Gerente;
-                    } 
+                    }
                     //create
-                    f.adicionarFuncionario(entity, senha.getText(),t);
-                    Dialogs.create()
-                            .title("Funcionário Criado com Sucesso")
-                            .masthead("Nome: " + entity.getNome() + "\n"
-                                    + "Login: " + entity.getLogin() + "\n"
-                                    + "CPF: " + entity.getCpf() + "\n"
-                                    + "Endereço: " + entity.getEndereco() + "\n"
-                                    + "Telefones: " + entity.getTelefones() + "\n"
-                                    + "Função: " + entity.getTipoDeFuncionario() + "\n")
-                            .showInformation();
+                    f.adicionarFuncionario(entity, senha.getText(), t);
+                    JavaFXUtil.showDialog(
+                            "Funcionário Criado com Sucesso", "Nome: " + entity.getNome() + "\n"
+                            + "Login: " + entity.getLogin() + "\n"
+                            + "CPF: " + entity.getCpf() + "\n"
+                            + "Endereço: " + entity.getEndereco() + "\n"
+                            + "Telefones: " + entity.getTelefones() + "\n"
+                            + "Função: " + entity.getTipoDeFuncionario() + "\n"
+                    );
                 } catch (FuncionarioNaoAutorizadoException ex) {
-                    Dialogs.create()
-                            .title("Funcionário não autorizado")
-                            .masthead("Por favor, entre com um usuário diferente")
-                            .showError();
+                    JavaFXUtil.showDialog(
+                            "Funcionário não autorizado", "Por favor, entre com um usuário diferente",
+                            Alert.AlertType.ERROR
+                    );
                 } catch (Exception ex) {
                     Logger.getLogger(FuncionarioDialogController.class.getName()).log(Level.SEVERE, null, ex);
                 }

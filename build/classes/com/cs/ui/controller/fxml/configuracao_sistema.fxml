@@ -164,14 +164,14 @@
                                        </children>
                                     </FlowPane>
                                     <Label text="Chave do Computador: " GridPane.rowIndex="9" />
-                                    <Label fx:id="chave_pc" text="00-00-00-00" GridPane.rowIndex="9">
-                                       <GridPane.margin>
-                                          <Insets left="148.0" />
-                                       </GridPane.margin>
+                                    <TextField fx:id="chave_pc" disable="true" GridPane.rowIndex="9">
                                        <tooltip>
                                           <Tooltip text="Chave de identificação do computador" />
                                        </tooltip>
-                                    </Label>
+                                       <GridPane.margin>
+                                          <Insets left="148.0" />
+                                       </GridPane.margin>
+                                    </TextField>
                                  </children>
                               </GridPane>
                               <Label fx:id="flag" layoutX="50.0" layoutY="21.0" text="Registrado" textFill="#00ee00" visible="false" />
@@ -194,6 +194,14 @@
                                        <tooltip>
                                           <Tooltip text="Salvar Alterações nas Permissões" />
                                        </tooltip>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#defaltStatusPermicao" text="Defalt" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                       <tooltip>
+                                          <Tooltip text="Reiniciar Permissões para valor Defalt" />
+                                       </tooltip>
+                                       <GridPane.margin>
+                                          <Insets left="219.0" />
+                                       </GridPane.margin>
                                     </Button>
                                  </children>
                                  <columnConstraints>

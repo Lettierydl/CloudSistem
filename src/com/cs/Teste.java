@@ -5,6 +5,7 @@
  */
 package com.cs;
 
+import com.cs.sis.util.Registro;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
@@ -41,14 +42,9 @@ public class Teste {
     }
 
     public static void main(String args[]) {
-
-        System.out.println("\nInitial password           = " + password);
-
-        String aPassword = doConvert(password);
-        System.out.println("Convert initial password   = " + aPassword);
-
-        String bPassword = doConvert(aPassword);
-        System.out.println("Perform another conversion = " + bPassword + "\n");
+        String serial = Registro.criarRegistro
+        ("LOJA ELLEN", "EDVANILDA TORRES VILAR ARAUJO", "810D090446");
+        System.out.println(serial);
     }
 
 }

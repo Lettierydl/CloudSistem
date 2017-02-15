@@ -13,6 +13,7 @@ import com.cs.sis.model.pessoas.Funcionario;
 import com.cs.sis.model.pessoas.TipoDeFuncionario;
 import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.util.Arquivo;
+import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
 import com.cs.sis.util.Registro;
@@ -38,7 +39,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -54,10 +57,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.DialogStyle;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -135,7 +134,7 @@ public class ConfiguracaoSistemaController implements Initializable {
     private Label flag;
     
     @FXML
-    private Label chave_pc;
+    private TextField chave_pc;
     
     @FXML
     private ComboBox<String> box_permicoes;
@@ -162,10 +161,21 @@ public class ConfiguracaoSistemaController implements Initializable {
         try{
             f.imprimirTexto(texto);
         }catch(Throwable e){
-            Dialogs.create().title("Erro Impressão texte")
-                    .showException(e);
+            JavaFXUtil.showDialog("Impressora não conectada",e);
         }
         
+    }
+    
+    @FXML
+    public void defaltStatusPermicao() {
+        try {
+            PermissaoFuncionario.configuracoesDefalt();
+            JavaFXUtil.showDialog("Permissões Atualizadas",
+                    "Permissões Atualizadas para Defalt");
+        }catch (Exception e) {
+            e.printStackTrace();
+            JavaFXUtil.showDialog(e);
+        }
     }
     
     @FXML
@@ -173,18 +183,17 @@ public class ConfiguracaoSistemaController implements Initializable {
         try{
             int retorno = f.retornoImpressora();
             String msg = retorno == 1 ? "Impressora conectada\nRetorno: 1" : "Impressora não conectada\nRetorno: "+retorno ;
-            Dialogs dialog = Dialogs.create().title("Cominicação com a Impressora")
-                    .masthead("Retorno comunicação com a impressora:")
-                    .message(msg);
-            dialog.style(DialogStyle.UNDECORATED);
             if(retorno == 1){
-                dialog.showConfirm();
+                JavaFXUtil.showDialog("Cominicação com a Impressora",
+                    "Retorno comunicação com a impressora:",
+                    msg);
             }else{
-                dialog.showError();
+                JavaFXUtil.showDialog("Cominicação com a Impressora",
+                    "Retorno comunicação com a impressora:",
+                    msg,Alert.AlertType.ERROR);
             }
         }catch(Error | Exception e){
-            Dialogs.create().title("Erro Impressão texte")
-                    .showException(e);
+            JavaFXUtil.showDialog("Erro Impressão texte",e);
         }
         
     }
@@ -229,26 +238,19 @@ public class ConfiguracaoSistemaController implements Initializable {
     @FXML
     void removerFuncionario(ActionEvent event) {
         
-        Action ct = Dialogs.create().title("Remover Funcionário")
-                .masthead("Tem certeza que deseja remover um funcionário?")
-                .showWarning();
-        if(ct.equals(Dialog.Actions.YES)){
-            Dialogs sn = Dialogs.create().title("Remover Funcionario")
-                .masthead("Digite o nome do funcionário que deseja remover");
-            sn.style(DialogStyle.UNDECORATED);
-            String get = sn.showTextInput().get(); 
+        ButtonType ct = JavaFXUtil.showDialogOptions("Remover Funcionário",
+                "Tem certeza que deseja remover um funcionário?");
+        if(ct.equals(ButtonType.YES)){
+            String get= JavaFXUtil.showDialogInput("Remover Funcionario",
+                    "Digite o nome do funcionário que deseja remover");
             try{
                 Funcionario fun = f.buscarFuncionarioPorNome(get);
                 f.removerFuncionario(fun);
-                Dialogs.create().title("Funcionário Removido")
-                .masthead("Funcionário Removido com Sucesso")
-                .message(fun.getNome())
-                .showInformation();
+                JavaFXUtil.showDialog("Funcionário Removido",
+                "Funcionário Removido com Sucesso",
+                fun.getNome());
             }catch(Exception e){
-                Dialogs.create().title("Remover Funcionário")
-                .masthead("Funcionário não encontrado")
-                .message(get)
-                .showError();
+                JavaFXUtil.showDialog("Funcionário "+get+" não encontrado",e);
             }
         }
     }
@@ -266,25 +268,23 @@ public class ConfiguracaoSistemaController implements Initializable {
             f.inserirConfiguracaoSistema(VariaveisDeConfiguracaoUtil.IP_DO_BANCO, ip);
             f.inserirConfiguracaoSistema(VariaveisDeConfiguracaoUtil.ATIVAR_LIMITE_REGISTRO_MOSTRADOS, limitar);
             f.inserirConfiguracaoSistema(VariaveisDeConfiguracaoUtil.EXTRATEGIA_DE_CONEXAO, estrategia);
-            Dialogs.create().title("Alterações realizada")
-                    .masthead("Alterações realizada com sucesso")
-                    .message("IP: "+ip+"\n" + "Arquivos: "+arquivos+"\n"
+            JavaFXUtil.showDialog("Alterações realizada",
+                    "Alterações realizada com sucesso",
+                    "IP: "+ip+"\n" + "Arquivos: "+arquivos+"\n"
                             + "Estratégia: "+ estrategia+"\n"
                             + "Zipar: "+ (zipar? "Sim" : "Não")+"\n"
-                            + "Limitar: "+ (limitar? "Sim" : "Não"))
-                    .showInformation();
+                            + "Limitar: "+ (limitar? "Sim" : "Não"));
         } catch (Exception ex) {
-            Dialogs.create().showException(ex);
+            JavaFXUtil.showDialog(ex);
             Arquivo arq = new Arquivo();
             arq.addConfiguracaoSistema(VariaveisDeConfiguracaoUtil.IP_DO_BANCO, ip);
             arq.addConfiguracaoSistema(VariaveisDeConfiguracaoUtil.ATIVAR_LIMITE_REGISTRO_MOSTRADOS, limitar);
             arq.addConfiguracaoSistema(VariaveisDeConfiguracaoUtil.EXTRATEGIA_DE_CONEXAO, estrategia);
-            Dialogs.create().title("Alterações realizada")
-                    .masthead("Alterações realizada apenas algumas partes")
-                    .message("IP: "+ip+"\n" + "Arquivos: "+arquivos+"\n"
+            JavaFXUtil.showDialog("Alterações realizada",
+                    "Alterações realizada apenas algumas partes",
+                    "IP: "+ip+"\n" + "Arquivos: "+arquivos+"\n"
                             + "Estratégia: "+ estrategia+"\n"
-                            + "Limitar: "+ (limitar? "Sim" : "Não"))
-                    .showError();
+                            + "Limitar: "+ (limitar? "Sim" : "Não"), Alert.AlertType.ERROR);
         }
     }
 
@@ -305,16 +305,14 @@ public class ConfiguracaoSistemaController implements Initializable {
         boolean reg = r.registrar(chave.getText(), razao.getText(), endereco.getText(), proprietario.getText());
         flag.setVisible(reg);
         if(reg){
-            Dialogs.create().title("Registro Realizado")
-                    .masthead("Registro realizado com sucesso")
-                    .message("Razão Socual: "+razao.getText()+"\n" 
+            JavaFXUtil.showDialog("Registro Realizado",
+                    "Registro realizado com sucesso",
+                    "Razão Socual: "+razao.getText()+"\n" 
                             + "Propietario: "+proprietario.getText()+"\n"
-                            + "Endereco: "+ endereco.getText()+"\n" )
-                    .showInformation();
+                            + "Endereco: "+ endereco.getText()+"\n" );
         }else{
-        Dialogs.create().title("Chave Inválida")
-                    .masthead("Chave Inválida para as informações cadastradas")
-                    .showError(); 
+        JavaFXUtil.showDialog("Chave Inválida",
+                "Chave Inválida para as informações cadastradas", Alert.AlertType.ERROR); 
         }
         
     }
@@ -324,22 +322,20 @@ public class ConfiguracaoSistemaController implements Initializable {
         try{
              f = Facede.getInstance();
         }catch(Exception | NoClassDefFoundError e){
-            Dialogs.create().title("Conexão com o Banco")
-                    .masthead("Não foi possível estabelecer uma conexão com o Banco")
-                    .showError();
+            JavaFXUtil.showDialog("Conexão com o Banco",
+                    "Não foi possível estabelecer uma conexão com o Banco", Alert.AlertType.ERROR);
         }
         
-        Dialogs sn = Dialogs.create().title("Senha de Acesso")
-                .masthead("Digite a senha de acesso as configurações do sistema");
-        sn.style(DialogStyle.UNDECORATED);
         MaskFieldUtil.numericField(quantidadeCaixas);
-        MaskFieldUtil.upperCase(this.razao);
-        MaskFieldUtil.upperCase(this.endereco);
-        MaskFieldUtil.upperCase(this.proprietario);
+        //MaskFieldUtil.upperCase(this.razao);
+        //MaskFieldUtil.upperCase(this.endereco);
+        //MaskFieldUtil.upperCase(this.proprietario);
         MaskFieldUtil.serialTextField(this.chave);
         
         
-        String get = sn.showTextInput("Cloudsistem").get();
+        String get =  JavaFXUtil.showDialogInput("Senha de Acesso",
+                "Digite a senha de acesso as configurações do sistema");
+        
         if(OperacaoStringUtil.validarSenhaMestre(get, true)){
             panelConfig.setDisable(false);
             ObservableList<String> estrategias = FXCollections.observableArrayList();
@@ -389,9 +385,8 @@ public class ConfiguracaoSistemaController implements Initializable {
     public void salvarStatusPermicao(){
         try {
             PermissaoFuncionario.putValor(box_permicoes.getValue(), autorizado.isSelected(), box_tiposFunc.getValue());
-            Dialogs.create().title("Permissão Atualizada")
-                    .masthead("Permissão Atualizada com sucesso")
-                    .showInformation();
+            JavaFXUtil.showDialog("Permissão Atualizada",
+                    "Permissão Atualizada com sucesso");
         } catch (FuncionarioNaoAutorizadoException ex) {
             Logger.getLogger(ConfiguracaoSistemaController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -509,6 +504,8 @@ public class ConfiguracaoSistemaController implements Initializable {
         }catch(Exception e){}
         
         chave_pc.setText(Registro.getIntance().chaveComputador());
+        chave_pc.setDisable(false);
+        chave_pc.setEditable(false);
         
         
         try{

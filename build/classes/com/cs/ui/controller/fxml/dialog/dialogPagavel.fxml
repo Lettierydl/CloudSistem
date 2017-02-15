@@ -99,7 +99,17 @@
             <Insets />
           </HBox.margin>
         </HBox>
-        <Pane maxWidth="+Infinity" HBox.hgrow="ALWAYS" />
+        <Pane maxWidth="+Infinity" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="excluirButton" layoutY="1.0" minWidth="80.0" mnemonicParsing="false" onAction="#excluirClicado" text="Excluir" textFill="RED">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip text="Excuir venda e repor produtos no estoque" />
+                     </tooltip>
+                  </Button>
+               </children></Pane>
         <HBox fx:id="okParent" alignment="CENTER">
           <children>
             <Button fx:id="okButton" minWidth="80.0" mnemonicParsing="false" onAction="#okClicado" text="Ok" HBox.hgrow="NEVER">

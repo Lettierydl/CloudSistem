@@ -27,6 +27,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -40,10 +42,6 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.DialogStyle;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -128,10 +126,9 @@ public class MercadoriasController implements Initializable {
             Produto p = f.buscarProdutoPorDescricaoOuCodigo(txt.replace(" R$ ", ";").split(";")[0]);
             double qt = OperacaoStringUtil.converterStringValor(quantidade.getText());
             if (qt <= 0) {
-                Dialogs.create()
-                        .title("Valor incorreto")
-                        .masthead("Quantidade não pode ser zero")
-                        .showError();
+                JavaFXUtil.showDialog("Valor incorreto",
+                        "Quantidade não pode ser zero",
+                        Alert.AlertType.ERROR);
                 quantidade.setText("1");
                 codigo.requestFocus();
                 codigo.selectAll();
@@ -149,16 +146,14 @@ public class MercadoriasController implements Initializable {
                 codigo.requestFocus();
                 codigo.selectAll();
             } catch (Exception e) {
-                Dialogs.create().showException(e);
+                JavaFXUtil.showDialog(e);
             }
         } catch (NoResultException | NonUniqueResultException ne) {
             codigo.requestFocus();
             codigo.selectAll();
-            Dialogs.create()
-                        .title("Produto inválido")
-                        .masthead("Produto não cadastrado")
-                        .message(txt)
-                        .showError();
+            JavaFXUtil.showDialog("Produto inválido",
+                        "Produto não cadastrado", txt,
+                        Alert.AlertType.ERROR);
         }
     }
 
@@ -176,10 +171,9 @@ public class MercadoriasController implements Initializable {
                 codigo.requestFocus();
                 codigo.selectAll();
             } catch (NumberFormatException ne) {
-                Dialogs.create()
-                        .title("Valor incorreto")
-                        .masthead("Quantidade inválida")
-                        .showError();
+                JavaFXUtil.showDialog("Valor incorreto",
+                        "Quantidade inválida",
+                        Alert.AlertType.ERROR);
                 codigo.setText(codigo.getText().replace("*", ""));
                 quantidade.setText("1");
                 codigo.requestFocus();
@@ -262,21 +256,17 @@ public class MercadoriasController implements Initializable {
     }
 
     public void removerItem(ItemDeVenda it) {
-        Dialogs dialog = Dialogs.create()
-                .title("Remover Item")
-                .masthead("Deseja realmente remover o item?")
-                .message(descricaoItem(it))
-                .actions(Dialog.Actions.YES, Dialog.Actions.CANCEL);
-        dialog.style(DialogStyle.UNDECORATED);
-        Action act = dialog.showError();
-        if (act.equals(Dialog.Actions.YES)) {
+        ButtonType act = JavaFXUtil.showDialogOptions("Remover Item",
+                "Deseja realmente remover o item?",
+                descricaoItem(it));
+        
+        if (act.equals(ButtonType.YES)) {
             try {
                 f.removerItemDaVenda(it);
                 preencherInformacoes();
             } catch (Exception ex) {
-                Dialogs.create()
-                        .title("Erro ao remover item")
-                        .showException(ex);
+                JavaFXUtil.showDialog("Erro ao remover item",
+                        ex);
             }
         }
     }

@@ -5,10 +5,13 @@
  */
 package com.cs.sis.util;
 
+import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.model.pessoas.Pessoa;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
+import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -24,11 +28,19 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 
 /**
@@ -36,6 +48,304 @@ import javafx.util.Callback;
  * @author Lettiery
  */
 public class JavaFXUtil {
+    
+    public static void showDialog(String thead) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(thead);
+        alert.showAndWait();
+    }
+    
+    //information defalt
+    public static void showDialog(String thead, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(thead);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    
+    public static void showDialog(String titulo, String thead, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(thead);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    
+    public static void showDialog(String titulo, String thead, String message, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(titulo);
+        alert.setHeaderText(thead);
+        alert.setContentText(message);
+        if(type == Alert.AlertType.ERROR){
+            alert.initStyle(StageStyle.UNDECORATED);
+        }
+        alert.showAndWait();
+    }
+    
+    public static void showDialog(String titulo, String thead, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(titulo);
+        alert.setHeaderText(thead);
+        if(type == Alert.AlertType.ERROR){
+            alert.initStyle(StageStyle.UNDECORATED);
+        }
+        alert.showAndWait();
+    }
+    
+    public static void showDialog(String titulo, String thead, String message, Alert.AlertType type, boolean undecorated) {
+        Alert alert = new Alert(type);
+        alert.setTitle(titulo);
+        alert.setHeaderText(thead);
+        alert.setContentText(message);
+
+        if (undecorated) {
+            alert.initStyle(StageStyle.UNDECORATED);
+        }
+        alert.showAndWait();
+    }
+    
+    public static void showDialog(FuncionarioNaoAutorizadoException ex) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Funcionário não autorizado");
+        alert.setHeaderText("Funcionário não autorizado");
+        alert.setContentText("Por favor entre com um funcionário autorizado a realizar essa ação!");
+
+        alert.initStyle(StageStyle.UNDECORATED);
+        alert.showAndWait();
+    }
+    
+    public static void showDialog(String thead,Throwable ex) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erro");
+        alert.setHeaderText(thead);
+        alert.setContentText(ex.getMessage());
+
+        alert.initStyle(StageStyle.UNDECORATED);
+
+        // Create expandable Exception.
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String exceptionText = sw.toString();
+
+        TextArea textArea = new TextArea(exceptionText);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.add(textArea, 0, 1);
+
+// Set expandable Exception into the dialog pane.
+        alert.getDialogPane().setExpandableContent(expContent);
+
+        alert.showAndWait();
+    }
+    
+    public static void showDialog(Throwable ex) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erro");
+        alert.setHeaderText(ex.getLocalizedMessage());
+        alert.setContentText(ex.getMessage());
+
+        alert.initStyle(StageStyle.UNDECORATED);
+
+        // Create expandable Exception.
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String exceptionText = sw.toString();
+
+        TextArea textArea = new TextArea(exceptionText);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.add(textArea, 0, 1);
+
+// Set expandable Exception into the dialog pane.
+        alert.getDialogPane().setExpandableContent(expContent);
+
+        alert.showAndWait();
+    }
+    
+    public static void showDialog(String titulo, String thead, Throwable ex) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(titulo);
+        alert.setHeaderText(thead);
+
+        alert.initStyle(StageStyle.UNDECORATED);
+
+        // Create expandable Exception.
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String exceptionText = sw.toString();
+
+        TextArea textArea = new TextArea(exceptionText);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.add(textArea, 0, 1);
+
+// Set expandable Exception into the dialog pane.
+        alert.getDialogPane().setExpandableContent(expContent);
+
+        alert.showAndWait();
+    }
+    
+    
+    public static ButtonType showDialogOptions(String thead) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setHeaderText(thead);
+        alert.initStyle(StageStyle.UNDECORATED);
+        
+        ButtonType cancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType nao = new ButtonType("Não", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType sim = new ButtonType("Sim",ButtonBar.ButtonData.OK_DONE);
+        
+        alert.getButtonTypes().setAll(nao,sim, cancelar);
+        
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == sim) {
+            return ButtonType.YES;
+        } else {
+            return ButtonType.CANCEL;
+        }
+    }
+    
+    public static ButtonType showDialogOptions(String thead, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setHeaderText(thead);
+        alert.setContentText(message);
+        
+        alert.initStyle(StageStyle.UNDECORATED);
+            
+        ButtonType cancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType nao = new ButtonType("Não", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType sim = new ButtonType("Sim",ButtonBar.ButtonData.OK_DONE);
+        
+        alert.getButtonTypes().setAll(nao,sim, cancelar);
+        
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == sim) {
+            return ButtonType.YES;
+        } else {
+            return ButtonType.CANCEL;
+        }
+    }
+    
+    //WARNING defalt
+    public static ButtonType showDialogOptions(String titulo, String thead, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(titulo);
+        alert.setHeaderText(thead);
+        alert.setContentText(message);
+        alert.initStyle(StageStyle.UNDECORATED);
+
+        ButtonType cancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType nao = new ButtonType("Não", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType sim = new ButtonType("Sim",ButtonBar.ButtonData.YES);
+        
+        alert.getButtonTypes().setAll(nao,sim, cancelar);
+        
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == sim) {
+            return ButtonType.YES;
+        } else {
+            return ButtonType.CANCEL;
+        }
+    }
+    
+    public static ButtonType showDialogOptions(String titulo, String thead, String message, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(titulo);
+        alert.setHeaderText(thead);
+        alert.setContentText(message);
+        alert.initStyle(StageStyle.UNDECORATED);
+
+        ButtonType cancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType nao = new ButtonType("Não", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType sim = new ButtonType("Sim",ButtonBar.ButtonData.OK_DONE);
+        
+        alert.getButtonTypes().setAll(nao,sim, cancelar);
+        
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == sim) {
+            return ButtonType.YES;
+        } else {
+            return ButtonType.CANCEL;
+        }
+    }
+    
+    public static String showDialogInput(String thead) {
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setHeaderText(thead);
+        
+        // Traditional way to get the response value.
+        dialog.showAndWait();
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            return "";
+        }
+    }
+    
+    public static String showDialogInput(String thead, String message) {
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setHeaderText(thead);
+        dialog.setContentText(message);
+
+        // Traditional way to get the response value.
+        dialog.showAndWait();
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            return "";
+        }
+    }
+
+    public static String showDialogInput(String titulo, String thead, String message) {
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle(titulo);
+        dialog.setHeaderText(thead);
+        dialog.setContentText(message);
+        
+
+        // Traditional way to get the response value.
+        dialog.showAndWait();
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            return "";
+        }
+    }
+    
     
     // serve para o sistema chamar o programa padrao que abre esse tipo de arquivo
     public static void abrirArquivoDoSistema(File file) throws IOException{

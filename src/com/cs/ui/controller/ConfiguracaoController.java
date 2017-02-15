@@ -9,6 +9,7 @@ import com.cs.ControllerTelas;
 import com.cs.Facede;
 import com.cs.Main;
 import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import com.cs.ui.controller.dialog.DialogController;
 import com.cs.ui.controller.dialog.ProgressDialogController;
@@ -20,13 +21,11 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.DialogStyle;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -54,12 +53,10 @@ public class ConfiguracaoController implements Initializable {
 
     @FXML
     public void restaurarBanco() {
-        Action ac = Dialogs.create().title("Restaurar Sistema")
-                .masthead("Deseja realmente restaurar o sistema?")
-                .title("Essa operação não poderá ser revertida")
-                .actions(Dialog.Actions.YES, Dialog.Actions.CANCEL)
-                .showError();
-        if (ac == Dialog.Actions.YES) {
+        ButtonType ac = JavaFXUtil.showDialogOptions("Restaurar Sistema",
+                "Deseja realmente restaurar o sistema?",
+                "Essa operação não poderá ser revertida");
+        if (ac == ButtonType.YES) {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Restalrar Banco de Dados");
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
@@ -76,20 +73,15 @@ public class ConfiguracaoController implements Initializable {
                 try {
                     boolean ret = f.restaurarBancoDeDados(file);
                     if (ret) {
-                        Dialogs.create().title("Restauração Realizada com sucesso")
-                                .masthead("Restauração do Sistema Realizada com sucesso")
-                                .style(DialogStyle.UNDECORATED)
-                                .showInformation();
+                        JavaFXUtil.showDialog("Restauração Realizada com sucesso",
+                                "Restauração do Sistema Realizada com sucesso");
                         f.logoff();
                         Main.trocarDeTela(ControllerTelas.TELA_LOGIN);
                     }
                 } catch (FuncionarioNaoAutorizadoException ex) {
-                    Dialogs.create().title("Funcionário não autorizado")
-                            .masthead("Funcionário não autorizado a realizar esta operação")
-                            .message("Por favor, entre com outro usuário")
-                            .showError();
+                    JavaFXUtil.showDialog(ex);
                 } catch (IOException ex) {
-                    Dialogs.create().showException(ex);
+                    JavaFXUtil.showDialog(ex);
                 }
             }
         }
@@ -122,12 +114,11 @@ public class ConfiguracaoController implements Initializable {
                         String path = f.realizarBackupBancoDeDados(file);
                         progress.concluir("Backup Realizado com sucesso.", file + " \n" + path );
                     } catch (FuncionarioNaoAutorizadoException ex) {
-                        Dialogs.create().title("Funcionário não autorizado")
-                                .masthead("Funcionário não autorizado a realizar esta operação")
-                                .message("Por favor, entre com outro usuário")
-                                .showError();
+                        JavaFXUtil.showDialog("Funcionário não autorizado",
+                                "Funcionário não autorizado a realizar esta operação",
+                                "Por favor, entre com outro usuário",Alert.AlertType.ERROR);
                     } catch (IOException ex) {
-                        Dialogs.create().showException(ex);
+                        JavaFXUtil.showDialog(ex);
                     }
                 }
             }.start();

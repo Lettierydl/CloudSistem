@@ -15,9 +15,9 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -43,6 +43,7 @@ public class EntradaProdutoDialogController extends DialogController<Produto> {
         // TODO
         MaskFieldUtil.quantityField(entrada);
         JavaFXUtil.nextFielOnAction(entrada, okButton);
+        
     }
 
     @Override
@@ -52,22 +53,17 @@ public class EntradaProdutoDialogController extends DialogController<Produto> {
         p.acrescentarQuantidadeDeEstoque(newEntrada);
         try {
             f.atualizarProduto(p);
-            Dialogs.create()
-                            .title("Quantidade Alterada")
-                            .masthead("Entrada de produto registrada com sucesso!")
-                            .message("Nova quantidade em estoque: "+
+            JavaFXUtil.showDialog(
+                            "Quantidade Alterada"
+                            ,"Entrada de produto registrada com sucesso!"
+                            ,"Nova quantidade em estoque: "+
                                     OperacaoStringUtil.formatarStringQuantidade(p.getQuantidadeEmEstoque()))
-                            .showInformation();
+                            ;
         } catch (FuncionarioNaoAutorizadoException ex) {
-             Dialogs.create()
-                            .title("Funcionário não autorizado")
-                            .masthead("Por favor, entre com um usuário diferente")
-                            .showError();
+             JavaFXUtil.showDialog(ex);
         } catch (Exception ex) {
             Logger.getLogger(EntradaProdutoDialogController.class.getName()).log(Level.SEVERE, null, ex);
-             Dialogs.create()
-                            .title("Erro ao atualizar Produto")
-                            .showException(ex);
+             JavaFXUtil.showDialog("Erro ao atualizar Produto",ex);
         }
         dialogStage.close();
         okClicked = true;

@@ -12,10 +12,10 @@ import com.cs.sis.controller.configuracao.PermissaoFuncionario;
 import com.cs.sis.model.exception.ParametrosInvalidosException;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Venda;
-import com.cs.sis.model.pessoas.TipoDeFuncionario;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
+import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +25,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -35,8 +36,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
-import org.controlsfx.dialog.DialogStyle;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -72,12 +71,11 @@ public class FinalizarAvistaController implements Initializable {
     CheckBox imprimir;
 
     @FXML
-    private Text nomeSupermercado;
-
-    @FXML
     private Label total;
     @FXML
     private Label troco;
+    @FXML
+    private Text razaoSocial;
 
     public FinalizarAvistaController() {
         f = Facede.getInstance();
@@ -91,10 +89,9 @@ public class FinalizarAvistaController implements Initializable {
     @FXML
     public void finalizar(ActionEvent event) {
         if (atual.getTotal() <= 0) {
-            Dialogs.create()
-                    .title("Venda zerada")
-                    .masthead("Por favor adicione algum item antes de filizar a venda")
-                    .showError();
+            JavaFXUtil.showDialog("Venda zerada",
+                    "Por favor adicione algum item antes de filizar a venda",
+                    Alert.AlertType.ERROR);
             Main.trocarDeTela(ControllerTelas.TELA_VENDA);
             return;
         }
@@ -104,10 +101,9 @@ public class FinalizarAvistaController implements Initializable {
         desc = (atual.getTotal() * desc)/100;
                 
         if ((val+desc) < atual.getTotal()) {
-            Dialogs.create()
-                    .title("Valor incorreto")
-                    .masthead("O valor pago pelo Cliente é inferior ao valor da venda")
-                    .showError();
+            JavaFXUtil.showDialog("Valor incorreto",
+                    "O valor pago pelo Cliente é inferior ao valor da venda",
+                    Alert.AlertType.ERROR);
             valorPago.requestFocus();
             valorPago.selectAll();
             return;
@@ -117,11 +113,10 @@ public class FinalizarAvistaController implements Initializable {
                 try{
                     f.finalizarVendaAVista(atual, desc);
                 }catch(ParametrosInvalidosException ee){
-                    Dialogs dialog = Dialogs.create()
-                        .title("Desconto com valor superior à venda")
-                        .masthead("Desconto com valor superior à venda")
-                        .message("Por favor, altera o valor do desconto");
-                    dialog.showError();
+                    JavaFXUtil.showDialog("Desconto com valor superior à venda",
+                        "Desconto com valor superior à venda",
+                        "Por favor, altera o valor do desconto",
+                    Alert.AlertType.ERROR);
                     desconto.requestFocus();
                     return;
                 }
@@ -129,23 +124,20 @@ public class FinalizarAvistaController implements Initializable {
                 f.finalizarVendaAVista(atual);
             }
             if (imprimir.isSelected() && !f.imprimirVenda(atual)) {
-                Dialogs dialog = Dialogs.create()
-                        .title("Impressora não conectada")
-                        .masthead("A impressora não esta respondendo")
-                        .message("Por favor, contate o suporte");
-                dialog.showError();
+                JavaFXUtil.showDialog("Impressora não conectada",
+                        "A impressora não esta respondendo",
+                        "Por favor, contate o suporte",
+                Alert.AlertType.ERROR);
             }
         } catch (Exception ex) {
-            Dialogs.create().showException(ex);
+            JavaFXUtil.showDialog(ex);
         }
         Main.trocarDeTela(ControllerTelas.TELA_VENDA);
-        Dialogs dialog = Dialogs.create()
-                .title("Venda Finalizada")
-                .masthead("Venda à vista finalizada com sucesso")
-                .message("Valor: " + OperacaoStringUtil.formatarStringValorMoeda(val)
+        JavaFXUtil.showDialog("Venda Finalizada",
+                        "Venda à vista finalizada com sucesso",
+                        "Valor: " + OperacaoStringUtil.formatarStringValorMoeda(val)
                         + "\nTroco: " + troco.getText());
-        dialog.style(DialogStyle.UNDECORATED);
-        dialog.showInformation();
+        
     }
 
     @FXML
@@ -156,10 +148,9 @@ public class FinalizarAvistaController implements Initializable {
         desc = (atual.getTotal() * desc)/100;
         
         if ((val+desc) < atual.getTotal()) {
-            Dialogs.create()
-                    .title("Valor incorreto")
-                    .masthead("O valor pago pelo Cliente é inferior ao valor da venda")
-                    .showError();
+            JavaFXUtil.showDialog("Valor incorreto",
+                            "O valor pago pelo Cliente é inferior ao valor da venda",
+                    Alert.AlertType.ERROR);
             valorPago.requestFocus();
             valorPago.selectAll();
             return;
@@ -208,6 +199,8 @@ public class FinalizarAvistaController implements Initializable {
         });
         
         JavaFXUtil.beginFoccusTextField(valorPago);
+        
+        razaoSocial.setText(VariaveisDeConfiguracaoUtil.getNomeEstabelecimento());
     }
 
     public void preencherInformacoes() {

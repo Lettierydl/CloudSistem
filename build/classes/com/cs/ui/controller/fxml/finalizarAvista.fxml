@@ -35,7 +35,7 @@
                   <Font name="Calibri Bold" size="36.0" />
                </font>
             </Text>
-            <Text fx:id="nomeSupermercado" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Mercadinho Popular">
+            <Text fx:id="razaoSocial" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Mercadinho Popular">
                <font>
                   <Font name="Calibri Bold" size="36.0" />
                </font>

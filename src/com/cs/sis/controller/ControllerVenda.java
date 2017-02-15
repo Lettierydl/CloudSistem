@@ -276,12 +276,11 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
             }
         }
 
-
         // logo em seguida deve diminuir o debito do Cliente com o valor do
         // Venda
     }
 
-    public void atualizarStatusPagaveis(List<Pagavel> pagaveis) throws EntidadeNaoExistenteException{
+    public void atualizarStatusPagaveis(List<Pagavel> pagaveis) throws EntidadeNaoExistenteException {
         for (Pagavel pag : pagaveis) {
             if (!pag.isPaga() && new BigDecimal(pag.getValorNaoPago()).setScale(2, RoundingMode.HALF_UP).doubleValue() == 0) {
                 if (pag instanceof Venda) {
@@ -296,7 +295,7 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
             }
         }
     }
-    
+
     /**
      *
      * @throws VendaPendenteException se existir uma venda atual sem ser
@@ -322,20 +321,21 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         if (v.getFormaDePagamento() != null) {
             throw new EstadoInvalidoDaVendaAtualException("Venda já finalizada anteriormente, inicie uma nova venda");
         }
+        v.setDia(Calendar.getInstance());
         v.setFormaDePagamento(FormaDePagamento.A_Vista);
         v.setPaga(true);
         v.setPartePaga(v.getTotal());
         edit(v);
         atual = null;
     }
-    
+
     public void finalizarVendaAVista(Venda v, double desconto)
-            throws EntidadeNaoExistenteException, ParametrosInvalidosException,Exception {
+            throws EntidadeNaoExistenteException, ParametrosInvalidosException, Exception {
         if (v.getFormaDePagamento() != null) {
             throw new EstadoInvalidoDaVendaAtualException("Venda já finalizada anteriormente, inicie uma nova venda");
         }
         v.setDesconto(desconto);
-        
+        v.setDia(Calendar.getInstance());
         v.setFormaDePagamento(FormaDePagamento.A_Vista);
         v.setPaga(true);
         v.setPartePaga(v.getTotal());
@@ -357,6 +357,7 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         if (v.getFormaDePagamento() != null) {
             throw new EstadoInvalidoDaVendaAtualException("Venda já finalizada anteriormente, inicie uma nova venda");
         }
+        v.setDia(Calendar.getInstance());
         v.setFormaDePagamento(FormaDePagamento.A_Prazo);
         v.setPaga(false);
         v.setPartePaga(partePaga);
@@ -444,6 +445,33 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
 
         atual.addItemDeVenda(it);
         edit(atual);
+    }
+    
+    
+    //deve ser chamado um metodo para devolver produto antes
+    public void removerVendaAVista(Venda v)
+            throws EntidadeNaoExistenteException, Exception {
+        if (v.getFormaDePagamento() != FormaDePagamento.A_Vista) {
+            throw new EstadoInvalidoDaVendaAtualException("Venda Á Prazo, não pode ser Deletada");
+        }
+        if (v.getFormaDePagamento() == null) {
+            throw new EstadoInvalidoDaVendaAtualException("Venda ainda não finalizada");
+        }
+        try{
+            beginTransaction();
+            for (ItemDeVenda it : FindVenda.itemDeVendaIdDaVenda(v.getId())) {
+                em.remove(em.getReference(ItemDeVenda.class, it.getId()));
+                        /*Query q = em.createNativeQuery("DELETE FROM item_de_venda WHERE id = :idItem ", ItemDeVenda.class);
+                     q.setParameter("idItem", item.getId());
+                         */
+            }
+            commitTransaction();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            closeEntityManager();
+        }
+        destroy(v);
     }
 
     public void removerItem(ItemDeVenda it)

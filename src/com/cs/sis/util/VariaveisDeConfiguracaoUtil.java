@@ -3,8 +3,8 @@ package com.cs.sis.util;
 import javafx.util.Duration;
 
 public class VariaveisDeConfiguracaoUtil {
-        
-        public static final String VERSION_SYSTEM = "2.5.0";
+    
+        public static final String VERSION_SYSTEM = "2.7.0";
     
 	public static final boolean LIBERAR_VENDA_DE_PRODUTO_SEM_ESTOQUE = true;
 	
@@ -48,6 +48,11 @@ public class VariaveisDeConfiguracaoUtil {
                 + "\nVendas à Vista"
                 + "\n\t\tEsc: Tela de Vendas";
         
-        public static String INFORMACAO_SISTEMA = "Versão do Sistema "+ VERSION_SYSTEM+"\n\n"+INFORMACAO_ATALHOS;
+        public static String getNomeEstabelecimento(){
+            return Registro.getIntance().getRazao();
+        }
         
+        public static String INFORMACAO_SISTEMA = "Versão do Sistema "+ VERSION_SYSTEM+"\n\n"+INFORMACAO_ATALHOS;
+       
+       
 }        

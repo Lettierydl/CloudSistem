@@ -107,7 +107,7 @@ public class FindProduto extends FindEntity {
     }
     @SuppressWarnings("unchecked")
     public static List<Produto> produtosQueDescricaoOuCodigoDeBarrasIniciam(
-            String descricaoOuCodigo, int limit) {
+        String descricaoOuCodigo, int limit) {
         String stringQuery = "select p FROM Produto as p where LOWER(p.descricao) LIKE LOWER(:descricao) "
                 + "or LOWER(p.codigoDeBarras) LIKE LOWER(:codigoDeBarras) order by p.descricao";
 
@@ -137,10 +137,11 @@ public class FindProduto extends FindEntity {
         query.setParameter("id", id);
 
         Produto produto = (Produto) query.getSingleResult();
-
-        em.getTransaction().begin();
-        em.refresh(produto);
-        em.getTransaction().commit();
+        
+        //pode calsar erro
+        //em.getTransaction().begin();
+        //em.refresh(produto);
+        //em.getTransaction().commit();
 
         return produto;
     }

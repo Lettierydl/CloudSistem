@@ -1,8 +1,7 @@
 package com.cs;
 
-import com.cs.ui.img.IMG;
+import com.cs.sis.util.JavaFXUtil;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.fxml.FXMLLoader;
@@ -11,17 +10,16 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  *
- * @author Angie
+ * @author Lettiery
  */
 public class ControllerTelas {
 
     public static Stage stage;
-    
-    public static Map<String , Scene> preCarregados = new HashMap<String , Scene>();
+
+    public static Map<String, Parent> preCarregados = new HashMap<String, Parent>();
 
     public static final String TELA_LOGIN = "ui/controller/fxml/login.fxml";
     public static final String TELA_PRINCIPAL = "ui/controller/fxml/principal.fxml";
@@ -36,31 +34,12 @@ public class ControllerTelas {
     }
 
     public void mostrarTela(final String tela) throws IOException {
-        
-        System.out.println("\n\n\n\nChamou... "+tela);
-        long antes = Calendar.getInstance().getTimeInMillis();
-        
-        Scene scene;
-        if(preCarregados.containsKey(tela)){
-            scene = preCarregados.get(tela);
-        }else{
-            Parent root = FXMLLoader.load(getClass().getResource(tela));
-            scene = new Scene(root);
-            preCarregados.put(tela, scene);
-        }
-        
-        long depois = Calendar.getInstance().getTimeInMillis();
-        System.out.println(depois-antes);
-        System.out.println("load fxml...");
-        
+        Parent root = FXMLLoader.load(getClass().getResource(tela));
+        Scene scene = new Scene(root);
         stage.close();
-
         stage.setScene(scene);
         stage.show();
-        
-        System.out.println("Set Screne...");
-        
-        stage.getIcons().add(new javafx.scene.image.Image(IMG.class.getResource("logo_relatorio.png").openStream()));
+        //stage.getIcons().add(new javafx.scene.image.Image(IMG.class.getResource("logo_relatorio.png").openStream()));
         stage.setTitle("CloudSistem");
 
         switch (tela) {
@@ -80,10 +59,8 @@ public class ControllerTelas {
             case TELA_FINALIZAR_A_VISTA:
                 adicionarTeclaDeAtalho(KeyCode.ESCAPE, TELA_VENDA, scene);
                 break;
-            
-                
+
         }
-        System.out.println("Finalizou...");
     }
 
     public void adicionarTeclaDeAtalho(KeyCode tecla, final String tela, Scene scene) {
@@ -92,7 +69,7 @@ public class ControllerTelas {
                 try {
                     mostrarTela(tela);
                 } catch (IOException ex) {
-                    Dialogs.create().showException(ex);
+                    JavaFXUtil.showDialog(ex);
                 }
             }
         });
@@ -104,7 +81,7 @@ public class ControllerTelas {
                 try {
                     mostrarTela(tela);
                 } catch (IOException ex) {
-                    Dialogs.create().showException(ex);
+                    JavaFXUtil.showDialog(ex);
                 }
             }
         });
@@ -116,7 +93,7 @@ public class ControllerTelas {
                 try {
                     mostrarTela(tela);
                 } catch (IOException ex) {
-                    Dialogs.create().showException(ex);
+                    JavaFXUtil.showDialog(ex);
                 }
             }
         });

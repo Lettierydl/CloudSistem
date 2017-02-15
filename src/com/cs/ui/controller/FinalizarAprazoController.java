@@ -17,18 +17,18 @@ import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
+import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -41,8 +41,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import org.controlsfx.dialog.DialogStyle;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -77,12 +75,12 @@ public class FinalizarAprazoController implements Initializable {
     CheckBox imprimir;
 
     @FXML
-    private Text nomeSupermercado;
-
-    @FXML
     private Label total;
     @FXML
     private Label subTotal;
+    
+    @FXML
+    private Text razaoSocial;
     
     @FXML
     private TextField observacao;
@@ -112,20 +110,18 @@ public class FinalizarAprazoController implements Initializable {
         
         Venda atual = f.getVendaAtual();
         if (atual.getTotal() <= 0) {
-            Dialogs.create()
-                    .title("Venda zerada")
-                    .masthead("Por favor adicione algum item antes de filizar a venda")
-                    .showError();
+            JavaFXUtil.showDialog("Venda zerada",
+                    "Por favor adicione algum item antes de filizar a venda",
+            Alert.AlertType.ERROR);
             Main.trocarDeTela(ControllerTelas.TELA_VENDA);
             return;
         }
         
         double val = OperacaoStringUtil.converterStringValor(valorPago.getText());
         if (val >= atual.getTotal()) {
-            Dialogs.create()
-                    .title("Valor incorreto")
-                    .masthead("O valor pago pelo Cliente deve ser inferior ao valor da venda")
-                    .showError();
+            JavaFXUtil.showDialog("Valor incorreto",
+                    "O valor pago pelo Cliente deve ser inferior ao valor da venda",
+                    Alert.AlertType.ERROR);
             valorPago.requestFocus();
             valorPago.selectAll();
             return;
@@ -134,10 +130,9 @@ public class FinalizarAprazoController implements Initializable {
         try{
             c = f.buscarClientePorNome(nomeCli.getText());
         }catch(NoResultException | NonUniqueResultException ne){
-            Dialogs.create()
-                    .title("Cliente não cadastrado")
-                    .masthead("Por favor digite um nome válido para o Cliente")
-                    .showError();
+            JavaFXUtil.showDialog("Cliente não cadastrado",
+                    "Por favor digite um nome válido para o Cliente",
+                    Alert.AlertType.ERROR);
             return;
         }
         
@@ -163,26 +158,24 @@ public class FinalizarAprazoController implements Initializable {
             //atual.setObservacao(observacao.getText());
             //atual.setCliente(c);
             if (imprimir.isSelected() && !f.imprimirVenda(atual)) {
-                Dialogs dialog = Dialogs.create()
-                        .title("Impressora não conectada")
-                        .masthead("A impressora não esta respondendo")
-                        .message("Por favor, contate o suporte");
-                dialog.showError();
+                JavaFXUtil.showDialog(
+                        "Impressora não conectada",
+                        "A impressora não esta respondendo",
+                        "Por favor, contate o suporte",
+                                Alert.AlertType.ERROR);
             }
         } catch (Exception ex) {
-            Dialogs.create().showException(ex);
+            JavaFXUtil.showDialog(ex);
             finalizando = false;
             return;
         }
         Main.trocarDeTela(ControllerTelas.TELA_VENDA);
-        Dialogs dialog = Dialogs.create()
-                .title("Venda Finalizada")
-                .masthead("Venda à prazo finalizada com sucesso")
-                .message("Cliente: " + c.getNome()
+        JavaFXUtil.showDialog("Venda Finalizada",
+                "Venda à prazo finalizada com sucesso",
+                "Cliente: " + c.getNome()
                         +"\nValor não pago da venda: " + OperacaoStringUtil.formatarStringValorMoeda(atual.getValorNaoPago())
                         + "\nNovo Débito do Cliente: "+ OperacaoStringUtil.formatarStringValorMoeda(debito));
-        dialog.style(DialogStyle.UNDECORATED);
-        dialog.showInformation();
+        
     }
     
     @FXML
@@ -208,10 +201,9 @@ public class FinalizarAprazoController implements Initializable {
         double val = OperacaoStringUtil.converterStringValor(valorPago.getText());
         Venda atual = f.getVendaAtual();
         if (val >= atual.getTotal()) {
-            Dialogs.create()
-                    .title("Valor incorreto")
-                    .masthead("O valor pago pelo Cliente deve ser inferior ao valor da venda")
-                    .showError();
+            JavaFXUtil.showDialog("Valor incorreto",
+                    "O valor pago pelo Cliente deve ser inferior ao valor da venda",
+                    Alert.AlertType.ERROR);
             valorPago.requestFocus();
             valorPago.selectAll();
             return;
@@ -248,6 +240,8 @@ public class FinalizarAprazoController implements Initializable {
         });
         nomeCli.setList(f.buscarNomeClientePorNomeQueInicia(""));
         JavaFXUtil.beginFoccusTextField(nomeCli);
+        
+        razaoSocial.setText(VariaveisDeConfiguracaoUtil.getNomeEstabelecimento());
     }
 
     public void preencherInformacoes() {

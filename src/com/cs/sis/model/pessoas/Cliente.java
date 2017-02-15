@@ -51,7 +51,7 @@ public class Cliente implements Serializable, Pessoa {
 	
 	/**
      */
-	@Column(nullable = false, precision = 2, unique = true)
+	@Column(nullable = false, unique = true)
 	private String nome;
 
 	/**

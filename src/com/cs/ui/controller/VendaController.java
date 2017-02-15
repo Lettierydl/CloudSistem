@@ -11,6 +11,7 @@ import com.cs.sis.util.AutoCompleteTextField;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
 import com.cs.sis.util.OperacaoStringUtil;
+import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,7 +30,9 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -44,10 +47,7 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.DialogStyle;
-import org.controlsfx.dialog.Dialogs;
+
 
 /**
  * FXML Controller class
@@ -83,13 +83,14 @@ public class VendaController implements Initializable {
     @FXML
     private TextField quantidade;
 
-    @FXML
-    private Text nomeSupermercado;
-
+    
     @FXML
     private Label descricao;
     @FXML
     private Label total;
+    
+    @FXML
+    private Text razaoSocial;
 
     static Timeline delayTimeline;
 
@@ -137,7 +138,7 @@ public class VendaController implements Initializable {
                 }
             }
         });
-        
+        razaoSocial.setText(VariaveisDeConfiguracaoUtil.getNomeEstabelecimento());
 
     }
 
@@ -149,10 +150,10 @@ public class VendaController implements Initializable {
     @FXML
     public void finalizarAvista(ActionEvent event) {
         if (f.getVendaAtual().getTotal() <= 0) {
-            Dialogs.create()
-                    .title("Venda zerada")
-                    .masthead("Por favor adicione algum item antes de filizar a venda")
-                    .showError();
+            JavaFXUtil.showDialog(
+                    "Venda zerada"
+                    ,"Por favor adicione algum item antes de filizar a venda",
+                    Alert.AlertType.ERROR);
         } else {
             Main.trocarDeTela(ControllerTelas.TELA_FINALIZAR_A_VISTA);
         }
@@ -161,10 +162,10 @@ public class VendaController implements Initializable {
     @FXML
     public void finalizarAprazo(ActionEvent event) {
         if (f.getVendaAtual().getTotal() <= 0) {
-            Dialogs.create()
-                    .title("Venda zerada")
-                    .masthead("Por favor adicione algum item antes de filizar a venda")
-                    .showError();
+            JavaFXUtil.showDialog(
+                    "Venda zerada"
+                    ,"Por favor adicione algum item antes de filizar a venda",
+                    Alert.AlertType.ERROR);
         } else {
             Main.trocarDeTela(ControllerTelas.TELA_FINALIZAR_A_PRAZO);
         }
@@ -215,11 +216,11 @@ public class VendaController implements Initializable {
 
             codigo.requestFocus();
             codigo.selectAll();
-            Dialogs.create()
-                    .title("Produto inválido")
-                    .masthead("Produto não cadastrado")
-                    .message(txt)
-                    .showError();
+            JavaFXUtil.showDialog(
+                    "Produto inválido"
+                    ,"Produto não cadastrado"
+                    ,txt,
+                    Alert.AlertType.ERROR);
         }
     }
     
@@ -243,21 +244,21 @@ public class VendaController implements Initializable {
         } catch (NoResultException | NonUniqueResultException ne) {
             nomeComplet.requestFocus();
             nomeComplet.selectAll();
-            Dialogs.create()
-                    .title("Produto inválido")
-                    .masthead("Produto não cadastrado")
-                    .message(txt)
-                    .showError();
+            JavaFXUtil.showDialog(
+                    "Produto inválido"
+                    ,"Produto não cadastrado"
+                    ,txt,
+                    Alert.AlertType.ERROR);
         }
     }
     
     
      private void inserirItemDeVenda(Produto p, double qt) {
             if (qt <= 0) {
-                Dialogs.create()
-                        .title("Valor incorreto")
-                        .masthead("Quantidade não pode ser zero")
-                        .showError();
+                JavaFXUtil.showDialog(
+                        "Valor incorreto"
+                        ,"Quantidade não pode ser zero",
+                        Alert.AlertType.ERROR);
                 quantidade.setText("1");
                 codigo.requestFocus();
                 codigo.selectAll();
@@ -280,7 +281,7 @@ public class VendaController implements Initializable {
                 codigo.requestFocus();
                 codigo.selectAll();
             } catch (Exception e) {// venda nao existente, erro grande
-                Dialogs.create().showException(e);
+                JavaFXUtil.showDialog(e);
             }
     }
     
@@ -300,10 +301,10 @@ public class VendaController implements Initializable {
                 codigo.requestFocus();
                 codigo.selectAll();
             } catch (NumberFormatException ne) {
-                Dialogs.create()
-                        .title("Valor incorreto")
-                        .masthead("Quantidade inválida")
-                        .showError();
+                JavaFXUtil.showDialog(
+                        "Valor incorreto"
+                        ,"Quantidade inválida",
+                        Alert.AlertType.ERROR);
                 codigo.setText(codigo.getText().replace("*", ""));
                 quantidade.setText("1");
                 codigo.requestFocus();
@@ -367,18 +368,18 @@ public class VendaController implements Initializable {
                 f.refreshValorDeVendaAtual();
             } catch (Exception ex) {
                 ex.printStackTrace();
-                Dialogs.create().showException(ex);
+                JavaFXUtil.showDialog(ex);
             }
         } else if (pendentes.size() > 1) {// varias vendas pendentes, mostrar erro
-            Dialogs.create()
-                    .title("Várias vendas pendentes")
-                    .masthead("Várias vendas inicializadas para o mesmo funcionário")
-                    .showError();
+            JavaFXUtil.showDialog(
+                    "Várias vendas pendentes"
+                    ,"Várias vendas inicializadas para o mesmo funcionário",
+                    Alert.AlertType.ERROR);
         } else {
             try {
                 f.inicializarVenda();
             } catch (VendaPendenteException ex) {
-                Dialogs.create().showException(ex);
+                JavaFXUtil.showDialog(ex);
             }
         }
         if (f.getVendaAtual() == null) {// verifica se iniciou venda atual
@@ -408,21 +409,17 @@ public class VendaController implements Initializable {
     }
 
     public void removerItem(ItemDeVenda it) {
-        Dialogs dialog = Dialogs.create()
-                .title("Remover Item")
-                .masthead("Deseja realmente remover o item?")
-                .message(descricaoItem(it))
-                .actions(Dialog.Actions.YES, Dialog.Actions.CANCEL);
-        dialog.style(DialogStyle.UNDECORATED);
-        Action act = dialog.showError();
-        if (act.equals(Dialog.Actions.YES)) {
+        ButtonType act = JavaFXUtil.showDialogOptions(
+                "Remover Item"
+                ,"Deseja realmente remover o item?"
+                ,descricaoItem(it));
+        if (act.equals(ButtonType.YES)) {
             try {
                 f.removerItemDaVenda(it);
                 preencherInformacoes();
             } catch (Exception ex) {
-                Dialogs.create()
-                        .title("Erro ao remover item")
-                        .showException(ex);
+                JavaFXUtil.showDialog(
+                        "Erro ao remover item",ex);
             }
         }
     }

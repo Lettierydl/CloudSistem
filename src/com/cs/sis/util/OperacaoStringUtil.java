@@ -71,7 +71,8 @@ public class OperacaoStringUtil {
 
     public static String formatarStringQuantidade(double quantidade) {
         if (quantidade != 0.0) {
-            return new DecimalFormat("0.000").format(quantidade);
+            //return new DecimalFormat("0.000").format(quantidade);
+            return new DecimalFormat("0").format(quantidade);
         } else {
             return "";
         }
@@ -197,6 +198,14 @@ public class OperacaoStringUtil {
         return tempReturn.toString();
     }
 
+    public static int diffInDays(Calendar c1, Calendar c2) {
+		int MILLIS_IN_DAY = 86400000;
+                int dif = (int) ((c1.getTimeInMillis() - c2.getTimeInMillis()) / MILLIS_IN_DAY);
+		if(dif < 0){
+                    return (int) ((c2.getTimeInMillis() - c1.getTimeInMillis()) / MILLIS_IN_DAY);
+                }
+                return dif;
+	}
 
 public static boolean validarSenhaMestre(String senha, boolean criptografar) {
         String senha_cript = senha;

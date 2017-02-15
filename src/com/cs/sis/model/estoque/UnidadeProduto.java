@@ -11,7 +11,8 @@ package com.cs.sis.model.estoque;
  * @author Lettiery
  */
 public enum UnidadeProduto {
-    UND, KG, G, M, L;
+    //UND, PEÇA,KG, G, M, L;
+    UND, PECA, CONJUNTO;
     
     public String getName(){
     	return this.name().replace("_", " ");

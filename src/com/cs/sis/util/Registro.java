@@ -1,9 +1,12 @@
 package com.cs.sis.util;
 
+import com.cs.sis.controller.gerador.GeradorRelatorio;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Registro implements Serializable {
@@ -12,24 +15,24 @@ public class Registro implements Serializable {
     private String endereco = "";
     private String proprietario = "";
     private String chaveRegistro = "";
-    private int cont = 15;
-    private int dia = -1;
+    //private int cont = 15;
+    //private int dia = -1;
     private boolean registrado = false;
     private static Arquivo arq = new Arquivo();
     private static final String arqv = "Registro.csi";
+    private static final int daysFree = 15;
 
-    private Registro() {
-    }
+    private Registro() {}
 
     public boolean registrar(String registro, String razao, String endereco, String proprietario) {
         try {
             //xRAZx-xPROx-xCHAx
-            String dec = OperacaoStringUtil.criptografar18(registro.replace("-", "").toUpperCase());
-            String decR = dec.substring(1, 3);
-            String decP = dec.substring(6, 8);
-            String decC = dec.substring(11, 13);
+            String dec = OperacaoStringUtil.criptografar18(registro.replace("-", "").toUpperCase()).toUpperCase();
+            String decR = dec.substring(1, 3).toUpperCase();
+            String decP = dec.substring(6, 8).toUpperCase();
+            String decC = dec.substring(11, 13).toUpperCase();
 
-            if (razao.startsWith(decR) && proprietario.startsWith(decP) && chaveComputador().startsWith(decC)) {
+            if (razao.toUpperCase().startsWith(decR) && proprietario.toUpperCase().startsWith(decP) && chaveComputador().toUpperCase().startsWith(decC)) {
                 this.registrado = true;
                 this.endereco = endereco;
                 this.razao = razao;
@@ -43,7 +46,7 @@ public class Registro implements Serializable {
         return false;
     }
 
-    public String criarRegistro(String razao, String proprietario, String chaveDoComputador) {
+    public static String criarRegistro(String razao, String proprietario, String chaveDoComputador) {
         String decR = razao.substring(0, 3);
         String decP = proprietario.substring(0, 3);
         String decC = chaveDoComputador.substring(0, 3);
@@ -58,7 +61,7 @@ public class Registro implements Serializable {
         return cod;
     }
 
-    public String chaveComputador() {
+    public static String chaveComputador() {
         String chave = "";
         try {
             String ip = getMac();
@@ -91,10 +94,10 @@ public class Registro implements Serializable {
         return new Registro();
     }
 
-    public void iniciarRegistro() {
+    private void iniciarRegistro() {
         Registro r = getIntance();
-        this.cont = r.getCont();
-        this.dia = r.getDia();
+        //this.cont = r.getCont();
+        //this.dia = r.getDia();
         this.endereco = r.getEndereco();
         this.proprietario = r.getProprietario();
         this.razao = r.getRazao();
@@ -102,13 +105,7 @@ public class Registro implements Serializable {
         if (registrado) {
             return;
         }
-        if (dia == -1) {
-            dia = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        }
-        if (dia != Calendar.getInstance().get(Calendar.DAY_OF_MONTH)) {
-            cont--;
-            dia = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        }
+        
         arq.salvarRegistro(this, arqv);
 
     }
@@ -125,23 +122,28 @@ public class Registro implements Serializable {
         return proprietario;
     }
 
-    public int getCont() {
-        return cont;
-    }
-
-    public int getDia() {
-        return dia;
-    }
-
     public boolean isRegistrado() {
         return registrado;
     }
 
     public boolean isBloqueado() {
-        return this.cont == 0;
+        if (registrado) {
+            return false;
+        }
+        String minDia = GeradorRelatorio.getMinDia();
+        try {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(minDia));
+            int dif = OperacaoStringUtil.diffInDays(cal, Calendar.getInstance());
+            return (dif >= daysFree);
+        } catch (NullPointerException | ParseException ne) {
+           ne.printStackTrace();
+        }
+        return false;
+        
     }
 
-    public String getMac() {
+    public static  String getMac() {
         BufferedReader in;
         try {
             Runtime r = Runtime.getRuntime();

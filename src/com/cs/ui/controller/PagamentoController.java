@@ -20,8 +20,6 @@ import com.cs.sis.util.OperacaoStringUtil;
 import com.cs.sis.util.VariaveisDeConfiguracaoUtil;
 import com.cs.ui.controller.dialog.DialogController;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,7 +41,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -62,9 +62,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.DialogStyle;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -135,21 +132,15 @@ public class PagamentoController implements Initializable {
             double oud_debito = c.getDebito();
             double new_debito = f.recalcularDebitoDoCliente(f.buscarClientePorNome(nomeP.getText()));
             if (oud_debito != new_debito) {
-                Dialogs di = Dialogs.create()
-                        .title("Débito atualizado")
-                        .masthead("Débito do Cliente atualizado com sucesso")
-                        .actions(Dialog.Actions.YES);
-                di.style(DialogStyle.UNDECORATED);
-                di.showWarning();
+               JavaFXUtil.showDialog("Débito atualizado",
+                        "Débito do Cliente atualizado com sucesso",
+                        Alert.AlertType.WARNING);
             } else {
-                Dialogs di = Dialogs.create()
-                        .title("Débito já atualizado")
-                        .masthead("Débito do Cliente já esta atualizado")
-                        .actions(Dialog.Actions.YES);
-                di.style(DialogStyle.UNDECORATED);
-                di.showInformation();
+                JavaFXUtil.showDialog("Débito já atualizado",
+                        "Débito do Cliente já esta atualizado");
             }
         } catch (Exception ex) {
+            JavaFXUtil.showDialog(ex);
             Logger.getLogger(PagamentoController.class.getName()).log(Level.SEVERE, null, ex);
         }
         
@@ -210,11 +201,9 @@ public class PagamentoController implements Initializable {
     @FXML
     public void adicionarObservacao(ActionEvent e) {
         try {
-            Dialogs dialog = Dialogs.create()
-                    .title("Observação")
-                    .masthead("Adicione observações sobre pagamento");
-            Optional<String> text = dialog.showTextInput(obs.toUpperCase());
-            obs = text.get();
+            obs = JavaFXUtil.showDialogInput(
+                    "Observação",
+                    "Adicione observações sobre pagamento").toUpperCase();
         } catch (Exception ee) {
         }
     }
@@ -222,11 +211,10 @@ public class PagamentoController implements Initializable {
     @FXML
     public void pagar(ActionEvent e) {
         if (OperacaoStringUtil.converterStringValor(valorP.getText()) <= 0) {
-            Dialogs.create()
-                    .title("Valor Errado")
-                    .masthead("O valor do pagamento não pode ser zero")
-                    .actions(Dialog.Actions.YES)
-                    .showError();
+            JavaFXUtil.showDialog(
+                    "Valor Errado"
+                    ,"O valor do pagamento não pode ser zero",
+                    Alert.AlertType.ERROR);
             return;
         }
         try {
@@ -243,23 +231,21 @@ public class PagamentoController implements Initializable {
             String msg = "Cliente: " + c.getNome() + "\n" + "Valor: " + valorP.getText() + "\n"
                     + (obs.isEmpty() ? "" : "Observação: " + obs + "\n")
                     + (troco > 0 ? "Troco: " + OperacaoStringUtil.formatarStringValorMoeda(troco) : "");
-            Dialogs dialog = Dialogs.create()
-                    .title("Pagamento")
-                    .masthead("Tem certeza que deseja adicionar o pagamento")
-                    .message(msg)
-                    .actions(Dialog.Actions.YES, Dialog.Actions.CANCEL);
-            dialog.style(DialogStyle.UNDECORATED);
-            if (dialog.showConfirm().toString().equals("YES")) {
+            ButtonType bt = JavaFXUtil.showDialogOptions(
+                    "Pagamento"
+                    ,"Tem certeza que deseja adicionar o pagamento"
+                    ,msg);
+            if (bt.equals(ButtonType.YES)) {
                 f.adicionarPagamento(p);
                 c = f.buscarClientePorNome(nomeP.getText());
-                Dialogs.create()
-                        .title("Pagamento Salvo")
-                        .masthead("Pagamento registrado com sucesso")
-                        .message(c.getDebito() == 0 ? "Cliente " + c.getNome() + " não possue mais débito"
+                JavaFXUtil.showDialog(
+                        "Pagamento Salvo"
+                        ,"Pagamento registrado com sucesso"
+                        ,c.getDebito() == 0 ? "Cliente " + c.getNome() + " não possue mais débito"
                                         : "Cliente " + c.getNome() + " com "
                                         + OperacaoStringUtil.formatarStringValorMoeda(c.getDebito())
                                         + " de rebito restante"
-                        ).showInformation();
+                        );
                 nomeP.setText("");
                 valorP.setText("");
                 debitoP.setText("");
@@ -274,9 +260,8 @@ public class PagamentoController implements Initializable {
                 form.setDisable(true);
             }
         } catch (Exception ex) {
-            Dialogs.create().title("Erro ao registrar o pagamento")
-                    .masthead("Erro ao registar o pagamento, entre em contato com o suporte")
-                    .showException(ex);
+            JavaFXUtil.showDialog("Erro ao registar o pagamento, entre em contato com o suporte",
+                    ex);
         }
     }
 
@@ -423,7 +408,11 @@ public class PagamentoController implements Initializable {
             dialogStage.setResizable(false);
             // Mostra a janela e espera até o usuário fechar.
             dialogStage.showAndWait();
-
+            
+            if(entity instanceof Venda && !controller.isOkClicked()){
+                atualizarListaVendasAVista();
+            }
+                    
             return controller.isOkClicked();
         } catch (IOException e) {
             e.printStackTrace();
@@ -510,9 +499,9 @@ public class PagamentoController implements Initializable {
             Cliente c = f.buscarClientePorNome(nomeD.getText());
             double va = OperacaoStringUtil.converterStringValor(valorD.getText());
             if (va <= 0) {
-                Dialogs.create().title("Valor inválido")
-                        .masthead("Valor inválido para a venda")
-                        .showError();
+                JavaFXUtil.showDialog("Valor inválido",
+                        "Valor inválido para a venda",
+                        Alert.AlertType.ERROR);
                 valorD.selectAll();
                 valorD.requestFocus();
                 return;
@@ -526,24 +515,24 @@ public class PagamentoController implements Initializable {
                 }
                 try {
                     f.adicionarDivida(d, c);
-                    Dialogs.create().title("Dívida registrada")
-                            .masthead("Divida salva com sucesso!")
-                            .message("Cliente: " + c.getNome() + "\n"
+                    JavaFXUtil.showDialog("Dívida registrada"
+                            ,"Divida salva com sucesso!"
+                            ,"Cliente: " + c.getNome() + "\n"
                                     + "Total: " + valorD.getText() + "\n"
                                     + "Data: " + OperacaoStringUtil.formatDataTimeValor(d.getDia()))
-                            .showInformation();
+                            ;
                     valorD.setText("");
                     nomeD.setText("");
                     descricaoD.setText("");
                     nomeD.requestFocus();
                 } catch (Exception ex) {
-                    Dialogs.create().showExceptionInNewWindow(ex);
+                    JavaFXUtil.showDialog(ex);
                 }
             }
         } catch (NonUniqueResultException | NoResultException ne) {
-            Dialogs.create().title("Cliente não selecionado")
-                    .masthead("Selecione o Cliente para a dívida")
-                    .showError();
+            JavaFXUtil.showDialog("Cliente não selecionado"
+                    ,"Selecione o Cliente para a dívida",
+                    Alert.AlertType.ERROR);
             nomeD.selectAll();
             nomeD.requestFocus();
         }

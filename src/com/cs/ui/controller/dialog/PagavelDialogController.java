@@ -5,11 +5,13 @@ package com.cs.ui.controller.dialog;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.cs.sis.model.exception.EntidadeNaoExistenteException;
 import com.cs.sis.model.financeiro.Divida;
 import com.cs.sis.model.financeiro.ItemDeVenda;
 import com.cs.sis.model.financeiro.Pagavel;
 import com.cs.sis.model.financeiro.Venda;
 import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
+import com.cs.sis.model.pessoas.TipoDeFuncionario;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.OperacaoStringUtil;
 import java.io.File;
@@ -24,7 +26,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -32,7 +36,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -52,6 +55,9 @@ public class PagavelDialogController extends DialogController<Pagavel> {
     @FXML
     private TableView<ItemDeVenda> itens;
 
+    @FXML
+    private Button excluirButton;
+    
     @FXML
     private Label obs;
     @FXML
@@ -85,11 +91,11 @@ public class PagavelDialogController extends DialogController<Pagavel> {
     void imprimirECF(ActionEvent event) {
         boolean imprimir = f.imprimirVenda((Venda) entity);
         if (!imprimir) {
-            Dialogs.create()
-                    .title("Impressora não conectada")
-                    .masthead("Impressora não conectada")
-                    .message("Por favor entre em contato com o suporte")
-                    .showError();
+            JavaFXUtil.showDialog(
+                    "Impressora não conectada",
+                    "Impressora não conectada"
+                    ,"Por favor entre em contato com o suporte",
+                    Alert.AlertType.ERROR);
         }
     }
 
@@ -108,18 +114,17 @@ public class PagavelDialogController extends DialogController<Pagavel> {
         if (file != null) {
             try {
                 String path = f.gerarPdfDaVendaVenda((Venda) entity, f.buscarItensDaVendaPorIdDaVenda(entity.getId()), file);
-                Dialogs.create().title("PDF salvo com sucesso")
-                        .masthead("PDF salvo com sucesso")
-                        .message(file.getAbsolutePath() )
-                        .showInformation();
+                JavaFXUtil.showDialog("PDF salvo com sucesso"
+                        ,"PDF salvo com sucesso"
+                        ,file.getAbsolutePath());
             } catch (FuncionarioNaoAutorizadoException ex) {
-                Dialogs.create()
-                        .title("Funcionário não autorizado")
-                        .masthead("Funcionário não autorizado a gerar PDFs")
-                        .message("Por favor entre com um funcionário autorizado")
-                        .showError();
+                JavaFXUtil.showDialog(
+                        "Funcionário não autorizado"
+                        ,"Funcionário não autorizado a gerar PDFs"
+                        ,"Por favor entre com um funcionário autorizado",
+                        Alert.AlertType.ERROR);
             } catch (IOException ex) {
-                Dialogs.create().showException(ex);
+                JavaFXUtil.showDialog(ex);
             }
         }
 
@@ -154,11 +159,50 @@ public class PagavelDialogController extends DialogController<Pagavel> {
         dialogStage.close();
         okClicked = true;
     }
+    
+    
+    @FXML
+    public void excluirClicado() {
+        if (!f.getFuncionarioLogado().getTipoDeFuncionario().equals(TipoDeFuncionario.Gerente)) {
+            JavaFXUtil.showDialog("Operação não autorizada"
+                    ,"Você não tem permissão"
+                    ,"Entre com um funcionário autorizado",
+                    Alert.AlertType.ERROR);
+            return;
+        }
+        ButtonType res = JavaFXUtil.showDialogOptions("Operação de Risco",
+                "Tem certeza que deseja excluir esta venda?"
+                ,"Os produtos serão repostos nos estoques\nEsta Operação não pode ser desfeita",
+                Alert.AlertType.ERROR);
+        
+        if(res == ButtonType.YES){
+            try {
+                f.removerVendaAVista((Venda) entity);
+                JavaFXUtil.showDialog("Venda excluida"
+                    ,"Venda excluida com sucesso."
+                    ,"Produtos repostos no estoque");
+            } catch (EntidadeNaoExistenteException ex) {
+                Logger.getLogger(PagavelDialogController.class.getName()).log(Level.SEVERE, null, ex);
+                JavaFXUtil.showDialog("Erro ao realizar a operação",ex);
+                return;
+            } catch (Exception ex) {
+                Logger.getLogger(PagavelDialogController.class.getName()).log(Level.SEVERE, null, ex);
+                JavaFXUtil.showDialog("Erro ao realizar a operação",ex);
+            }
+            dialogStage.close();
+        }
+        //okClicked = true;
+    }
 
     @Override
     public void setEntity(Pagavel entity) {
         this.entity = entity;
         if (entity instanceof Venda) {
+            if (!f.getFuncionarioLogado().getTipoDeFuncionario().equals(TipoDeFuncionario.Gerente)) {
+                excluirButton.setDisable(true);
+                excluirButton.setVisible(false);
+            }
+            
             func.setText(entity.getFuncionario().getNome());
             try {
                 cli.setText(entity.getCliente().getNome());

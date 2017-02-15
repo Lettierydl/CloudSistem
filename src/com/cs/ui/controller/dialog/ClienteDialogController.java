@@ -12,7 +12,6 @@ import com.cs.sis.model.exception.EntidadeNaoExistenteException;
 import com.cs.sis.model.exception.FuncionarioNaoAutorizadoException;
 import com.cs.sis.util.JavaFXUtil;
 import com.cs.sis.util.MaskFieldUtil;
-import org.controlsfx.dialog.Dialogs;
 import com.cs.sis.util.OperacaoStringUtil;
 import java.net.URL;
 import java.util.List;
@@ -20,15 +19,14 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.DialogStyle;
 
 /**
  * FXML Controller class
@@ -143,11 +141,11 @@ public class ClienteDialogController extends DialogController<Cliente> {
             }
         }
         if (!msgErro.isEmpty()) {
-            Dialogs.create()
-                    .title("Campos Inválidos")
-                    .masthead("Por favor, corrija os campos inválidos")
-                    .message(msgErro)
-                    .showError();
+            JavaFXUtil.showDialog(
+                    "Campos Inválidos"
+                    ,"Por favor, corrija os campos inválidos"
+                    ,msgErro,
+                    Alert.AlertType.ERROR);
 
         }
         return msgErro.isEmpty();
@@ -168,10 +166,10 @@ public class ClienteDialogController extends DialogController<Cliente> {
                     //merge
                     f.atualizarCliente(entity);
                 } catch (FuncionarioNaoAutorizadoException ex) {
-                    Dialogs.create()
-                            .title("Funcionário não autorizado")
-                            .masthead("Por favor, entre com um usuário diferente")
-                            .showError();
+                    JavaFXUtil.showDialog(
+                            "Funcionário não autorizado"
+                            ,"Por favor, entre com um usuário diferente",
+                            Alert.AlertType.ERROR);
                 } catch (Exception ex) {
                     Logger.getLogger(ClienteDialogController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -191,19 +189,16 @@ public class ClienteDialogController extends DialogController<Cliente> {
                         date = OperacaoStringUtil.formatDataValor(entity.getDataDeNascimento());
                     } catch (NullPointerException ne) {
                     }
-                    Dialogs.create()
-                            .title("Cliente Criado com Sucesso")
-                            .masthead("Nome: " + entity.getNome() + "\n"
+                    JavaFXUtil.showDialog(
+                            "Cliente Criado com Sucesso"
+                            ,"Nome: " + entity.getNome() + "\n"
                                     + "CPF: " + entity.getCpf() + "\n"
                                     + "Endereço: " + entity.getEndereco() + "\n"
                                     + "Telefones: " + entity.getTelefones() + "\n"
                                     + "Data de nascimento: " + date + "\n")
-                            .showInformation();
+                            ;
                 } catch (FuncionarioNaoAutorizadoException ex) {
-                    Dialogs.create()
-                            .title("Funcionário não autorizado")
-                            .masthead("Por favor, entre com um usuário diferente")
-                            .showError();
+                    JavaFXUtil.showDialog(ex);
                 } catch (Exception ex) {
                     Logger.getLogger(ClienteDialogController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -266,14 +261,11 @@ public class ClienteDialogController extends DialogController<Cliente> {
     @FXML
     public void excluirClicado(){
         
-        Dialogs dialog = Dialogs.create().title("Excluir Cliente")
-                .masthead("Tem certeza que deseja excluir todas as informações do Cliente "+entity.getNome()+"?")
-                .message("Todas as vendas e pagamentos desse Cliente serão apagadas\n"
+        ButtonType act = JavaFXUtil.showDialogOptions("Excluir Cliente"
+                ,"Tem certeza que deseja excluir todas as informações do Cliente "+entity.getNome()+"?"
+                ,"Todas as vendas e pagamentos desse Cliente serão apagadas\n"
                         + "Essa operação não pode ser revertida!");
-        dialog.actions(Dialog.Actions.CANCEL, Dialog.Actions.YES);
-        dialog.style(DialogStyle.UNDECORATED);
-        Action act = dialog.showError();
-        if(act.equals(Dialog.Actions.CANCEL)){
+        if(act.equals(ButtonType.CANCEL)){
             return;
         }
         
@@ -290,28 +282,22 @@ public class ClienteDialogController extends DialogController<Cliente> {
             f.removerCliente(entity);
         } catch (EntidadeNaoExistenteException ex) {
             Logger.getLogger(ClienteDialogController.class.getName()).log(Level.SEVERE, null, ex);
-            dialog = Dialogs.create().title("Erro na operação")
-                .masthead("Erro na operação de exclusão");
-            dialog.style(DialogStyle.UNDECORATED);
-            dialog.showError();
+            JavaFXUtil.showDialog("Erro na operação"
+                ,"Erro na operação de exclusão",
+            Alert.AlertType.ERROR);
             return;
         } catch (FuncionarioNaoAutorizadoException ex) {
-            dialog = Dialogs.create().title("Funcionário não autorizado")
-                .masthead("Funcionário não autorizado à remover Pagáveis e Pagamentos")
-                .message("Por favor, entre com um funcionário autorizado para estas operações!");
-            dialog.style(DialogStyle.UNDECORATED);
-            dialog.showError();
+            JavaFXUtil.showDialog(ex);
             return;
         }catch(Exception ee){
             ee.printStackTrace();
-            Dialogs.create().showException(ee);
+            JavaFXUtil.showDialog(ee);
             return;
         }
-        dialog = Dialogs.create().title("Cliente excuido")
-                .masthead("Cliente excuido com sucesso!")
-                .message("Cadastro do Cliente "+entity.getNome()+ " excuido com sucesso!");
-            dialog.style(DialogStyle.UNDECORATED);
-            dialog.showError();
+        JavaFXUtil.showDialog("Cliente excuido"
+                ,"Cliente excuido com sucesso!"
+                ,"Cadastro do Cliente "+entity.getNome()+ " excuido com sucesso!",
+                Alert.AlertType.ERROR);
         this.cancelarClicado();
     }
 

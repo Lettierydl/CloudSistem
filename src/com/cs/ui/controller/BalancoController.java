@@ -40,6 +40,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
@@ -50,7 +51,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * FXML Controller class
@@ -202,11 +202,10 @@ public class BalancoController implements Initializable {
             ObservableList tableData = FXCollections.observableArrayList(data);
             dTable.setItems(tableData);
         } catch (FuncionarioNaoAutorizadoException ex) {
-            Dialogs.create()
-                    .title("Funcionário não autorizado")
-                    .masthead("Funcionário não autorizado a gerar PDFs")
-                    .message("Por favor entre com um funcionário autorizado")
-                    .showError();
+            JavaFXUtil.showDialog("Funcionário não autorizado",
+                    "Funcionário não autorizado a gerar PDFs",
+                    "Por favor entre com um funcionário autorizado",
+                    Alert.AlertType.ERROR);
         }
     }
 
@@ -239,17 +238,15 @@ public class BalancoController implements Initializable {
             File file = fileChooser.showSaveDialog(dSomaDebito.getScene().getWindow());
             if (file != null) {
                 f.gerarPdfRelatorioDebitoClientes(deb, file);
-                Dialogs.create().title("PDF salvo com sucesso")
-                        .masthead("PDF salvo com sucesso")
-                        .message(file.getAbsolutePath())
-                        .showInformation();
+                JavaFXUtil.showDialog("PDF salvo com sucesso",
+                        "PDF salvo com sucesso",
+                        file.getAbsolutePath());
             }
         } catch (FuncionarioNaoAutorizadoException ex) {
-            Dialogs.create()
-                    .title("Funcionário não autorizado")
-                    .masthead("Funcionário não autorizado a gerar PDFs")
-                    .message("Por favor entre com um funcionário autorizado")
-                    .showError();
+            JavaFXUtil.showDialog("Funcionário não autorizado",
+                    "Funcionário não autorizado a gerar PDFs",
+                    "Por favor entre com um funcionário autorizado",
+                    Alert.AlertType.ERROR);
         }
     }
 
@@ -260,9 +257,9 @@ public class BalancoController implements Initializable {
         try {
             c = f.buscarClientePorNome(hNome.getText());
         } catch (Exception e) {
-            Dialogs.create().title("Cliente não cadastrado")
-                    .masthead("Cliente " + hNome.getText() + " não encontrado")
-                    .showError();
+            JavaFXUtil.showDialog("Cliente não cadastrado",
+                    "Cliente " + hNome.getText() + " não encontrado",
+                    Alert.AlertType.ERROR);
             return;
         }
 
@@ -273,9 +270,9 @@ public class BalancoController implements Initializable {
                     JavaFXUtil.toDate(hAte).getTime());
         } catch (Exception e) {
             if (JavaFXUtil.toDate(hDe) == null || JavaFXUtil.toDate(hAte) == null) {
-                Dialogs.create().title("Data não preenchida")
-                        .masthead("Por favor preencha a data desejada")
-                        .showError();
+                JavaFXUtil.showDialog("Data não preenchida",
+                        "Por favor preencha a data desejada",
+                        Alert.AlertType.ERROR);
                 return;
             }
         }
@@ -322,9 +319,9 @@ public class BalancoController implements Initializable {
             val = f.getRelatorioDeEntradaDeCaixa(JavaFXUtil.toDate(eDe).getTime(), JavaFXUtil.toDate(eAte).getTime());
         } catch (Exception e) {
             if (JavaFXUtil.toDate(eDe) == null || JavaFXUtil.toDate(eAte) == null) {
-                Dialogs.create().title("Data não preenchida")
-                        .masthead("Por favor preencha a data desejada")
-                        .showError();
+                JavaFXUtil.showDialog("Data não preenchida",
+                        "Por favor preencha a data desejada",
+                        Alert.AlertType.ERROR);
                 return;
             }
         }
@@ -349,9 +346,9 @@ public class BalancoController implements Initializable {
             val = f.getRelatorioDeVendas(JavaFXUtil.toDate(vDe).getTime(), JavaFXUtil.toDate(vAte).getTime());
         } catch (Exception e) {
             if (JavaFXUtil.toDate(vDe) == null || JavaFXUtil.toDate(vAte) == null) {
-                Dialogs.create().title("Data não preenchida")
-                        .masthead("Por favor preencha a data desejada")
-                        .showError();
+                JavaFXUtil.showDialog("Data não preenchida",
+                        "Por favor preencha a data desejada",
+                        Alert.AlertType.ERROR);
                 return;
             }
         }
@@ -384,9 +381,9 @@ public class BalancoController implements Initializable {
             val = f.getRelatorioDeProduto(JavaFXUtil.toDate(sDe).getTime(), JavaFXUtil.toDate(sAte).getTime());
         } catch (Exception e) {
             if (JavaFXUtil.toDate(sDe) == null || JavaFXUtil.toDate(sAte) == null) {
-                Dialogs.create().title("Data não preenchida")
-                        .masthead("Por favor preencha a data desejada")
-                        .showError();
+                JavaFXUtil.showDialog("Data não preenchida",
+                        "Por favor preencha a data desejada",
+                        Alert.AlertType.ERROR);
                 return;
             }
         }
@@ -416,9 +413,9 @@ public class BalancoController implements Initializable {
     @FXML
     void gerarPDFGeral(ActionEvent event) {
         if (JavaFXUtil.toDate(gDe) == null || JavaFXUtil.toDate(gAte) == null) {
-            Dialogs.create().title("Data não preenchida")
-                    .masthead("Por favor preencha a data desejada")
-                    .showError();
+            JavaFXUtil.showDialog("Data não preenchida",
+                    "Por favor preencha a data desejada",
+                    Alert.AlertType.ERROR);
             return;
         }
         FileChooser fileChooser = new FileChooser();
@@ -439,16 +436,11 @@ public class BalancoController implements Initializable {
             try {
                 f.gerarPdfRelatorioBalancoProdutos(JavaFXUtil.toDate(gDe).getTime(), JavaFXUtil.toDate(gAte).getTime(),
                         file);
-                Dialogs.create().title("PDF salvo com sucesso")
-                        .masthead("PDF salvo com sucesso")
-                        .message(file.getAbsolutePath())
-                        .showInformation();
+                JavaFXUtil.showDialog("PDF salvo com sucesso",
+                        "PDF salvo com sucesso",
+                        file.getAbsolutePath());
             } catch (FuncionarioNaoAutorizadoException ex) {
-                Dialogs.create()
-                        .title("Funcionário não autorizado")
-                        .masthead("Funcionário não autorizado a gerar PDFs")
-                        .message("Por favor entre com um funcionário autorizado")
-                        .showError();
+                JavaFXUtil.showDialog(ex);
             }
 
         }
@@ -457,9 +449,9 @@ public class BalancoController implements Initializable {
     @FXML
     void gerarPlanilhaGeral(ActionEvent event) {
         if (JavaFXUtil.toDate(gDe) == null || JavaFXUtil.toDate(gAte) == null) {
-            Dialogs.create().title("Data não preenchida")
-                    .masthead("Por favor preencha a data desejada")
-                    .showError();
+            JavaFXUtil.showDialog("Data não preenchida",
+                    "Por favor preencha a data desejada",
+                    Alert.AlertType.ERROR);
             return;
         }
 
@@ -481,16 +473,11 @@ public class BalancoController implements Initializable {
             try {
                 f.gerarPlanilhaRelatorioBalancoProdutos(JavaFXUtil.toDate(gDe).getTime(), JavaFXUtil.toDate(gAte).getTime(),
                         file);
-                Dialogs.create().title("Planilha salva com sucesso")
-                        .masthead("Planilha salva com sucesso")
-                        .message(file.getAbsolutePath())
-                        .showInformation();
+                JavaFXUtil.showDialog("Planilha salva com sucesso",
+                        "Planilha salva com sucesso",
+                        file.getAbsolutePath());
             } catch (FuncionarioNaoAutorizadoException ex) {
-                Dialogs.create()
-                        .title("Funcionário não autorizado")
-                        .masthead("Funcionário não autorizado a gerar PDFs")
-                        .message("Por favor entre com um funcionário autorizado")
-                        .showError();
+                JavaFXUtil.showDialog(ex);
             }
 
         }
@@ -516,16 +503,11 @@ public class BalancoController implements Initializable {
             try {
                 f.gerarPdfRelatorioEstoqueProdutos(gEstoqueNegativo.isSelected(),
                         file);
-                Dialogs.create().title("PDF salvo com sucesso")
-                        .masthead("PDF salvo com sucesso")
-                        .message(file.getAbsolutePath())
-                        .showInformation();
+                JavaFXUtil.showDialog("PDF salvo com sucesso",
+                        "PDF salvo com sucesso",
+                        file.getAbsolutePath());
             } catch (FuncionarioNaoAutorizadoException ex) {
-                Dialogs.create()
-                        .title("Funcionário não autorizado")
-                        .masthead("Funcionário não autorizado a gerar PDFs")
-                        .message("Por favor entre com um funcionário autorizado")
-                        .showError();
+                JavaFXUtil.showDialog(ex);
             }
 
         }
@@ -551,16 +533,14 @@ public class BalancoController implements Initializable {
                 System.out.println(gEstoqueNegativo.isSelected());
                 f.gerarPlanilhaRelatorioEstoqueProdutos(gEstoqueNegativo.isSelected(),
                         file);
-                Dialogs.create().title("Planilha salva com sucesso")
-                        .masthead("Planilha salva com sucesso")
-                        .message(file.getAbsolutePath())
-                        .showInformation();
+                JavaFXUtil.showDialog("Planilha salva com sucesso",
+                        "Planilha salva com sucesso",
+                        file.getAbsolutePath());
             } catch (FuncionarioNaoAutorizadoException ex) {
-                Dialogs.create()
-                        .title("Funcionário não autorizado")
-                        .masthead("Funcionário não autorizado a gerar PDFs")
-                        .message("Por favor entre com um funcionário autorizado")
-                        .showError();
+                JavaFXUtil.showDialog("Funcionário não autorizado",
+                        "Funcionário não autorizado a gerar PDFs",
+                        "Por favor entre com um funcionário autorizado",
+                        Alert.AlertType.ERROR);
             }
 
         }
