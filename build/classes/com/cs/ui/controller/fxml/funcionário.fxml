@@ -49,10 +49,10 @@
       <TextField fx:id="pesquisa" layoutX="593.0" layoutY="64.0" onKeyReleased="#digitado" opacity="0.0" prefHeight="50.0" prefWidth="300.0" promptText="pequisar funcionário" />
       <TableView fx:id="tabela" layoutX="81.0" layoutY="137.0" prefHeight="354.0" prefWidth="864.0">
         <columns>
-          <TableColumn fx:id="colunaNome" prefWidth="431.0" text="NOME" />
+          <TableColumn fx:id="colunaNome" prefWidth="431.0" text="Nome" />
           <TableColumn fx:id="colunaCPF" minWidth="0.0" prefWidth="124.0" text="CPF" />
-            <TableColumn fx:id="colunaTel" prefWidth="123.0" text="TELEFONES" />
-            <TableColumn fx:id="colunaFun" prefWidth="105.0" text="FUNÇÃO" />
+            <TableColumn fx:id="colunaTel" prefWidth="123.0" text="Telefones" />
+            <TableColumn fx:id="colunaFun" prefWidth="105.0" text="Função" />
             <TableColumn fx:id="colunaEdit" prefWidth="72.0" text="Editar" />
         </columns>
       </TableView>

@@ -15,3 +15,7 @@ hs_err_pid*
 .DS_Store
 *.log
 
+# File Sistem
+build/*
+build/
+*.properties

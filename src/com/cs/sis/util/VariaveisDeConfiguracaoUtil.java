@@ -4,7 +4,7 @@ import javafx.util.Duration;
 
 public class VariaveisDeConfiguracaoUtil {
     
-        public static final String VERSION_SYSTEM = "2.7.0";
+        public static final String VERSION_SYSTEM = "2.8.0";
     
 	public static final boolean LIBERAR_VENDA_DE_PRODUTO_SEM_ESTOQUE = true;
 	
@@ -15,6 +15,9 @@ public class VariaveisDeConfiguracaoUtil {
         public static final Duration DURACAO_FADE = new Duration(300);
 	
         public static int LIMITE_DE_REGISTROS_EXIBIDOS = 100;
+        
+        public static final String EMAILS_ADMINISTRACAO = "EMAILS_ADMINISTRACAO";
+        
         
         //Chaves de configuracao
         

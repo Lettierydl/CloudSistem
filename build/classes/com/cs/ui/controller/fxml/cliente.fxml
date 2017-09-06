@@ -17,7 +17,7 @@
         <URL value="@/com/cs/ui/css/principal.css" />
     </stylesheets>
    <children>
-      <Label layoutX="80.0" layoutY="4.0" text="ClienteS">
+      <Label layoutX="80.0" layoutY="4.0" text="Clientes">
          <font>
             <Font size="28.0" />
          </font>
@@ -43,12 +43,12 @@
       <TextField fx:id="pesquisa" layoutX="593.0" layoutY="64.0" onKeyReleased="#digitado" opacity="0.0" prefHeight="50.0" prefWidth="300.0" promptText="pequisar Cliente" />
       <TableView fx:id="tabela" layoutX="85.0" layoutY="137.0" prefHeight="354.0" prefWidth="860.0">
          <columns>
-            <TableColumn fx:id="colunaNome" maxWidth="500.0" minWidth="50.0" prefWidth="274.0" text="NOME" />
-            <TableColumn fx:id="colunaDebt" minWidth="0.0" prefWidth="85.0" text="DÉBITO" />
-            <TableColumn fx:id="colunaTel" prefWidth="131.0" text="TELEFONES" />
-            <TableColumn fx:id="colunaEnd" prefWidth="160.0" text="ENDEREÇO" />
+            <TableColumn fx:id="colunaNome" maxWidth="500.0" minWidth="50.0" prefWidth="274.0" text="Nome" />
+            <TableColumn fx:id="colunaDebt" minWidth="0.0" prefWidth="85.0" text="Débito" />
+            <TableColumn fx:id="colunaTel" prefWidth="131.0" text="Telefones" />
+            <TableColumn fx:id="colunaEnd" prefWidth="160.0" text="Endereço" />
             <TableColumn fx:id="colunaCpf" minWidth="50.0" prefWidth="132.0" text="CPF" />
-            <TableColumn fx:id="colunaEdit" prefWidth="71.0" text="EDITAR" />
+            <TableColumn fx:id="colunaEdit" prefWidth="71.0" text="Editar" />
          </columns></TableView>
    </children>
 </AnchorPane>

@@ -37,8 +37,9 @@ public class GeradorRelatorio extends Gerador {
     }
 
     /**
-     * Posicao : descricao 0 : Soma de todas as partes pagas da venda 1 : Total
-     * de todos os pagamentos realizados
+     * Posicao : descricao 
+     * 0 : Soma de todas as partes pagas da venda
+     * 1 : Total de todos os pagamentos realizados
      */
     public static double[] getRelatorioDeEntradaDeCaixa(Date diaInicio, Date diaFim) {
 

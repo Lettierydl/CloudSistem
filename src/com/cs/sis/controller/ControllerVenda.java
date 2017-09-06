@@ -279,6 +279,76 @@ public class ControllerVenda extends ControllerEntity<Pagavel> {
         // logo em seguida deve diminuir o debito do Cliente com o valor do
         // Venda
     }
+    
+    /**
+     * Verifica quais vendas podem ser pagas<br/>
+     * Se não puder pagar uma venda completa é acrescentado uma parte paga na
+     * venda
+     *
+     * @see ControllerPessoa.edit(Cliente c) deve ser chamado logo em seguida
+     * para atualizar o debito do Cliente
+     * @param Pagamento que foi efetuado
+     * @throws Exception
+     * @throws EntidadeNaoExistenteException se venda não existir
+     */
+    public void abaterValorDoPagamentoNaVenda(Pagamento p, List<Pagavel> pagaveisSelected)
+            throws EntidadeNaoExistenteException, Exception {
+        Cliente c = p.getCliente();
+        double valorRestante = p.getValor();
+        double sumPagaveisSelected = 0;
+        for (Pagavel pag : pagaveisSelected) {
+            sumPagaveisSelected += pag.getValorNaoPago();
+        }
+        
+        for (Pagavel pag : pagaveisSelected) {
+            if (valorRestante == 0) {// ja pagou a venda
+                break;
+            }
+            if (pag.getValorNaoPago() > valorRestante) {// paga parte da
+                // venda
+                pag.acrescentarPartePaga(valorRestante);
+                valorRestante = 0;
+            } else {// paga venda toda, pode sobrar resto pra outras vendas ou
+                // nao
+                valorRestante -= pag.getValorNaoPago();
+                pag.acrescentarPartePaga(pag.getValorNaoPago());
+            }
+            if (pag instanceof Venda) {
+                edit((Venda) pag);
+            } else if (pag instanceof Divida) {
+                edit((Divida) pag);
+            }
+        }
+        if (valorRestante > 0) {// finaliza o pagamento com outras vendas
+            List<Pagavel> pagaveis = new ArrayList<Pagavel>();
+            pagaveis.addAll(FindVenda.dividasNaoPagaDoCliente(c));
+            pagaveis.addAll(FindVenda.vendasNaoPagaDoCliente(c));
+
+            for (Pagavel pag : pagaveis) {
+                if (valorRestante == 0) {// ja pagou a venda
+                    break;
+                }
+                if (pag.getValorNaoPago() > valorRestante) {// paga parte da
+                    // venda
+                    pag.acrescentarPartePaga(valorRestante);
+                    valorRestante = 0;
+                } else {// paga venda toda, pode sobrar resto pra outras vendas ou
+                    // nao
+                    valorRestante -= pag.getValorNaoPago();
+                    pag.acrescentarPartePaga(pag.getValorNaoPago());
+                }
+                if (pag instanceof Venda) {
+                    edit((Venda) pag);
+                } else if (pag instanceof Divida) {
+                    edit((Divida) pag);
+                }
+            }
+        }//pagou tudo
+
+
+        // logo em seguida deve diminuir o debito do Cliente com o valor do
+        // Venda
+    }
 
     public void atualizarStatusPagaveis(List<Pagavel> pagaveis) throws EntidadeNaoExistenteException {
         for (Pagavel pag : pagaveis) {

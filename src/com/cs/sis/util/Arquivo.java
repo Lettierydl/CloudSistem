@@ -4,8 +4,10 @@
  */
 package com.cs.sis.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -132,7 +134,44 @@ public class Arquivo {
         }
         salvarArquivo(conf, config, CONFIGURACAO_SISTEMA);
     }
-    
+   public static byte[] lerBytesPDF(File f) throws FileNotFoundException, IOException {
+        FileInputStream fis = new FileInputStream(f);
+        //System.out.println(file.exists() + "!!");
+        //InputStream in = resource.openStream();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] buf = new byte[1024];
+        try {
+            for (int readNum; (readNum = fis.read(buf)) != -1;) {
+                bos.write(buf, 0, readNum); //no doubt here is 0
+                //Writes len bytes from the specified byte array starting at offset off to this byte array output stream.
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        byte[] bytes = bos.toByteArray();
+        return bytes;
+    }
+
+    public static void criarPDF(byte[] byts, File destino) throws FileNotFoundException, IOException {
+        FileOutputStream fos = new FileOutputStream(destino);
+        fos.write(byts);
+        fos.flush();
+        fos.close();
+    }
+
+    public String lerMessange(String assunto) {
+        Object o = recuperarArquivo(config, assunto + ".txt");
+        if (o != null) {
+            return o.toString();
+        } else {
+            salvarArquivo("", config, assunto + ".txt");
+            return "";
+        }
+    }
+
+    public void salvarMessange(String msg, String assunto) {
+        salvarArquivo(msg, config, assunto + ".txt");
+    }
     public static void copyFile(File source, File destination) throws IOException {
         if (destination.exists()){
             destination.delete();
@@ -161,6 +200,7 @@ public class Arquivo {
         conf.put(VariaveisDeConfiguracaoUtil.EXTRATEGIA_DE_CONEXAO, "Local");
         conf.put(VariaveisDeConfiguracaoUtil.QUANTIDADE_CAIXA, "2");
         conf.put(VariaveisDeConfiguracaoUtil.ATIVAR_LIMITE_REGISTRO_MOSTRADOS, true);
+        conf.put(VariaveisDeConfiguracaoUtil.EMAILS_ADMINISTRACAO, "belosmarvilar@gmail.com;neidevilarc@gmail.com");
         salvarArquivo(conf, config, CONFIGURACAO_SISTEMA);
     }
 }

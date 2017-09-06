@@ -315,8 +315,8 @@ public class EstoqueDialogController extends DialogController<Produto> {
                 limite.setText("0,000");
                 codigo.setText("");
                 descricao.setText("");
-                //categoria.setValue(CategoriaProduto.Alimentos);
-                categoria.setValue(CategoriaProduto.Roupa);
+                categoria.setValue(CategoriaProduto.getDefalt());
+                //categoria.setValue(CategoriaProduto.Roupa);
                 unidade.setValue(UnidadeProduto.UND);
                 entrada.setVisible(false);
                 break;

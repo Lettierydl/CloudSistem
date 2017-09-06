@@ -10,9 +10,11 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="CloudSistem.jar" size="1424124" download="eager" />
+    <jar href="CloudSistem.jar" size="1428954" download="eager" />
     <jar href="lib/Bematech.jar" size="5396" download="eager" />
     <jar href="lib/DarumaFrameworkJNA.jar" size="25569" download="eager" />
+    <jar href="lib/commons-email-1.4-javadoc.jar" size="186330" download="eager" />
+    <jar href="lib/commons-email-1.4.jar" size="51239" download="eager" />
     <jar href="lib/eclipselink.jar" size="8482035" download="eager" />
     <jar href="lib/iText-5.0.5.jar" size="1599728" download="eager" />
     <jar href="lib/javafx-autocomplete-field-1.0.jar" size="18994" download="eager" />

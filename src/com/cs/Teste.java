@@ -42,7 +42,7 @@ public class Teste {
     }
 
     public static void main(String args[]) {
-        String serial = Registro.criarRegistro
+        String serial = Registro.criarRegistro         //810D050565
         ("LOJA ELLEN", "EDVANILDA TORRES VILAR ARAUJO", "810D090446");
         System.out.println(serial);
     }

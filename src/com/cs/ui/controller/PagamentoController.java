@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -218,6 +217,8 @@ public class PagamentoController implements Initializable {
             return;
         }
         try {
+            double sumPagaveisSelected = 0.0;
+            
             Pagamento p = new Pagamento();
             p.setCliente(f.buscarClientePorNome(nomeP.getText()));
             p.setFuncionario(f.getFuncionarioLogado());
@@ -236,7 +237,11 @@ public class PagamentoController implements Initializable {
                     ,"Tem certeza que deseja adicionar o pagamento"
                     ,msg);
             if (bt.equals(ButtonType.YES)) {
-                f.adicionarPagamento(p);
+                if(pags.isEmpty()){
+                    f.adicionarPagamento(p);
+                }else{
+                    f.adicionarPagamento(p, pags);
+                }
                 c = f.buscarClientePorNome(nomeP.getText());
                 JavaFXUtil.showDialog(
                         "Pagamento Salvo"

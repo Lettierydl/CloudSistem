@@ -146,7 +146,6 @@ public class Facede {
         return FindCliente.ClienteComNome(nome);
     }
 
-    // Verificar necessidade
     public Cliente buscarClientePorCPF(String cpf) {
         return FindCliente.ClienteComCPF(cpf);
     }
@@ -543,6 +542,22 @@ public class Facede {
         }
         pagam.create(pagamento);
         vend.abaterValorDoPagamentoNaVenda(pagamento);
+        c.diminuirDebito(pagamento.getValor());
+        pes.edit(c);
+
+        return troco;
+    }
+    
+    public double adicionarPagamento(Pagamento pagamento, List<Pagavel> pagaveis)
+            throws EntidadeNaoExistenteException, ParametrosInvalidosException, Exception {
+        Cliente c = FindCliente.ClienteComId(pagamento.getCliente().getId());
+        double troco = 0;
+        if (c.getDebito() < pagamento.getValor()) {
+            troco = c.getDebito() - pagamento.getValor();
+            pagamento.setValor(c.getDebito());
+        }
+        pagam.create(pagamento);
+        vend.abaterValorDoPagamentoNaVenda(pagamento, pagaveis);
         c.diminuirDebito(pagamento.getValor());
         pes.edit(c);
 

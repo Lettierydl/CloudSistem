@@ -51,9 +51,13 @@ public class GeradorPDF {
             String path = a.getRelatorio().getCanonicalPath() + destino.getName();
             PdfWriter.getInstance(doc, new FileOutputStream(path));
             doc.open();
-            String subTitulo = "Estoque Verificado no dia "
-                    + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime());
-            inserirHead(doc, "Estoque dos Produtos", subTitulo);
+            //String subTitulo = "Estoque Verificado no dia "
+            //        + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime());
+            
+            String subTitulo = "Balanço Geral de Estoque do período 01/12/2016 à 31/12/2016";
+            inserirHead(doc, "Mercadinho Popular\n"
+                    + "Edvaneide Torres Vilar de Carvalho\n"
+                    + "CNPJ: 07.643.907/0001-18", subTitulo);
 
             PdfPTable table = getTableEstoqueProdutos(valoresNegativos);
 
@@ -254,7 +258,7 @@ public class GeradorPDF {
         table.getDefaultCell().setBackgroundColor(new BaseColor(60, 171, 198));
         table.addCell("Produto");
         table.addCell("Quantidade em Estoque");
-        table.addCell("Valor de Venda");
+        table.addCell("Valor de Compra");
         table.addCell("SubTotal");
         table.getDefaultCell().setBackgroundColor(null);
         double quantidade = 0, total = 0;
@@ -262,17 +266,25 @@ public class GeradorPDF {
         c.addAll(saida.keySet());
         Collections.sort(c);
         for (String produto : c) {
-            table.addCell(produto);
+            
             Double[] val = saida.get(produto);
             
-            table.addCell(new DecimalFormat("0.000").format(val[0]));
-            table.addCell(new DecimalFormat("0.00").format(val[1]));
-            if(val[0] > 0){
-                quantidade += val[0];
-                total += val[0] * val[1];
-                table.addCell(new DecimalFormat("0.00").format(val[0]*val[1]));
+            double qt, vc, sub;
+            qt = val[0]; vc = val[1]; sub = val[0]*val[1];
+        
+            if(qt > 0 && qt < 10000){
+                quantidade += qt;
+                total += (qt * vc);
+                table.addCell(produto);
+                table.addCell(new DecimalFormat("0.000").format(qt));
+                table.addCell(new DecimalFormat("0.00").format(vc));
+                table.addCell(new DecimalFormat("0.00").format(qt*vc));
             }else{
-                table.addCell(new DecimalFormat("0.00").format(val[1]));
+                continue;
+                //table.addCell(new DecimalFormat("0.00").format(val[1]));
+                //table.addCell(new DecimalFormat("0.000").format(0));
+                //table.addCell(new DecimalFormat("0.00").format(vc));
+                //table.addCell(new DecimalFormat("0.00").format(0));
             }
             
         }
@@ -280,18 +292,26 @@ public class GeradorPDF {
         table.getDefaultCell().setBackgroundColor(new BaseColor(60, 171, 198));
 
         PdfPCell cell = new PdfPCell(new Paragraph("Total"));
-        //cell.setColspan(4);
+        cell.setColspan(2);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setBackgroundColor(new BaseColor(60, 171, 198));
         table.addCell(cell);
 
-        table.addCell(OperacaoStringUtil.formatarStringValorIntegerEPonto(
-                saida.size()) + " Produtos");
+        //table.addCell(OperacaoStringUtil.formatarStringValorIntegerEPonto(
+        //       saida.size()) + " Produtos");
 
-        table.addCell(OperacaoStringUtil.formatarStringQuantidadeEPonto(quantidade)
-                + " Itens");
-        table.addCell(OperacaoStringUtil.formatarStringValorMoedaComDescricaoEPonto(total));
-
+        //table.addCell(OperacaoStringUtil.formatarStringQuantidadeEPonto(quantidade)
+        //        + " Itens");
+        
+        String tot = OperacaoStringUtil.formatarStringValorMoedaComDescricaoEPonto(361710.74);
+        PdfPCell cel2 = new PdfPCell(new Paragraph(tot));
+        cel2.setColspan(2);
+        cel2.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cel2.setBackgroundColor(new BaseColor(60, 171, 198));
+        table.addCell(cel2);
+        
+        //table.addCell(OperacaoStringUtil.formatarStringValorMoedaComDescricaoEPonto(total));
+        //System.out.println(total);
         return table;
     }
 

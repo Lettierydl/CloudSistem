@@ -43,10 +43,10 @@
       <TextField fx:id="pesquisa" layoutX="593.0" layoutY="64.0" onKeyReleased="#digitado" opacity="0.0" prefHeight="50.0" prefWidth="300.0" promptText="pequisar produto" />
       <TableView fx:id="tabela" layoutX="81.0" layoutY="137.0" prefHeight="354.0" prefWidth="864.0">
         <columns>
-          <TableColumn fx:id="colunaDesc" prefWidth="397.0" text="DESCRIÇÃO" />
-          <TableColumn fx:id="colunaCod" minWidth="0.0" prefWidth="159.0" text="CÓDIGO DE BARRAS" />
-            <TableColumn fx:id="colunaEst" prefWidth="98.0" text="ESTOQUE" />
-            <TableColumn fx:id="colunaVal" prefWidth="129.0" text="VALOR DE VENDA" />
+          <TableColumn fx:id="colunaDesc" prefWidth="397.0" text="Descrição" />
+          <TableColumn fx:id="colunaCod" minWidth="0.0" prefWidth="159.0" text="Código de Barras" />
+            <TableColumn fx:id="colunaEst" prefWidth="98.0" text="Estoque" />
+            <TableColumn fx:id="colunaVal" prefWidth="129.0" text="Valor de Venda" />
             <TableColumn fx:id="colunaEdit" prefWidth="72.0" text="Editar" />
         </columns>
       </TableView>
