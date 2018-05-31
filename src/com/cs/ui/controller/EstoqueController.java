@@ -21,7 +21,7 @@ import javafx.scene.input.KeyEvent;
  *
  * @author Lettiery
  */
-public class EstoqueController extends ControllerUI<Produto> {
+public class EstoqueController extends ControllerCRUD_UI<Produto> {
 
     @FXML
     private TableColumn colunaDesc;

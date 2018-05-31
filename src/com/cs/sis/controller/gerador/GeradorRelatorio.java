@@ -199,6 +199,8 @@ public class GeradorRelatorio extends Gerador {
         }
         return valores;
     }
+    
+    
 
     /**
      * Map Chave : Descricao
@@ -361,4 +363,34 @@ public class GeradorRelatorio extends Gerador {
         }
         return saida;
     }
-}
+    
+    public static Map<String, Double[]> getRelatorioEstoqueProdutos(boolean valoresNegativos, List<String> codigos_retirados) {
+        EntityManager em = getEntityManager();
+            String q = "select p.descricao, p.quantidadeEmEstoque, p.valorDeVenda "
+                            + " from Produto as p "
+                            + "where p.quantidadeEmEstoque > 0 and ";
+            if(valoresNegativos){
+                q = "select p.descricao, p.quantidadeEmEstoque, p.valorDeVenda "
+                            + " from Produto as p where ";
+                            //+ "order by p.descricao";
+            }
+            for(String codigo : codigos_retirados){
+                q += " p.codigoDeBarras != \'" + codigo + "' ";
+                q += (codigos_retirados.get(codigos_retirados.size()-1).equalsIgnoreCase(codigo)) ? "" : " and ";
+            }
+            q +="order by p.descricao";
+            
+            
+            Query query = em.createQuery(q);
+            Map<String, Double[]> saida = new HashMap<String, Double[]>();
+            for (Object obj : query.getResultList()) {
+                Object[] o = (Object[]) obj;
+                Double[] valores = {0.0, 0.0};
+                valores[0] = (Double) o[1];
+                valores[1] = (Double) o[2];
+                saida.put((String) o[0], valores);
+            }
+            return saida;
+    }
+    
+    }

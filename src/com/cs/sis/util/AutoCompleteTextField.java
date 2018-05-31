@@ -89,6 +89,10 @@ public class AutoCompleteTextField extends TextField {
         entries.addAll(list);
     }
     
+    public void removeItem(String item){
+       entries.remove(item);
+    }
+    
     public void upperCaseText(){
         MaskFieldUtil.upperCase(this);
     }

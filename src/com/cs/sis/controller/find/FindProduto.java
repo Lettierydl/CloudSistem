@@ -276,6 +276,17 @@ public class FindProduto extends FindEntity {
 
         return descricoes;
     }
+
+    public static List<String> drecricaoProdutos() {
+     String stringQuery = "select UPPER(p.descricao) FROM Produto as p  order by p.descricao";
+
+        Query query = getEntityManager().createNativeQuery(stringQuery);
+
+        @SuppressWarnings("unchecked")
+        List<String> descricoes = (List<String>) query.getResultList();
+
+        return descricoes;
+    }
     
     
 

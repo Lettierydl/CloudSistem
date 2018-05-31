@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import com.cs.sis.util.*?>
+
+<GridPane hgap="14.0" maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="539.0" prefWidth="572.0" vgap="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cs.ui.controller.dialog.RelatorioDialogController">
+  <children>
+    <VBox maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" prefHeight="296.0" prefWidth="459.0" spacing="7.0" GridPane.rowIndex="1">
+         <children>
+            <Pane prefHeight="395.0" prefWidth="544.0">
+               <children>
+                  <TableView fx:id="itens" layoutY="114.0" prefHeight="272.0" prefWidth="544.0">
+                     <columns>
+                        <TableColumn fx:id="produtoCol" prefWidth="274.0" text="Produto" />
+                        <TableColumn fx:id="codigoCol" prefWidth="191.0" text="Codigo de Brarras" />
+                        <TableColumn fx:id="removeCol" prefWidth="71.0" text="Remover" />
+                     </columns>
+                  </TableView>
+                  
+                  <!--<TextField fx:id="nomeComplet" layoutY="19.0" onAction="#enterKeyNome" prefHeight="27.0" prefWidth="251.0" promptText="Nome ou Código do Produto" />-->
+                  <AutoCompleteTextField fx:id="nomeComplet" layoutY="19.0" onAction="#enterKeyNome" prefHeight="27.0" prefWidth="251.0" promptText="Nome ou Código do Produto" />
+                   
+                  
+                              
+                  
+                              <Text layoutY="15.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Produtos desconsiderados" wrappingWidth="267.0">
+                     <font>
+                        <Font name="Calibri" size="18.0" />
+                     </font>
+                  </Text>
+                  <TextField fx:id="valorFinal" layoutX="293.0" layoutY="19.0" prefHeight="27.0" prefWidth="250.0" promptText="Valor Final do Relatório" />
+                  <Text layoutX="293.0" layoutY="16.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Valor Final" wrappingWidth="233.0">
+                     <font>
+                        <Font name="Calibri" size="18.0" />
+                     </font>
+                  </Text>
+                  <DatePicker fx:id="dataInicial" layoutY="58.0" prefHeight="27.0" prefWidth="251.0" promptText="Data Inicial" />
+                  <DatePicker fx:id="dataFinal" layoutX="293.0" layoutY="58.0" prefHeight="27.0" prefWidth="250.0" promptText="Data Final" />
+                  <CheckBox fx:id="limitarLista" layoutY="91.0" mnemonicParsing="false" text="Limitar lista" />
+               </children>
+            </Pane>
+         </children>
+    </VBox>
+    <HBox maxHeight="-Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" GridPane.rowIndex="2">
+      <children>
+        <HBox fx:id="actionParent" alignment="CENTER">
+          <HBox.margin>
+            <Insets />
+          </HBox.margin>
+        </HBox>
+        <Pane maxWidth="+Infinity" HBox.hgrow="ALWAYS" />
+        <Button fx:id="cancelButton" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#cancelarClicado" text="Cancel" HBox.hgrow="NEVER">
+          <HBox.margin>
+            <Insets />
+          </HBox.margin>
+        </Button>
+        <HBox fx:id="okParent" alignment="CENTER">
+          <children>
+            <Button fx:id="okButton" minWidth="80.0" mnemonicParsing="false" onAction="#okClicado" text="Gerar PDF" HBox.hgrow="NEVER">
+              <HBox.margin>
+                <Insets left="25.0" />
+              </HBox.margin>
+            </Button>
+          </children>
+        </HBox>
+      </children>
+    </HBox>
+      <Label fx:id="page" prefHeight="29.0" prefWidth="624.0" text="Configurações do Relatório">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+  </children>
+  <columnConstraints>
+    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="Infinity" minWidth="-Infinity" prefWidth="469.0" />
+  </columnConstraints>
+  <padding>
+    <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+  </padding>
+  <rowConstraints>
+      <RowConstraints maxHeight="Infinity" minHeight="10.0" prefHeight="52.0" valignment="CENTER" vgrow="ALWAYS" />
+    <RowConstraints maxHeight="Infinity" minHeight="-Infinity" prefHeight="392.0" valignment="CENTER" vgrow="ALWAYS" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+  </rowConstraints>
+</GridPane>

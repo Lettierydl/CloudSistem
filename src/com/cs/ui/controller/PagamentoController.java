@@ -111,6 +111,7 @@ public class PagamentoController implements Initializable {
         iniciarPageHistorico();
         iniciarPageDivida();
         iniciarPageVenda();
+        iniciarPageVendaPrazo();
         JavaFXUtil.beginFoccusTextField(nomeP);
 
         nomeP.addEventHandler(KeyEvent.KEY_RELEASED, (KeyEvent t) -> {
@@ -543,11 +544,12 @@ public class PagamentoController implements Initializable {
         }
     }
 
+    /*Venda a Vista*/
     @FXML
     private DatePicker dataV;
     @FXML
     private TableView<Venda> vendasAVista;
-
+    
     @FXML
     private TableColumn colDataV;
     @FXML
@@ -579,7 +581,7 @@ public class PagamentoController implements Initializable {
     }
 
     @FXML
-    private void dataDigitada(ActionEvent event) {
+    private void dataDigitadaV(ActionEvent event) {
         try {
             Calendar dia = OperacaoStringUtil.converterDataValor(dataV.getEditor().getText());
             atualizarListaVendasAVista();
@@ -644,4 +646,112 @@ public class PagamentoController implements Initializable {
         });
     }
 
+    
+    /*Venda a prazo*/
+    @FXML
+    private DatePicker dataPR;
+    @FXML
+    private TableView<Venda> vendasAPrazo;
+    @FXML
+    private TableColumn colDataPR;
+    @FXML
+    private TableColumn colFuncPR;
+    @FXML
+    private TableColumn colClientePR;
+    @FXML
+    private TableColumn colValorPR;
+    @FXML
+    private TableColumn colItensPR;
+    @FXML
+    private TableColumn colVerPR;
+    
+    
+    private void iniciarPageVendaPrazo() {
+        MaskFieldUtil.dateField(dataPR.getEditor());
+        dataPR.setValue(JavaFXUtil.toLocalDate(Calendar.getInstance()));
+        iniciarTabelaVendasAPrazo();
+        atualizarListaVendasAPrazo();
+    }
+    
+    private void iniciarTabelaVendasAPrazo() {
+        colValorPR.setCellValueFactory(new PropertyValueFactory<>("total"));
+        colItensPR.setCellValueFactory(new PropertyValueFactory<Venda, Integer>("quantidadeDeItens"));
+        colDataPR.setCellValueFactory(new PropertyValueFactory<>("data"));
+        colFuncPR.setCellValueFactory(new PropertyValueFactory<>("funcionario"));
+        colClientePR.setCellValueFactory(new PropertyValueFactory<>("cliente"));
+        colVerPR.setCellValueFactory(new PropertyValueFactory<Venda, Venda>(""));
+
+        JavaFXUtil.colunValueMoedaFormat(colValorPR);
+        JavaFXUtil.colunPessoaFormat(colFuncPR);
+        JavaFXUtil.colunPessoaFormat(colClientePR);
+    }
+    
+    
+    private void atualizarListaVendasAPrazo() {
+        try {
+            Calendar dia = JavaFXUtil.toDate(dataPR);
+            vendasAPrazo.getItems().clear();
+            List<Venda> avista = f.buscarVendaAPrazo(dia);
+            ObservableList<Venda> observableList = FXCollections.observableList(avista);
+            vendasAPrazo.setItems(observableList);
+            configurarVerColunVendaAPrazo();
+        } catch (Exception e) {
+        }
+    }
+
+    @FXML        
+    private void dataDigitadaPR(ActionEvent event) {
+        try {
+            Calendar dia = OperacaoStringUtil.converterDataValor(dataPR.getEditor().getText());
+            atualizarListaVendasAPrazo();
+        } catch (Exception e) {
+        }
+    }
+    @FXML
+    private void dataDigitadaPressPR(KeyEvent event) {
+        try {
+            Calendar dia = OperacaoStringUtil.converterDataValor(dataPR.getEditor().getText());
+            atualizarListaVendasAPrazo();
+        } catch (Exception e) {
+        }
+    }
+    
+    public void configurarVerColunVendaAPrazo() {
+        colVerPR.setComparator(new Comparator<Venda>() {
+            @Override
+            public int compare(Venda p1, Venda p2) {
+                return Double.compare(p1.getValorNaoPago(), p2.getValorNaoPago());
+            }
+        });
+        colVerPR.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Venda, Venda>, ObservableValue<Venda>>() {
+            @Override
+            public ObservableValue<Venda> call(TableColumn.CellDataFeatures<Venda, Venda> features) {
+                return new ReadOnlyObjectWrapper(features.getValue());
+            }
+        });
+        colVerPR.setCellFactory(new Callback<TableColumn<Venda, Venda>, TableCell<Venda, Venda>>() {
+            public TableCell<Venda, Venda> call(TableColumn<Venda, Venda> btnCol) {
+                return new TableCell<Venda, Venda>() {
+                    @Override
+                    public void updateItem(final Venda obj, boolean empty) {
+                        if (empty || obj == null) {
+                            return;
+                        }
+                        final Label button = new Label(obj.getOrigem());
+                        button.setCursor(Cursor.HAND);
+                        super.updateItem(obj, empty);
+                        setGraphic(button);
+                        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+                                showDialogView(obj);
+                            }
+                        });
+                    }
+                };
+            }
+        });
+    }
+    
+    
 }

@@ -5,6 +5,7 @@
  */
 package com.cs;
 
+import com.cs.sis.util.OperacaoStringUtil;
 import com.cs.sis.util.Registro;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
@@ -41,10 +42,25 @@ public class Teste {
 
     }
 
+    //Rua Rita Pereira de Almeida, N 173, Livramento - PB
     public static void main(String args[]) {
+        //xRAZx-xPROx-xCHAx
+            
+        
         String serial = Registro.criarRegistro         //810D050565
-        ("LOJA ELLEN", "EDVANILDA TORRES VILAR ARAUJO", "810D090446");
+        ("BELOSMAR VILAR DE CARVALHO", "EDVANEIDE TORRES VILAR",
+                "16-7008-0789");
+        
         System.out.println(serial);
+        
+        String dec = OperacaoStringUtil.criptografar18(serial.replace("-", "").toUpperCase()).toUpperCase();
+            System.err.println(dec);
+            String decR = dec.substring(1, 3).toUpperCase();
+            String decP = dec.substring(6, 8).toUpperCase();
+            String decC = dec.substring(11, 13).toUpperCase();
+            System.err.println(decR);
+            System.err.println(decP);
+            System.err.println(decC);
     }
 
 }

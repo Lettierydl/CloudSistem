@@ -167,8 +167,27 @@
                               <TableColumn fx:id="colVerV" prefWidth="90.0" text="Visualizar" />
                            </columns>
                         </TableView>
-                        <DatePicker fx:id="dataV" layoutX="82.0" layoutY="14.0" onAction="#dataDigitada" onKeyReleased="#dataDigitadaPress" />
+                        <DatePicker fx:id="dataV" layoutX="82.0" layoutY="14.0" onAction="#dataDigitadaV" onKeyReleased="#dataDigitadaPress" />
                      </children></AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Vendas À Prazo">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="vendasAPrazo" prefHeight="361.0" prefWidth="860.0" AnchorPane.leftAnchor="82.0" AnchorPane.rightAnchor="82.0" AnchorPane.topAnchor="50.0">
+                           <columns>
+                              <TableColumn fx:id="colDataPR" prefWidth="142.6211929321289" text="Data" />
+                              <TableColumn fx:id="colFuncPR" prefWidth="158.0" text="Funcionário" />
+                              <TableColumn fx:id="colClientePR" prefWidth="245.0" text="Cliente" />
+                              <TableColumn fx:id="colValorPR" prefWidth="116.0" text="Valor" />
+                              <TableColumn fx:id="colItensPR" prefWidth="97.0" text="Intes" />
+                              <TableColumn fx:id="colVerPR" prefWidth="93.0" text="Visualizar" />
+                           </columns>
+                        </TableView>
+                        <DatePicker fx:id="dataPR" layoutX="82.0" layoutY="14.0" onAction="#dataDigitadaPR" onKeyReleased="#dataDigitadaPressPR" />
+                     </children>
+                  </AnchorPane>
                </content>
             </Tab>
         </tabs>

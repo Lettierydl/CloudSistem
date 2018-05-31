@@ -14,11 +14,18 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPageEvent;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
+import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,12 +61,49 @@ public class GeradorPDF {
             //String subTitulo = "Estoque Verificado no dia "
             //        + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime());
             
-            String subTitulo = "Balanço Geral de Estoque do período 01/12/2016 à 31/12/2016";
+            String subTitulo = "Balanço Geral de Estoque do período 01/12/2017 à 31/12/2017";
             inserirHead(doc, "Mercadinho Popular\n"
                     + "Edvaneide Torres Vilar de Carvalho\n"
                     + "CNPJ: 07.643.907/0001-18", subTitulo);
 
             PdfPTable table = getTableEstoqueProdutos(valoresNegativos);
+
+            doc.add(table);
+
+            doc.close();
+            Arquivo.copyFile(new File(path), destino);
+            return destino.getAbsolutePath();
+        } catch (DocumentException | IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+    
+    public String gerarPdfRelatorioEstoqueProdutos(boolean valoresNegativos, boolean pararLista, Calendar dataInicio, Calendar dataFim, List<String> codigos_retirados, double total_requisitado, File destino) {
+        Document doc = new Document();
+        try {
+            String path = a.getRelatorio().getCanonicalPath() + destino.getName();
+            PdfWriter instance = PdfWriter.getInstance(doc, new FileOutputStream(path));
+            doc.open();
+            
+            //String subTitulo = "Estoque Verificado no dia "
+            //        + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime());
+            
+            String data = "";
+            try{
+                data += OperacaoStringUtil.formatDataValor(dataInicio)+ " à "+
+                    OperacaoStringUtil.formatDataValor(dataFim);
+            }catch(NullPointerException e){
+                data += ("01/01/"+(Calendar.getInstance().get(Calendar.YEAR)-1))+ " à ";
+                data += ("31/12/"+(Calendar.getInstance().get(Calendar.YEAR)-1));
+            }
+            
+            String subTitulo = "Balanço Geral de Estoque do período "+data; //" 01/12/2017 à 31/12/2017";
+            inserirHead(doc, "Mercadinho Popular\n"
+                    + "Edvaneide Torres Vilar de Carvalho\n"
+                    + "CNPJ: 07.643.907/0001-18", subTitulo);
+
+            PdfPTable table = getTableEstoqueProdutos(valoresNegativos, pararLista,codigos_retirados, total_requisitado);
 
             doc.add(table);
 
@@ -195,7 +239,11 @@ public class GeradorPDF {
             doc.open();
             String subTitulo = "Venda Realizada no dia "
                     + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(v.getDia().getTime());
-            inserirHead(doc, "Venda do Cliente " + v.getCliente().getNome(), subTitulo);
+            if(v.getCliente() != null){
+                inserirHead(doc, "Venda do Cliente " + v.getCliente().getNome(), subTitulo);
+            }else{//venda a vista
+                inserirHead(doc, "Venda À Vista", subTitulo);
+            }
 
             PdfPTable table = getTableDeItens(itens);
 
@@ -245,6 +293,8 @@ public class GeradorPDF {
     }
     
     private PdfPTable getTableEstoqueProdutos(boolean valoresNegativos) throws DocumentException {
+        double total_requisitado = 381624.18;
+        
         Map<String, Double[]> saida = GeradorRelatorio.getRelatorioEstoqueProdutos(valoresNegativos);
 
         PdfPTable table = new PdfPTable(4);
@@ -286,6 +336,9 @@ public class GeradorPDF {
                 //table.addCell(new DecimalFormat("0.00").format(vc));
                 //table.addCell(new DecimalFormat("0.00").format(0));
             }
+            if(total_requisitado-10 <= total && total <= total_requisitado+10){
+                break;
+            }
             
         }
 
@@ -303,7 +356,86 @@ public class GeradorPDF {
         //table.addCell(OperacaoStringUtil.formatarStringQuantidadeEPonto(quantidade)
         //        + " Itens");
         
-        String tot = OperacaoStringUtil.formatarStringValorMoedaComDescricaoEPonto(361710.74);
+        String tot = OperacaoStringUtil.formatarStringValorMoedaComDescricaoEPonto(381624.18);
+        PdfPCell cel2 = new PdfPCell(new Paragraph(tot));
+        cel2.setColspan(2);
+        cel2.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cel2.setBackgroundColor(new BaseColor(60, 171, 198));
+        table.addCell(cel2);
+        
+        //table.addCell(OperacaoStringUtil.formatarStringValorMoedaComDescricaoEPonto(total));
+        //System.out.println(total);
+        return table;
+    }
+    /*
+    @parametr boolean paraLista = true a lista é parada ao aingir o limite
+    */
+    private PdfPTable getTableEstoqueProdutos(boolean valoresNegativos,boolean paraLista,  List<String> codigos_retirados, double total_requisitado) throws DocumentException {
+        //double total_requisitado = 381624.18;
+        
+        Map<String, Double[]> saida = GeradorRelatorio.getRelatorioEstoqueProdutos(valoresNegativos, codigos_retirados);
+
+        PdfPTable table = new PdfPTable(4);
+        table.setWidths(new int[]{5, 2, 1, 1});
+        table.setWidthPercentage(100f);
+        table.setSpacingBefore(10f);
+        table.setSpacingAfter(10f);
+
+        table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+
+        table.getDefaultCell().setBackgroundColor(new BaseColor(60, 171, 198));
+        table.addCell("Produto");
+        table.addCell("Quantidade em Estoque");
+        table.addCell("Valor de Compra");
+        table.addCell("SubTotal");
+        table.getDefaultCell().setBackgroundColor(null);
+        double quantidade = 0, total = 0;
+        List<String> c = new ArrayList<String>();
+        c.addAll(saida.keySet());
+        Collections.sort(c);
+        for (String produto : c) {
+            if(paraLista && total_requisitado <= total){
+                break;
+            }
+            
+            Double[] val = saida.get(produto);
+            
+            double qt, vc, sub;
+            qt = val[0]; vc = val[1]; sub = val[0]*val[1];
+        
+            if(qt > 0 && qt < 10000){
+                quantidade += qt;
+                total += (qt * vc);
+                table.addCell(produto);
+                table.addCell(new DecimalFormat("0.000").format(qt));
+                table.addCell(new DecimalFormat("0.00").format(vc));
+                table.addCell(new DecimalFormat("0.00").format(qt*vc));
+            }else{
+                continue;
+                //table.addCell(new DecimalFormat("0.00").format(val[1]));
+                //table.addCell(new DecimalFormat("0.000").format(0));
+                //table.addCell(new DecimalFormat("0.00").format(vc));
+                //table.addCell(new DecimalFormat("0.00").format(0));
+            }
+            
+            
+        }
+
+        table.getDefaultCell().setBackgroundColor(new BaseColor(60, 171, 198));
+
+        PdfPCell cell = new PdfPCell(new Paragraph("Total"));
+        cell.setColspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setBackgroundColor(new BaseColor(60, 171, 198));
+        table.addCell(cell);
+
+        //table.addCell(OperacaoStringUtil.formatarStringValorIntegerEPonto(
+        //       saida.size()) + " Produtos");
+
+        //table.addCell(OperacaoStringUtil.formatarStringQuantidadeEPonto(quantidade)
+        //        + " Itens");
+        
+        String tot = OperacaoStringUtil.formatarStringValorMoedaComDescricaoEPonto(total_requisitado);
         PdfPCell cel2 = new PdfPCell(new Paragraph(tot));
         cel2.setColspan(2);
         cel2.setHorizontalAlignment(Element.ALIGN_CENTER);

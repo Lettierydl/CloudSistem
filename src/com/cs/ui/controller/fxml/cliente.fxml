@@ -17,7 +17,7 @@
         <URL value="@/com/cs/ui/css/principal.css" />
     </stylesheets>
    <children>
-      <Label layoutX="80.0" layoutY="4.0" text="Clientes">
+      <Label layoutX="80.0" layoutY="4.0" text="CLIENTES">
          <font>
             <Font size="28.0" />
          </font>

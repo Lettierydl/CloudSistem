@@ -7,7 +7,7 @@ package com.cs.ui.controller.dialog;
 
 import com.cs.ControllerTelas;
 import com.cs.Facede;
-import com.cs.ui.controller.ControllerUI;
+import com.cs.ui.controller.ControllerCRUD_UI;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -85,7 +85,7 @@ public abstract class DialogController<T> implements Initializable {
 
     public static ProgressDialogController getProgressDialog() {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(ControllerUI.class.getResource("fxml/dialog/dialogProgress.fxml"));
+        loader.setLocation(ControllerCRUD_UI.class.getResource("fxml/dialog/dialogProgress.fxml"));
         GridPane page = null;
         try {
             page = (GridPane) loader.load();

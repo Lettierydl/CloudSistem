@@ -71,8 +71,8 @@ public class OperacaoStringUtil {
 
     public static String formatarStringQuantidade(double quantidade) {
         if (quantidade != 0.0) {
-            //return new DecimalFormat("0.000").format(quantidade);
-            return new DecimalFormat("0").format(quantidade);
+            return new DecimalFormat("0.000").format(quantidade).replace(".", ",");
+            //return new DecimalFormat("0").format(quantidade);
         } else {
             return "";
         }
@@ -100,7 +100,7 @@ public class OperacaoStringUtil {
 
     public static String formatarStringValorMoedaComDescricao(double valor) {
         if (valor != 0.0) {
-            return DESCRICAO_MOEDA + " "+ new DecimalFormat("0.00").format(valor)
+            return DESCRICAO_MOEDA + " "+ new DecimalFormat("0.00").format(valor).replace(".", ",")
                     ;
         } else {
             return "";
@@ -119,7 +119,7 @@ public class OperacaoStringUtil {
 
     public static String formatarStringValorMoeda(double valor) {
         if (valor != 0.0) {
-            return new DecimalFormat("0.00").format(valor);
+            return new DecimalFormat("0.00").format(valor).replace(".", ",");
         } else {
             return "";
         }

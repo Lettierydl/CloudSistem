@@ -163,6 +163,36 @@ public class FindVenda extends FindEntity {
 
         return vendas;
     }
+    
+    public static List<Venda> vendasAPrazo(Calendar dia) {
+        Calendar di = Calendar.getInstance();
+        di.setTime(dia.getTime());
+        di.set(Calendar.HOUR, 0);
+        di.set(Calendar.MINUTE, 0);
+        di.set(Calendar.SECOND, 00);
+
+        Calendar df = Calendar.getInstance();
+        df.setTime(dia.getTime());
+        df.set(Calendar.HOUR, 23);
+        df.set(Calendar.MINUTE, 59);
+        df.set(Calendar.SECOND, 59);
+
+        String stringQuery = "select v FROM Venda as v ";
+        stringQuery += "WHERE v.formaDePagamento = :forma and  v.dia between :diaInicio and :diaFim"
+                + " order by v.dia , v.total DESC";
+        Query query = getEntityManager().createQuery(stringQuery, Venda.class);
+        //query.setMaxResults(LIMITE_DA_LISTA_DE_VENDAS_DE_HOJE);
+        
+        query.setParameter("diaInicio", di);
+        query.setParameter("diaFim", df);
+        query.setParameter("forma", FormaDePagamento.A_Prazo);
+        
+
+        @SuppressWarnings("unchecked")
+        List<Venda> vendas = (List<Venda>) query.getResultList();
+
+        return vendas;
+    }
 
     public static List<Venda> vendasDoCliente(Cliente Cliente, Date diaInicio,
             Date diaFim) {

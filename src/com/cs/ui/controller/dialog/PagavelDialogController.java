@@ -5,6 +5,7 @@ package com.cs.ui.controller.dialog;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.cs.sis.controller.impressora.ControllerImpressoraLocal;
 import com.cs.sis.model.exception.EntidadeNaoExistenteException;
 import com.cs.sis.model.financeiro.Divida;
 import com.cs.sis.model.financeiro.ItemDeVenda;
@@ -18,7 +19,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,8 +87,17 @@ public class PagavelDialogController extends DialogController<Pagavel> {
     }
 
     @FXML
-    void imprimir(ActionEvent event) {
-
+    void imprimir(ActionEvent event) throws IOException{
+        List <String>impressoras = new ArrayList<String>();
+        for(String i: ControllerImpressoraLocal.listaImpressora()){
+            impressoras.add(i);
+        }
+        
+        String imprSelected = JavaFXUtil.showDialogSelectOptions("Impressão", "Deseja imprimir essa "+entity.getClass().getSimpleName(), "Impressoras Disponíveis: ", impressoras);
+        String file = "";
+        if(f.imprimirVendaLocal((Venda) entity, imprSelected)){
+            JavaFXUtil.showDialog("Impressão", "Impressão", "Impressão realizada com sucesso");
+        }
     }
 
     @FXML

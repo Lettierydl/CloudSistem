@@ -16,7 +16,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -52,13 +51,15 @@ public class LoginController implements Initializable {
         } catch (Error | Exception er) {
             JavaFXUtil.showDialog("Erro ao Conectar com o banco",er);
         }
-        if(f.isBloqueado()){
+        try{
+           if(f.isBloqueado()){
             JavaFXUtil.showDialog("Avaliação Encerrada",
                     "Sistema bloqueado!\nPeríodo de avaliação finalizado.",
                     "Entre em contato com o suporte para ativar o seu sistema.",
                     AlertType.ERROR);
             return;
-        }
+            }
+        }catch(NullPointerException ne){}
         String name = nome.getText();
         String pass = senha.getText();
         try {

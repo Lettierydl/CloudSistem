@@ -47,9 +47,9 @@ public class Registro implements Serializable {
     }
 
     public static String criarRegistro(String razao, String proprietario, String chaveDoComputador) {
-        String decR = razao.substring(0, 3);
-        String decP = proprietario.substring(0, 3);
-        String decC = chaveDoComputador.substring(0, 3);
+        String decR = razao.toUpperCase().substring(0, 3);
+        String decP = proprietario.toUpperCase().substring(0, 3);
+        String decC = chaveDoComputador.toUpperCase().substring(0, 3);
 
         String cod = String.valueOf(Math.random()).substring(3, 4) + decR + String.valueOf(Math.random()).substring(3, 4)
                 + String.valueOf(Math.random()).substring(3, 4) + decP + String.valueOf(Math.random()).substring(3, 4)

@@ -57,16 +57,20 @@ public class ConfiguracaoController implements Initializable {
                 "Deseja realmente restaurar o sistema?",
                 "Essa operação não poderá ser revertida");
         if (ac == ButtonType.YES) {
+            String senha = JavaFXUtil.showDialogInput("Teste de Permissão", "Digite a senha para permissão para essa operação!");
+            if(!senha.equalsIgnoreCase("cloudsistem")){
+                JavaFXUtil.showDialog("Senha Incorreta", "Senha Incorreta", "Você não tem autorização para essa operação!", Alert.AlertType.ERROR, true);
+                return;
+            }
+            
+            
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Restalrar Banco de Dados");
+            fileChooser.setTitle("Restaurar Banco de Dados");
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("SQL", "*.sql"),
                     new FileChooser.ExtensionFilter("Zip", "*.zip")
             );
-            if (true) {
-                return;
-            }
 
             File file = fileChooser.showOpenDialog(restaurarBut.getScene().getWindow());
             if (file != null) {

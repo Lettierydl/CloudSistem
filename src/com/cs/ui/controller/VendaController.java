@@ -403,7 +403,7 @@ public class VendaController implements Initializable {
 
     public String descricaoItem(ItemDeVenda it) {
         return it.getDescricaoProduto() + "\n"
-                + OperacaoStringUtil.formatarStringQuantidadeInteger(it.getQuantidade()) + " X "
+                + OperacaoStringUtil.formatarStringQuantidade(it.getQuantidade()) + " X "
                 + OperacaoStringUtil.formatarStringValorMoeda(it.getValorProduto()) + " = "
                 + OperacaoStringUtil.formatarStringValorMoeda(it.getTotal());
     }

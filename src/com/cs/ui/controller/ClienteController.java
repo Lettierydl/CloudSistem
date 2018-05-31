@@ -21,7 +21,7 @@ import javafx.scene.input.KeyEvent;
  * @author Lettiery
  */
 //criar uma classe abstrata controller ui e colocar os metodos que se repetem
-public class ClienteController extends ControllerUI<Cliente> {
+public class ClienteController extends ControllerCRUD_UI<Cliente> {
 
     @FXML
     private TableColumn colunaNome;

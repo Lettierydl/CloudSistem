@@ -4,7 +4,7 @@ import javafx.util.Duration;
 
 public class VariaveisDeConfiguracaoUtil {
     
-        public static final String VERSION_SYSTEM = "2.8.0";
+        public static final String VERSION_SYSTEM = "2.9.2";
     
 	public static final boolean LIBERAR_VENDA_DE_PRODUTO_SEM_ESTOQUE = true;
 	
@@ -25,6 +25,7 @@ public class VariaveisDeConfiguracaoUtil {
         public static final String QUANTIDADE_CAIXA = "QUANTIDADE_CAIXA";
         public static final String IP_DO_BANCO = "IP_DO_BANCO";
         public static final String EXTRATEGIA_DE_CONEXAO = "EXTRATEGIA_DE_CONEXCAO";
+        public static final String TIPO_DE_IMPRESSORA = "TIPO_DE_IMPRESSORA";
         
         public static final String COMPACTAR_BACKUP = "COMPACTAR_BACKUP";
         public static final String ARQUIVOS_DEFALT_BACKUP = "ARQUIVOS_DEFALT_BACKUP";

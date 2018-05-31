@@ -2,6 +2,7 @@ package com.cs.ui.controller;
 
 import com.cs.ControllerTelas;
 import com.cs.Facede;
+import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.financeiro.Pagamento;
 import com.cs.sis.model.financeiro.Pagavel;
 import com.cs.sis.model.pessoas.Cliente;
@@ -510,6 +511,37 @@ public class BalancoController implements Initializable {
                 JavaFXUtil.showDialog(ex);
             }
 
+        }
+    }
+    @FXML
+    public void abrirModalCreate() {
+        
+    }
+
+    
+    @FXML//estoque manipulado
+    public void  gerarPDFEstoqueGeralComConfiguracoes(){
+        try {
+            // Carrega o arquivo fxml e cria um novo stage para a janela popup.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("fxml/dialog/dialogRelatorio.fxml"));
+            GridPane page = (GridPane) loader.load();
+
+            // Cria o palco dialogStage.
+            Stage dialogStage = new Stage();
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(ControllerTelas.stage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Define a pessoa no controller.
+            DialogController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            dialogStage.setResizable(false);
+            dialogStage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     

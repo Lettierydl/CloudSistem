@@ -12,6 +12,7 @@ import com.cs.sis.controller.*;
 import com.cs.sis.controller.configuracao.PermissaoFuncionario;
 import com.cs.sis.controller.find.*;
 import com.cs.sis.controller.gerador.*;
+import com.cs.sis.controller.impressora.ControllerImpressoraLocal;
 import com.cs.sis.model.estoque.Produto;
 import com.cs.sis.model.financeiro.*;
 import com.cs.sis.model.pessoas.*;
@@ -52,6 +53,34 @@ public class Facede {
             instance = new Facede();
         }
         return instance;
+    }
+    public static Facede getInstanceNoConection() {
+        if (instance == null) {
+            instance = new Facede(1);
+        }
+        return instance;
+    }
+    
+    private Facede(int n) {
+        reg = Registro.getIntance();
+        arq = new Arquivo();
+        
+        try {
+            imp = ControllerImpressora.getInstance();
+        } catch (Error | Exception e) {
+        }
+        new Thread(){
+            public void run(){
+                try{
+                    int retorno = imp.testeConectividadeImpressora();
+                    if(imp.testeConectividadeImpressora() < 0){
+                        System.err.println("impressora não conectada... Retorno: " + retorno);
+                    }
+                }catch(Throwable e){
+                        System.err.println("Não foi possivel carregar a DLL da impressora...");
+                }
+            }
+        }.start();
     }
 
     private Facede() {
@@ -250,6 +279,10 @@ public class Facede {
 
     public List<String> buscarDescricaoProdutoPorDescricaoQueInicia(String descricao) {
         return FindProduto.drecricaoProdutoQueIniciam(descricao);
+    }
+    
+    public List<String> buscarDescricaoProdutos() {
+        return FindProduto.drecricaoProdutos();
     }
 
     public List<String> buscarDescricaoProdutoPorDescricaoQueInicia(String descricao, int maxReult) {
@@ -587,6 +620,9 @@ public class Facede {
     public List<Venda> buscarVendaAVista(Calendar dia) {
         return FindVenda.vendasAVista(dia);
     }
+    public List<Venda> buscarVendaAPrazo(Calendar dia) {
+        return FindVenda.vendasAPrazo(dia);
+    }
 
     public List<ItemDeVenda> buscarItensDaVendaPorIdDaVenda(int id) {
         return FindVenda.itemDeVendaIdDaVenda(id);
@@ -693,6 +729,11 @@ public class Facede {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
         return pdf.gerarPdfRelatorioEstoqueProdutos(valoresNegativos, f);
     }
+    
+    public String gerarPdfRelatorioEstoqueProdutos(boolean valoresNegativos, boolean pararLista, Calendar dataInicio, Calendar dataFim, List<String> codigos_retirados, double valorLimite, File f) throws FuncionarioNaoAutorizadoException {
+        PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
+        return pdf.gerarPdfRelatorioEstoqueProdutos(valoresNegativos, pararLista, dataInicio, dataFim, codigos_retirados, valorLimite, f);
+    }
 
     public String gerarPdfDaVendaVenda(Venda v, List<ItemDeVenda> itens) throws FuncionarioNaoAutorizadoException {
         PermissaoFuncionario.isAutorizado(lg.getLogado(), PermissaoFuncionario.GERAR_RELATORIOS);
@@ -745,6 +786,14 @@ public class Facede {
     public void inserirConfiguracaoSistema(String key, Object value) {
         arq.addConfiguracaoSistema(key, value);
     }
+    
+    public void salvarTemporarios(String nome, Object value) {
+        arq.salvarTemporaria(value, nome);
+    }
+    
+    public Object recuperarTemporario(String nome) {
+        return arq.recuperarTemporaria(nome);
+    }
 
     public Object lerConfiguracaoSistema(String key) {
         return arq.lerConfiguracaoSistema(key);
@@ -793,6 +842,14 @@ public class Facede {
     public boolean imprimirVenda(Venda v) {
         try {
             return imp.imprimirVenda(v);
+        } catch (NullPointerException ne) {
+            return false;
+        }
+    }
+    
+    public boolean imprimirVendaLocal(Venda v, String impressora) {
+        try {
+            return ControllerImpressoraLocal.imprimir(impressora, imp.criarTexto(v));
         } catch (NullPointerException ne) {
             return false;
         }

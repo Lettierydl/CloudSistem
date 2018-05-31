@@ -28,7 +28,7 @@ import javafx.stage.Stage;
  *
  * @author Lettiery
  */
-public class FuncionarioController extends ControllerUI<Funcionario> {
+public class FuncionarioController extends ControllerCRUD_UI<Funcionario> {
 
     @FXML
     private TableColumn colunaNome;

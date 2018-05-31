@@ -19,6 +19,7 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -32,6 +33,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -233,6 +235,26 @@ public class JavaFXUtil {
         }
     }
     
+    //String titulo, String thead, String message, Alert.AlertType type, boolean undecorated
+    public static String showDialogSelectOptions(String titulo, String thead, String message, List<String> options) {
+        if(options.isEmpty()){
+            return "";
+        }
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(options.get(0), options);
+        dialog.setTitle(titulo);
+        dialog.setHeaderText(thead);
+        dialog.setContentText(message);
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            return result.get();
+        }else{
+            return "";
+        }
+
+    }
+    
     public static ButtonType showDialogOptions(String thead, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setHeaderText(thead);
@@ -350,6 +372,11 @@ public class JavaFXUtil {
     // serve para o sistema chamar o programa padrao que abre esse tipo de arquivo
     public static void abrirArquivoDoSistema(File file) throws IOException{
         Desktop.getDesktop().open(file);    
+    } 
+    
+    // serve para o sistema chamar o programa padrao que abre esse tipo de arquivo
+    public static void imprimirArquivoDoSistema(File file) throws IOException{
+        Desktop.getDesktop().print(file);
     } 
     
     

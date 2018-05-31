@@ -111,6 +111,9 @@ public class ConfiguracaoSistemaController implements Initializable {
 
     @FXML
     private ComboBox<String> box_estrategia;
+    
+    @FXML
+    private ComboBox<String> tipoImpressora;
 
     @FXML
     private TableColumn<?, ?> colunaNome;
@@ -262,16 +265,19 @@ public class ConfiguracaoSistemaController implements Initializable {
         boolean zipar = zipSelect.isSelected();
         boolean limitar = limitSelect.isSelected();
         String estrategia = box_estrategia.getValue();
+        String tipoImpr = tipoImpressora.getValue();
         
         try {
             f.salvarConfiguracoesDeBackup(arquivos, zipar);
             f.inserirConfiguracaoSistema(VariaveisDeConfiguracaoUtil.IP_DO_BANCO, ip);
             f.inserirConfiguracaoSistema(VariaveisDeConfiguracaoUtil.ATIVAR_LIMITE_REGISTRO_MOSTRADOS, limitar);
             f.inserirConfiguracaoSistema(VariaveisDeConfiguracaoUtil.EXTRATEGIA_DE_CONEXAO, estrategia);
+            f.inserirConfiguracaoSistema(VariaveisDeConfiguracaoUtil.TIPO_DE_IMPRESSORA, tipoImpr);
             JavaFXUtil.showDialog("Alterações realizada",
                     "Alterações realizada com sucesso",
                     "IP: "+ip+"\n" + "Arquivos: "+arquivos+"\n"
                             + "Estratégia: "+ estrategia+"\n"
+                            + "Impressora: "+ tipoImpr+"\n"
                             + "Zipar: "+ (zipar? "Sim" : "Não")+"\n"
                             + "Limitar: "+ (limitar? "Sim" : "Não"));
         } catch (Exception ex) {
@@ -284,6 +290,7 @@ public class ConfiguracaoSistemaController implements Initializable {
                     "Alterações realizada apenas algumas partes",
                     "IP: "+ip+"\n" + "Arquivos: "+arquivos+"\n"
                             + "Estratégia: "+ estrategia+"\n"
+                            + "Impressora: "+ tipoImpr+"\n"
                             + "Limitar: "+ (limitar? "Sim" : "Não"), Alert.AlertType.ERROR);
         }
     }
@@ -301,7 +308,7 @@ public class ConfiguracaoSistemaController implements Initializable {
         f.inserirConfiguracaoSistema(VariaveisDeConfiguracaoUtil.QUANTIDADE_CAIXA, Integer.valueOf(qtCaixa));
         
         Registro r = Registro.getIntance();
-        //System.out.println(r.criarRegistro(razao.getText(), proprietario.getText(), r.chaveComputador()));
+        System.out.println(r.criarRegistro(razao.getText(), proprietario.getText(), r.chaveComputador()));
         boolean reg = r.registrar(chave.getText(), razao.getText(), endereco.getText(), proprietario.getText());
         flag.setVisible(reg);
         if(reg){
@@ -324,6 +331,7 @@ public class ConfiguracaoSistemaController implements Initializable {
         }catch(Exception | NoClassDefFoundError e){
             JavaFXUtil.showDialog("Conexão com o Banco",
                     "Não foi possível estabelecer uma conexão com o Banco", Alert.AlertType.ERROR);
+            f = Facede.getInstanceNoConection();
         }
         
         MaskFieldUtil.numericField(quantidadeCaixas);
@@ -337,12 +345,19 @@ public class ConfiguracaoSistemaController implements Initializable {
                 "Digite a senha de acesso as configurações do sistema");
         
         if(OperacaoStringUtil.validarSenhaMestre(get, true)){
+            try{
             panelConfig.setDisable(false);
             ObservableList<String> estrategias = FXCollections.observableArrayList();
             estrategias.add("Remoto");
             estrategias.add("Local");
             box_estrategia.setItems(estrategias);
             box_estrategia.setValue("Remoto");
+            
+            ObservableList<String> impressoras = FXCollections.observableArrayList();
+            impressoras.add("ECF");
+            impressoras.add("Local");
+            tipoImpressora.setItems(impressoras);
+            tipoImpressora.setValue("ECF");
             preencherCampos();
             
             colunaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
@@ -363,7 +378,9 @@ public class ConfiguracaoSistemaController implements Initializable {
             ObservableList<TipoDeFuncionario> tipos = FXCollections.observableArrayList(TipoDeFuncionario.values());
             box_tiposFunc.setItems(tipos);
             box_tiposFunc.setValue(TipoDeFuncionario.Gerente);
-            atualizarStatusPermicao();
+            
+                atualizarStatusPermicao();
+            }catch(NoClassDefFoundError e){}
             
         }else{
             panelConfig.setDisable(true);
@@ -486,6 +503,10 @@ public class ConfiguracaoSistemaController implements Initializable {
         }catch(Exception e){}
         try{
             box_estrategia.setValue(confg.get(VariaveisDeConfiguracaoUtil.EXTRATEGIA_DE_CONEXAO).toString());
+        }catch(Exception e){}
+        
+        try{
+            tipoImpressora.setValue(confg.get(VariaveisDeConfiguracaoUtil.TIPO_DE_IMPRESSORA).toString());
         }catch(Exception e){}
         
         try{

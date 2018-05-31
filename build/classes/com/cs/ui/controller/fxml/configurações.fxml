@@ -32,7 +32,7 @@
                      <children>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" GridPane.columnIndex="1" />
                         <Button fx:id="realizarBut" mnemonicParsing="false" onAction="#realiarBackups" text="Realizar Backups" />
-                        <Button fx:id="restaurarBut" mnemonicParsing="false" onAction="#realiarBackups" text="Restaurar Sistema">
+                        <Button fx:id="restaurarBut" mnemonicParsing="false" onAction="#restaurarBanco" text="Restaurar Sistema">
                            <GridPane.margin>
                               <Insets left="160.0" />
                            </GridPane.margin>

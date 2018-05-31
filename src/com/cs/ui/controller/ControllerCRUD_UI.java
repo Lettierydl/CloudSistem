@@ -43,7 +43,7 @@ import javafx.util.Duration;
  * @author Lettiery
  * @param <T>
  */
-public abstract class ControllerUI<T> implements Initializable {
+public abstract class ControllerCRUD_UI<T> implements Initializable {
 
     protected Facede f;
     protected boolean pesquisa_ativa = false;
@@ -59,7 +59,7 @@ public abstract class ControllerUI<T> implements Initializable {
     @FXML
     protected TableColumn colunaEdit;
 
-    protected ControllerUI() {
+    protected ControllerCRUD_UI() {
         f = Facede.getInstance();
     }
 
